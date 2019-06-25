@@ -7,7 +7,6 @@ class StrFormatter:
         "yellow": "\u001b[33m",
         "clear": "\u001b[0m"
     }
-    # def __init__(self): pass
     def start(self):
         '''
         When executed in __init__, it is executed each time this class is instantiated, so it is prevented by coding in this function.
@@ -17,15 +16,10 @@ class StrFormatter:
         '''
         os = platform.platform(terse=True)
         if "Windows" in os:
-            # If os is Windows, use module 'colorama'.
+            # If os is Windows, use module 'colorama'. And only init to fit terminal to ANSI.
             # Mac and Unix can't import colorama, so import here.
-            from colorama import init, Fore
+            from colorama import init
             init()
-            self.terminalColors = {
-                "red": Fore.RED,
-                "yellow": Fore.YELLOW,
-                "clear": Fore.RESET
-            }
 
     def get_colored_console_log(self, color, message):
         '''
