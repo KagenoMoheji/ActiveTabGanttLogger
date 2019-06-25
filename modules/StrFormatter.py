@@ -1,20 +1,31 @@
 import platform
-from colorama import Fore
-
-# Check on Mac! If colored, you can remove commentouts below!!
 
 class StrFormatter:
-    # We can use this in only whose terminal uses UTF8 like MacOS.
-    # terminalColors = {
-    #     "red": "\u001b[31m",
-    #     "yellow": "\u001b[33m",
-    #     "clear": "\u001b[0m"
-    # }
-    # def __init__(self):
-    #     # WindowsだったらShiftJISに変換しようと思ったけど，色つかなかった．
-    #     os = platform.platform(terse=True)
-    #     if "Windows" in os:
-    #         self.terminalColors = {k: v.encode("shift-jis") for (k, v) in self.terminalColors.items()}
+    # At first, 'terminalColors' has escape sequences for MacOS and Unix.
+    terminalColors = {
+        "red": "\u001b[31m",
+        "yellow": "\u001b[33m",
+        "clear": "\u001b[0m"
+    }
+    # def __init__(self): pass
+    def start(self):
+        '''
+        When executed in __init__, it is executed each time this class is instantiated, so it is prevented by coding in this function.
+
+        References:
+            https://githubja.com/tartley/colorama
+        '''
+        os = platform.platform(terse=True)
+        if "Windows" in os:
+            # If os is Windows, use module 'colorama'.
+            # Mac and Unix can't import colorama, so import here.
+            from colorama import init, Fore
+            init()
+            self.terminalColors = {
+                "red": Fore.RED,
+                "yellow": Fore.YELLOW,
+                "clear": Fore.RESET
+            }
 
     def get_colored_console_log(self, color, message):
         '''
@@ -25,16 +36,9 @@ class StrFormatter:
             message (str): Alert message
 
         Returns:
-            None
+            (str): Colored text for terminal
         '''
-        # if not color in self.terminalColors:
-        #     print("{0}Error: Invalid in Arg 'color'.\nYou can select from 'yellow' or 'red'.{1}".format(self.terminalColors["red"], self.terminalColors["clear"]))
-        #     exit()
-        # return "{0}{1}{2}".format(self.terminalColors[color], message, self.terminalColors["clear"])
-        if color is "red":
-            return "{0}{1}{2}".format(Fore.RED, message, Fore.RESET)
-        elif color is "yellow":
-            return "{0}{1}{2}".format(Fore.YELLOW, message, Fore.RESET)
-        else:
-            print("{0}Error: Invalid in Arg 'color'.\nYou can select from 'yellow' or 'red'.{1}".format(Fore.RED, Fore.RESET))
+        if not color in self.terminalColors:
+            print("{0}Error: Invalid in Arg 'color'.\nYou can select from 'yellow' or 'red'.{1}".format(self.terminalColors["red"], self.terminalColors["clear"]))
             exit()
+        return "{0}{1}{2}".format(self.terminalColors[color], message, self.terminalColors["clear"])
