@@ -1,7 +1,5 @@
 
 '''
-
-
 References
     https://pod.hatenablog.com/entry/2017/02/11/194834
     https://qiita.com/Alice1017/items/0464a38ab335ac3b9336
