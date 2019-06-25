@@ -1,9 +1,14 @@
 from modules.InitProcess import InitProcess
-import colorama
+from modules.StrFormatter import StrFormatter
 
 def main():
-    # Initial Process
-    colorama.init() # Initialization of colorama for StrFormat.py
+    '''
+    Initial Process
+    '''
+    # A start of a module 'StrFormatter' for coloring terminal
+    strformatter = StrFormatter()
+    strformatter.start()
+    # Main initialization
     init = InitProcess()
     os, mode, uuid = init.get_init_parameters()
     print("OS: {}".format(os))
