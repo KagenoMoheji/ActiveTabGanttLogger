@@ -10,7 +10,7 @@
 
 ## テスト環境
 - OS
-    - Windows10
+    - Windows10 64bit
     - MacOS Mojave10.14.5
 - ブラウザ
     - Google Chrome75.0.3770.100
