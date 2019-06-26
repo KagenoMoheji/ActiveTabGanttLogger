@@ -23,14 +23,14 @@ class InitProcess:
         Returns:
             os (str): OS and its version
             mode (str): "Alone" or "Observer" or "Logger"
-            uuid ("" | str): UUID when mode is not "Alone"
+            uuid ("" | str): UUID when mode is not "Alone" and "Plotter"
 
         References:
             http://ja.pymotw.com/2/platform/
         '''
         os = self.get_os()
         mode = self.argparser.identify_mode()
-        if mode is "Alone":
+        if mode is "Alone": # or (mode is "Plotter")
             uuid = "None"
         elif mode is "Observer":
             uuid = self.generate_uuid()
@@ -109,7 +109,7 @@ class ArgsParser:
             https://stackoverflow.com/a/3853776
         '''
         self.strformatter = StrFormatter()
-        usage = "ganttlogger [--observer] [--logger] [--uuid <UUID>] [--help]" # [--plotter <MODE>]
+        usage = "ganttlogger [--observer] [--logger] [--uuid <UUID>] [--help]" # [--plotter] [--mode <MODE>]
         self.parser = ArgumentParser(
             prog="ganttlogger",
             description="""\
@@ -137,14 +137,19 @@ and Plotting graphs (active-tab=ganttchart, mouse=line, keyboard=bar).
             dest="uuid",
             help="When you set '--logger', you must also set this by being informed from 'observer' PC."
         )
-        """
+        '''
         self.parser.add_argument(
             "-p", "--plotter",
-            type=str,
-            dest="mode",
+            action="store_true",
             help="Use this option if you want other outputs by a log after getting one and a graph."
         )
-        """
+        self.parser.add_argument(
+            "-m", "--mode",
+            type=str,
+            dest="mode",
+            help="When you set '--logger', you must also set this."
+        )
+        '''
         self.args = self.parser.parse_args()
 
     def identify_mode(self):
@@ -161,11 +166,11 @@ and Plotting graphs (active-tab=ganttchart, mouse=line, keyboard=bar).
         if self.args.observer:
             mode = "Observer"
         elif self.args.logger:
-            mode = "Logger"
             if not self.args.uuid:
                 print(self.strformatter.get_colored_console_log("red",
                     "Error: Logger missing an option '--uuid <UUID>'."))
                 exit()
+            mode = "Logger"
             self.uuid = self.args.uuid
         else:
             if self.args.uuid:
@@ -173,4 +178,16 @@ and Plotting graphs (active-tab=ganttchart, mouse=line, keyboard=bar).
                     "Error: You may need '--logger'."))
                 exit()
             mode = "Alone"
+        '''
+        elif self.args.plotter:
+            if not self.args.mode:
+                print(self.strformatter.get_colored_console_log("red",
+                    "Error: Plotter missing an option '--mode <MODE>'."))
+                exit()
+            
+            if ...:
+                # Check whether valid value in args.mode
+                # Example, "removeTab" or "setDeltat
+            mode = "Plotter"
+        '''
         return mode
