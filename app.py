@@ -42,24 +42,40 @@ def main():
     '''
 
     # Exit the loop above
-    # Close process?
+    # Close process here? or in functions below?
 
 def alone(os):
     print("This mode is Alone")
-    pass
 
 def observer(os, uuid):
     print("This mode is Observer")
-    pass
 
 def logger(os, uuid):
     print("This mode is Logger")
-    pass
 
 '''
 def plotter():
     pass
 '''
 
-if __name__ is "__main__":
-    main()
+
+
+if __name__ == "__main__":
+    '''
+    Command `pipenv run python app.py` is run to check the action of modules.
+    '''
+    # main()
+
+    # psutilモジュールではアクティブタブは分からなさそう．
+    import psutil
+    # https://githubja.com/giampaolo/psutil
+    # https://psutil.readthedocs.io/en/latest/#process-class
+    for ps in psutil.process_iter():
+        text = """\
+ppid: {ppid}
+pid: {pid}
+name: {name}
+status: {status}
+============================
+""".format(ppid=ps.ppid(), pid=ps.pid, name=ps.name(), status=ps.status())
+        print(text)
