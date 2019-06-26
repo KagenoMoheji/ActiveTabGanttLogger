@@ -61,12 +61,21 @@ class InitProcess:
             None
 
         Returns:
-            (str): OS and its version
+            os (str): OS and its version
 
         References:
             http://ja.pymotw.com/2/platform/
         '''
-        return platform.platform(terse=True)
+        os = platform.platform(terse=True)
+
+        # Check OS
+        if ("Windows" in os) or ("Darwin" in os):
+            return os
+        print(self.strformatter.get_colored_console_log("red",
+            "Error: This can work on 'Windows' or 'MacOS'"))
+        exit()
+
+        
 
     def generate_uuid(self):
         '''
