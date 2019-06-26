@@ -10,10 +10,10 @@
 
 ## テスト環境
 - OS
-    - Google Chrome75.0.3770.100
-- ブラウザ
     - Windows10
     - MacOS Mojave10.14.5
+- ブラウザ
+    - Google Chrome75.0.3770.100
 
 ## 名称やコマンドの改名
 - 「ActiveTabGanttLogger」や`ganttlogger`は微妙
