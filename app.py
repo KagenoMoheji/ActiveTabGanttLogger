@@ -11,9 +11,8 @@ def main():
     # Main initialization
     init = InitProcess()
     os, mode, uuid = init.get_init_parameters()
+
     print("OS: {}".format(os))
-    print("mode: {}".format(mode))
-    print("Your ID is: {}".format(uuid))
 
     # Start main process in accordance with mode
 
