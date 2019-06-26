@@ -91,13 +91,13 @@ class ArgsParser:
             https://stackoverflow.com/a/3853776
         '''
         self.strformatter = StrFormatter()
-        usage = "ganttlogger [--observer] [--logger] [--uuid <UUID>] [--help]"
+        usage = "ganttlogger [--observer] [--logger] [--uuid <UUID>] [--help]" # [--plotter <MODE>]
         self.parser = ArgumentParser(
             prog="ganttlogger",
             description="""\
-Observing active-tab, mouse, keyboard,
+This CLI will do Observing active-tab, mouse, keyboard,
 and Logging them,
-and Plot graphs (active-tab=ganttchart, mouse=line, keyboard=bar).
+and Plotting graphs (active-tab=ganttchart, mouse=line, keyboard=bar).
 {}""".format(self.strformatter.get_colored_console_log("yellow",
 "If you don't set any option, this work both of 'observer' and 'logger'.")),
             usage=usage,
@@ -119,6 +119,14 @@ and Plot graphs (active-tab=ganttchart, mouse=line, keyboard=bar).
             dest="uuid",
             help="When you set '--logger', you must also set this by being informed from 'observer' PC."
         )
+        """
+        self.parser.add_argument(
+            "-p", "--plotter",
+            type=str,
+            dest="mode",
+            help="Use this option if you want other outputs by a log after getting one and a graph."
+        )
+        """
         self.args = self.parser.parse_args()
 
     def identify_mode(self):
