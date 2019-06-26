@@ -41,6 +41,16 @@ class InitProcess:
                 "Error: Invalid variable in mode of InitProcess.py"))
             exit()
 
+        print("OS: {}".format(os))
+        print("mode: {}".format(mode))
+        print("Your ID is: {}".format(uuid))
+
+        # Get simpler os parameter
+        if "Windows" in os:
+            os = "w"
+        elif "Darwin" in os:
+            os = "d"
+
         return os, mode, uuid
     
     def get_os(self):
