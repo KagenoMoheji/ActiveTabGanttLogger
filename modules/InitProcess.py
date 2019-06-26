@@ -71,9 +71,10 @@ class InitProcess:
         # Check OS
         if ("Windows" in os) or ("Darwin" in os):
             return os
-        print(self.strformatter.get_colored_console_log("red",
-            "Error: This can work on 'Windows' or 'MacOS'"))
-        exit()
+        else:
+            print(self.strformatter.get_colored_console_log("red",
+                "Error: This can work on 'Windows' or 'MacOS'"))
+            exit()
 
         
 
