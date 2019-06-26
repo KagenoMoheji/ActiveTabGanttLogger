@@ -14,6 +14,8 @@
     - MacOS Mojave10.14.5
 - ブラウザ
     - Google Chrome75.0.3770.100
+- Python
+    - 3.7
 
 ## 名称やコマンドの改名
 - 「ActiveTabGanttLogger」や`ganttlogger`は微妙
