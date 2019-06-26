@@ -5,12 +5,31 @@ References
     https://qiita.com/Alice1017/items/0464a38ab335ac3b9336
 '''
 from setuptools import setup
+import platform
+
+'''
+●install_requiresに関して
+[Windows向け]
+・pypiwin32
+[Mac向け]
+'''
+
+os = platform.platform(terse=True)
+install_requires = ["matplotlib", "numpy", "psutil"]
+if "Windows" in os:
+    install_requires += [
+        "pypiwin32"
+    ]
+# elif "Darwin" in os:
+#     install_requires += [
+
+#     ]
 
 setup(
     name="ganttlogger",
     version="0.0",
     # description="",
-    install_requires=["matplotlib", "numpy"],
+    install_requires=install_requires,
     entry_points={
         "console_scripts": [
             "ganttlogger = app:main"
