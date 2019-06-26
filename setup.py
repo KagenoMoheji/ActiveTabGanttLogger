@@ -10,7 +10,7 @@ setup(
     name="ganttlogger",
     version="0.0",
     # description="",
-    # install_requires=["", ],
+    install_requires=["matplotlib", "numpy"],
     entry_points={
         "console_scripts": [
             "ganttlogger = app:main"
