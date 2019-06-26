@@ -12,7 +12,7 @@ Or, if you have installed this CLI, start from (4).
 (2)Create virtual python environment with pipenv.
 `pipenv --python 3.7`
 (3)Install this CLI.
-`pipenv run python -m pip install -e .`
+`pipenv run python -m pip install -e .` or `pipenv run pip3 install -e .`
 (4)Run CLI.
 `pipenv run ganttlogger`
 '''
