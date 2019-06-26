@@ -76,8 +76,6 @@ class InitProcess:
                 "Error: This can work on 'Windows' or 'MacOS'"))
             exit()
 
-        
-
     def generate_uuid(self):
         '''
         Generate UUID.
