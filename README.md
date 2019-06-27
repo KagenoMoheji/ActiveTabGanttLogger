@@ -22,3 +22,6 @@
 - アクティブウィンドウ遷移・マウス・キーボードを観測してガントチャート・折れ線・棒グラフを出力するし…
 - タスクを監視…「PCTaskObserver」と`taskobserver`？
 - ほかに良い名前無いかな…
+
+## 仕様
+- MouseObserver・KeyboardObserverの最低デルタtは1s．
