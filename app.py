@@ -209,7 +209,7 @@ if __name__ == "__main__":
                     recent_active_pid = active_pid
                     # fwの実行ファイル名の取得
                     active_name = fw["NSApplicationName"]
-                    print("name: {}".format(fw.localizedName()))
+                    print("name: {}".format(nsw.sharedWorkspace().frontmostApplication().localizedName()))
                     # fwの詳細テキストの取得
                     tab_text = ""
                     # if "CHROME" in active_name.upper(): # Chromeなら
