@@ -199,7 +199,7 @@ if __name__ == "__main__":
             while True:
                 # ForegroundWindowのオブジェクト取得
                 fw = nsw.sharedWorkspace().activeApplication()
-                print(CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, kCGNullWindowID))
+                # print(CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, kCGNullWindowID))
                 # pidの取得
                 active_pid = fw["NSApplicationProcessIdentifier"]
                 if active_pid != recent_active_pid:
@@ -209,6 +209,8 @@ if __name__ == "__main__":
                     recent_active_pid = active_pid
                     # fwの実行ファイル名の取得
                     active_name = fw["NSApplicationName"]
+                    if "()" in active_name:
+                        active_name = active_name.replace("()", "")
                     # fwの詳細テキストの取得
                     tab_text = ""
                     # if "CHROME" in active_name.upper(): # Chromeなら
