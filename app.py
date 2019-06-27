@@ -30,14 +30,14 @@ def main():
     # print("OS: {}".format(os)) # "w" or "d"
 
     # Start main process(thread-loop) in accordance with mode
-    if mode is "Alone":
+    if mode == "Alone":
         alone(os)
-    elif mode is "Observer":
+    elif mode == "Observer":
         observer(os, uuid)
-    elif mode is "Logger":
+    elif mode == "Logger":
         logger(os, uuid)
     '''
-    elif mode is "Plotter":
+    elif mode == "Plotter":
         plotter(os)
     '''
 
@@ -112,7 +112,6 @@ if __name__ == "__main__":
     if "Windows" in os:
         '''
         [Get active window ※Windows10-64bit]
-        ・(win32gui)https://www.reddit.com/r/learnpython/comments/90onta/getting_activeforeground_window_title_on_windows/
         ●win32guiモジュールのインストールについて
         ・http://blog.livedoor.jp/kmiwa_project/archives/1058907748.html
         ・https://sourceforge.net/projects/pywin32/files/pywin32/Build%20221/
@@ -122,6 +121,8 @@ if __name__ == "__main__":
         →Windows10-64bitに向けては，`pip install pypiwin32`を採用
         ●win32系のドキュメント？
         ・http://docs.activestate.com/activepython/2.4/pywin32/win32_modules.html
+        ●実装参考
+        ・https://www.reddit.com/r/learnpython/comments/90onta/getting_activeforeground_window_title_on_windows/
         ●アクティブタブがchromeだった場合のリンクの取得について
         ・https://stackoverflow.com/questions/11645123/how-do-i-get-the-url-of-the-active-google-chrome-tab-in-windows
         ・https://codeday.me/jp/qa/20190401/509668.html
@@ -142,26 +143,28 @@ if __name__ == "__main__":
                 fw = wg.GetForegroundWindow()
                 # pidの取得
                 # 同じアプリケーションで異なるウィンドウを開いていても同じpidで区別はつかないらしい
-                # それならpid取らなくても，GetWindowText()の分割でアプリケーション名取って比較するのもOKでは？
+                # それだとブラウザ内のページの区別つかないな
                 active_pid = wp.GetWindowThreadProcessId(fw)[-1]
-                if active_pid is not recent_active_pid:
+                if active_pid != recent_active_pid:
+                    # タブ遷移時刻を取得
+                    timestamp = datetime.now().strftime("%H:%M:%S.%f")
+                    # recent_active_pidの更新
                     recent_active_pid = active_pid
-                    # timestamp = datetime.now().strftime("%H:%M:%S.%f")
-                # fwの実行ファイル名の取得
-                active_name = psutil.Process(recent_active_pid).name()
-                # fwの詳細テキストの取得
-                # 下記の一行でステータスバー(ブラウザならページのタイトル)のテキストを取得できる
-                tab_text = wg.GetWindowText(fw)
-                if "CHROME" in active_name.upper(): # Chromeなら
-                    tab_text_list = tab_text.split(" - ")[:-1]
-                    tab_text = " - ".join(tab_text_list)
+                    # fwの実行ファイル名の取得
+                    active_name = psutil.Process(recent_active_pid).name()
+                    # fwの詳細テキストの取得
+                    # 下記の一行でステータスバー(ブラウザならページのタイトル)のテキストを取得できる
+                    tab_text = wg.GetWindowText(fw)
+                    if "CHROME" in active_name.upper(): # Chromeなら
+                        tab_text_list = tab_text.split(" - ")[:-1]
+                        tab_text = " - ".join(tab_text_list)
 
-                # ブラウザならtab_textはURL，それ以外はステータスバー
-                print("{time}: {pid}: {active_name}({tab_text})".format(
-                    time=datetime.now().strftime("%H:%M:%S.%f"), # time=timestamp
-                    pid=recent_active_pid,
-                    active_name=active_name,
-                    tab_text=tab_text))
+                    # ブラウザならtab_textはURL，それ以外はステータスバー
+                    print("{time}: {pid}: {active_name}({tab_text})".format(
+                        time=timestamp,
+                        pid=recent_active_pid,
+                        active_name=active_name,
+                        tab_text=tab_text))
                 time.sleep(1)
         except KeyboardInterrupt:
             print("Exit")
@@ -171,9 +174,14 @@ if __name__ == "__main__":
         ・(Win: win32gui, Mac: Appkit)https://stackoverflow.com/a/36419702
         ・(Mac Appkit)https://codeday.me/jp/qa/20190523/885948.html
         ・(Mac向け？xpropやxdotoolのインストールが必要？)https://stackoverflow.com/questions/3983946/get-active-window-title-in-x
+        ・(Quartz？)https://stackoverflow.com/questions/29814634/what-is-an-alternative-to-win32gui-in-python-2-7-for-mac
         ●Appkitモジュールのインストールについて
         ・http://palepoli.skr.jp/wp/2019/01/31/python3-pyobjc/
         ・https://pypi.org/project/pyobjc/
+        ●実装参考
+        ・https://developer.apple.com/documentation/appkit/nsworkspace#1965656
+        ・https://developer.apple.com/documentation/appkit/nswindow
+        ・https://stackoverflow.com/a/36419702
         ●アクティブタブがchromeだった場合のリンクの取得について
 
         '''
@@ -186,22 +194,24 @@ if __name__ == "__main__":
                 fw = nsw.sharedWorkspace().activeApplication()
                 print(fw)
                 # pidの取得
-                # active_pid = 
-                # if active_pid is not recent_active_pid:
-                #     recent_active_pid = active_pid
-                    # timestamp = datetime.now().strftime("%H:%M:%S.%f")
-                # fwの実行ファイル名の取得
-                # active_name = psutil.Process(recent_active_pid).name()
-                # fwの詳細テキストの取得
-                # tab_text =
-                # if "CHROME" in active_name.upper(): # Chromeなら
+                active_pid = fw["NSApplicationProcessIdentifier"]
+                if active_pid != recent_active_pid:
+                    # タブ遷移時刻を取得
+                    timestamp = datetime.now().strftime("%H:%M:%S.%f")
+                    # recent_active_pidの更新
+                    recent_active_pid = active_pid
+                    # fwの実行ファイル名の取得
+                    active_name = fw["NSApplicationName"]
+                    # fwの詳細テキストの取得
+                    tab_text = ""
+                    # if "CHROME" in active_name.upper(): # Chromeなら
 
-                # ブラウザならtab_textはURL，それ以外はステータスバー
-                # print("{time}: {pid}: {active_name}({tab_text})".format(
-                #     time=datetime.now().strftime("%H:%M:%S.%f"), # time=timestamp
-                #     pid=recent_active_pid,
-                #     active_name=active_name,
-                #     tab_text=tab_text))
+                    # ブラウザならtab_textはURL，それ以外はステータスバー
+                    print("{time}: {pid}: {active_name}({tab_text})".format(
+                        time=timestamp,
+                        pid=recent_active_pid,
+                        active_name=active_name,
+                        tab_text=tab_text))
                 time.sleep(1)
         except KeyboardInterrupt:
             print("Exit")
