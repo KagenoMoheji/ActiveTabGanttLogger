@@ -12,6 +12,7 @@ import platform
 ●for Windows10-64bit
 ・pypiwin32
 ●for MacOS Mojave
+・pyobjc
 '''
 
 os = platform.platform(terse=True)
@@ -20,10 +21,10 @@ if "Windows" in os:
     install_requires += [
         "pypiwin32"
     ]
-# elif "Darwin" in os:
-#     install_requires += [
-
-#     ]
+elif "Darwin" in os:
+    install_requires += [
+        "pyobjc"
+    ]
 
 setup(
     name="ganttlogger",
