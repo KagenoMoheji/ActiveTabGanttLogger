@@ -8,10 +8,10 @@ from setuptools import setup
 import platform
 
 '''
-●install_requiresに関して
-[Windows向け]
+[About 'install_requires']
+●for Windows10-64bit
 ・pypiwin32
-[Mac向け]
+●for MacOS Mojave
 '''
 
 os = platform.platform(terse=True)
