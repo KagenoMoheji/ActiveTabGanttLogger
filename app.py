@@ -107,7 +107,6 @@ if __name__ == "__main__":
 # ============================
 # """.format(ppid=ps.ppid(), pid=ps.pid, name=ps.name(), status=ps.status())
 #         print(text)
-
     os = platform.platform(terse=True)
     if "Windows" in os:
         '''
@@ -139,27 +138,27 @@ if __name__ == "__main__":
         recent_active_pid = -1
         try:
             while True:
-                # ForegroundWindowのオブジェクト取得
+                # ForegroundWindowのオブジェクト取得=============================================
                 fw = wg.GetForegroundWindow()
-                # pidの取得
+                # pidの取得=============================================
                 # 同じアプリケーションで異なるウィンドウを開いていても同じpidで区別はつかないらしい
                 # それだとブラウザ内のページの区別つかないな
                 active_pid = wp.GetWindowThreadProcessId(fw)[-1]
                 if active_pid != recent_active_pid:
-                    # タブ遷移時刻を取得
+                    # タブ遷移時刻を取得=============================================
                     timestamp = datetime.now().strftime("%H:%M:%S.%f")
-                    # recent_active_pidの更新
+                    # recent_active_pidの更新=============================================
                     recent_active_pid = active_pid
-                    # fwの実行ファイル名の取得
+                    # fwの実行ファイル名の取得=============================================
                     active_name = psutil.Process(recent_active_pid).name()
-                    # fwの詳細テキストの取得
+                    # fwの詳細テキストの取得=============================================
                     # 下記の一行でステータスバー(ブラウザならページのタイトル)のテキストを取得できる
                     tab_text = wg.GetWindowText(fw)
                     if "CHROME" in active_name.upper(): # Chromeなら
                         tab_text_list = tab_text.split(" - ")[:-1]
                         tab_text = " - ".join(tab_text_list)
 
-                    # ブラウザならtab_textはURL，それ以外はステータスバー
+                    # ブラウザならtab_textはURL，それ以外はステータスバー=============================================
                     print("{time}: {pid}: {active_name}({tab_text})".format(
                         time=timestamp,
                         pid=recent_active_pid,
@@ -197,23 +196,28 @@ if __name__ == "__main__":
         recent_active_pid = -1
         try:
             while True:
-                # ForegroundWindowのオブジェクト取得
+                # ForegroundWindowのオブジェクト取得=============================================
                 fw = nsw.sharedWorkspace().activeApplication()
-                # print(CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, kCGNullWindowID))
-                # pidの取得
+                # pidの取得=============================================
                 active_pid = fw["NSApplicationProcessIdentifier"]
                 if active_pid != recent_active_pid:
-                    # タブ遷移時刻を取得
+                    # タブ遷移時刻を取得=============================================
                     timestamp = datetime.now().strftime("%H:%M:%S.%f")
-                    # recent_active_pidの更新
+                    # recent_active_pidの更新=============================================
                     recent_active_pid = active_pid
-                    # fwの実行ファイル名の取得
+                    # fwの実行ファイル名の取得=============================================
                     active_name = fw["NSApplicationName"]
-                    # fwの詳細テキストの取得
+                    # fwの詳細テキストの取得=============================================
                     tab_text = ""
+                    # 詳細情報を含めたWindowリストを取得
+                    cg_windows = CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, kCGNullWindowID)
+                    for cg_window in cg_windows:
+                        if active_name == cg_window["kCGWindowOwnerName"]:
+                            tab_text = cg_window["kCGWindowName"]
+                            break
                     # if "CHROME" in active_name.upper(): # Chromeなら
 
-                    # ブラウザならtab_textはURL，それ以外はステータスバー
+                    # ブラウザならtab_textはURL，それ以外はステータスバー=============================================
                     print("{time}: {pid}: {active_name}({tab_text})".format(
                         time=timestamp,
                         pid=recent_active_pid,
