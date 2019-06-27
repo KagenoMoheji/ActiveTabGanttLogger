@@ -133,9 +133,9 @@ if __name__ == "__main__":
         import win32process as wp
         import win32com.client as wcli
         # import win32con as wc
+
         # pids = wp.GetWindowThreadProcessId(w.GetForegroundWindow())
         # print(psutil.Process(pids[-1]))
-
         recent_active_pid = -1
         try:
             while True:
@@ -174,18 +174,25 @@ if __name__ == "__main__":
         ・(Win: win32gui, Mac: Appkit)https://stackoverflow.com/a/36419702
         ・(Mac Appkit)https://codeday.me/jp/qa/20190523/885948.html
         ・(Mac向け？xpropやxdotoolのインストールが必要？)https://stackoverflow.com/questions/3983946/get-active-window-title-in-x
-        ・(Quartz？)https://stackoverflow.com/questions/29814634/what-is-an-alternative-to-win32gui-in-python-2-7-for-mac
-        ●Appkitモジュールのインストールについて
+        ・(Quartz)https://stackoverflow.com/questions/29814634/what-is-an-alternative-to-win32gui-in-python-2-7-for-mac
+        ●Appkit・Quartzモジュールのインストールについて
         ・http://palepoli.skr.jp/wp/2019/01/31/python3-pyobjc/
         ・https://pypi.org/project/pyobjc/
+        ・https://pypi.org/project/pyobjc-framework-Quartz/
         ●実装参考
         ・https://developer.apple.com/documentation/appkit/nsworkspace#1965656
         ・https://developer.apple.com/documentation/appkit/nswindow
         ・https://stackoverflow.com/a/36419702
+        ・https://stackoverflow.com/questions/28815863/how-to-get-active-window-title-using-python-in-mac/37368813#37368813
         ●アクティブタブがchromeだった場合のリンクの取得について
 
         '''
         from AppKit import NSWorkspace as nsw
+        from Quartz import (
+            CGWindowListCopyWindowInfo,
+            kCGWindowListOptionOnScreenOnly,
+            kCGNullWindowID
+        )
 
         recent_active_pid = -1
         try:
@@ -202,6 +209,7 @@ if __name__ == "__main__":
                     recent_active_pid = active_pid
                     # fwの実行ファイル名の取得
                     active_name = fw["NSApplicationName"]
+                    print("name: {}".format(fw.localizedName()))
                     # fwの詳細テキストの取得
                     tab_text = ""
                     # if "CHROME" in active_name.upper(): # Chromeなら
