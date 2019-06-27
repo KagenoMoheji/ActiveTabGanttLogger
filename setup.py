@@ -23,7 +23,8 @@ if "Windows" in os:
     ]
 elif "Darwin" in os:
     install_requires += [
-        "pyobjc"
+        "pyobjc",
+        "pyobjc-framework-Quartz"
     ]
 
 setup(
