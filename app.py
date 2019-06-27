@@ -208,9 +208,7 @@ if __name__ == "__main__":
                     # recent_active_pidの更新
                     recent_active_pid = active_pid
                     # fwの実行ファイル名の取得
-                    active_name = str(fw["NSApplicationName"].encode("utf-8"))
-                    if "()" in active_name:
-                        active_name = active_name.replace("()", "")
+                    active_name = fw["NSApplicationName"]
                     # fwの詳細テキストの取得
                     tab_text = ""
                     # if "CHROME" in active_name.upper(): # Chromeなら
