@@ -212,7 +212,7 @@ if __name__ == "__main__":
                     # 詳細情報を含めたWindowリストを取得
                     cg_windows = CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, kCGNullWindowID)
                     for cg_window in cg_windows:
-                        if active_name == cg_window["kCGWindowOwnerName"]:
+                        if active_name == cg_window["kCGWindowOwnerName"] and cg_window["kCGWindowName"]:
                             tab_text = cg_window["kCGWindowName"]
                             break
                     # if "CHROME" in active_name.upper(): # Chromeなら
