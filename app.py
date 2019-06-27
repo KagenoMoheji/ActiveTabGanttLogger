@@ -199,8 +199,8 @@ if __name__ == "__main__":
             while True:
                 # ForegroundWindowのオブジェクト取得
                 fw = nsw.sharedWorkspace().activeApplication()
-                print("type1: {0}\ntype2: {1}".format(fw,
-                    nsw.sharedWorkspace().frontmostApplication()))
+                print("type1: {0}\ntype2: {1}".format(type(fw),
+                    type(nsw.sharedWorkspace().frontmostApplication())))
                 print(fw)
                 # pidの取得
                 active_pid = fw["NSApplicationProcessIdentifier"]
