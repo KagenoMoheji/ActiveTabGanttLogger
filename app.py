@@ -85,10 +85,10 @@ if __name__ == "__main__":
     →短時間でタブ切り替えされたアプリケーションは，使われないものとして除去するのもアリ
     ・拡張ディスプレイで，タイマー(ブラウザ)を映すことやってみるか
     '''
+    # main()
     import platform
     from datetime import datetime
     import time
-    # main()
 
     '''
     [Get PID and its name]
@@ -113,7 +113,7 @@ if __name__ == "__main__":
         '''
         [Get active window ※Windows10-64bit]
         ・(win32gui)https://www.reddit.com/r/learnpython/comments/90onta/getting_activeforeground_window_title_on_windows/
-        ●win32guiのモジュールのインストールについて
+        ●win32guiモジュールのインストールについて
         ・http://blog.livedoor.jp/kmiwa_project/archives/1058907748.html
         ・https://sourceforge.net/projects/pywin32/files/pywin32/Build%20221/
         ・https://github.com/mhammond/pywin32/releases
@@ -125,7 +125,7 @@ if __name__ == "__main__":
         ●アクティブタブがchromeだった場合のリンクの取得について
         ・https://stackoverflow.com/questions/11645123/how-do-i-get-the-url-of-the-active-google-chrome-tab-in-windows
         ・https://codeday.me/jp/qa/20190401/509668.html
-
+        →上記リンクはいずれもダメ
 
         '''
         import win32gui as wg
@@ -142,9 +142,11 @@ if __name__ == "__main__":
                 fw = wg.GetForegroundWindow()
                 # pidの取得
                 # 同じアプリケーションで異なるウィンドウを開いていても同じpidで区別はつかないらしい
+                # それならpid取らなくても，GetWindowText()の分割でアプリケーション名取って比較するのもOKでは？
                 active_pid = wp.GetWindowThreadProcessId(fw)[-1]
                 if active_pid is not recent_active_pid:
                     recent_active_pid = active_pid
+                    # timestamp = datetime.now().strftime("%H:%M:%S.%f")
                 # fwの実行ファイル名の取得
                 active_name = psutil.Process(recent_active_pid).name()
                 # fwの詳細テキストの取得
@@ -156,7 +158,7 @@ if __name__ == "__main__":
 
                 # ブラウザならtab_textはURL，それ以外はステータスバー
                 print("{time}: {pid}: {active_name}({tab_text})".format(
-                    time=datetime.now().strftime("%H:%M:%S.%f"),
+                    time=datetime.now().strftime("%H:%M:%S.%f"), # time=timestamp
                     pid=recent_active_pid,
                     active_name=active_name,
                     tab_text=tab_text))
@@ -169,11 +171,40 @@ if __name__ == "__main__":
         ・(Win: win32gui, Mac: Appkit)https://stackoverflow.com/a/36419702
         ・(Mac Appkit)https://codeday.me/jp/qa/20190523/885948.html
         ・(Mac向け？xpropやxdotoolのインストールが必要？)https://stackoverflow.com/questions/3983946/get-active-window-title-in-x
+        ●Appkitモジュールのインストールについて
+        ・http://palepoli.skr.jp/wp/2019/01/31/python3-pyobjc/
+        ・https://pypi.org/project/pyobjc/
         ●アクティブタブがchromeだった場合のリンクの取得について
 
-
         '''
-        print("MacOS")
+        from AppKit import NSWorkspace as nsw
+
+        recent_active_pid = -1
+        try:
+            while True:
+                # ForegroundWindowのオブジェクト取得
+                fw = nsw.sharedWorkspace().activeApplication()
+                print(fw)
+                # pidの取得
+                # active_pid = 
+                # if active_pid is not recent_active_pid:
+                #     recent_active_pid = active_pid
+                    # timestamp = datetime.now().strftime("%H:%M:%S.%f")
+                # fwの実行ファイル名の取得
+                # active_name = psutil.Process(recent_active_pid).name()
+                # fwの詳細テキストの取得
+                # tab_text =
+                # if "CHROME" in active_name.upper(): # Chromeなら
+
+                # ブラウザならtab_textはURL，それ以外はステータスバー
+                # print("{time}: {pid}: {active_name}({tab_text})".format(
+                #     time=datetime.now().strftime("%H:%M:%S.%f"), # time=timestamp
+                #     pid=recent_active_pid,
+                #     active_name=active_name,
+                #     tab_text=tab_text))
+                time.sleep(1)
+        except KeyboardInterrupt:
+            print("Exit")
 
 
     
