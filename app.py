@@ -208,7 +208,7 @@ if __name__ == "__main__":
                     # recent_active_pidの更新
                     recent_active_pid = active_pid
                     # fwの実行ファイル名の取得
-                    active_name = fw["NSApplicationName"]
+                    active_name = fw["NSApplicationName"].encode("utf-8")
                     if "()" in active_name:
                         active_name = active_name.replace("()", "")
                     # fwの詳細テキストの取得
