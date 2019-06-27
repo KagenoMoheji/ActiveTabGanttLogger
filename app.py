@@ -199,6 +199,8 @@ if __name__ == "__main__":
             while True:
                 # ForegroundWindowのオブジェクト取得
                 fw = nsw.sharedWorkspace().activeApplication()
+                print("type1: {0}\ntype2: {1}".format(fw,
+                    nsw.sharedWorkspace().frontmostApplication()))
                 print(fw)
                 # pidの取得
                 active_pid = fw["NSApplicationProcessIdentifier"]
@@ -209,7 +211,6 @@ if __name__ == "__main__":
                     recent_active_pid = active_pid
                     # fwの実行ファイル名の取得
                     active_name = fw["NSApplicationName"]
-                    print("name: {}".format(nsw.sharedWorkspace().frontmostApplication().localizedName()))
                     # fwの詳細テキストの取得
                     tab_text = ""
                     # if "CHROME" in active_name.upper(): # Chromeなら
