@@ -54,6 +54,6 @@ class KeybordObserver:
     def __init__(self):
         pass
 
-class PidObserver:
-    def __init__(self):
-        pass
+# class PidObserver:
+#     def __init__(self):
+#         pass
