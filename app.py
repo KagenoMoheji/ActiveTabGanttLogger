@@ -66,6 +66,9 @@ if __name__ == "__main__":
     コメントも日本語OKで．
 
     [メモ]
+    ●アクティブタブのステータスバーのテキストの照合によってアクティブタブ遷移を検出
+    しているが、Chrome以外はそのテキストは参考のため(ログには書く)で、グラフプロット時は
+    実行ファイル名で統合してプロットする。
     ●実際にobserverするとき，長時間稼働して配列(numpy)に格納するデータ数膨大に
     なるから，一定時間(5-10m)経った時にそれまでの配列を別スレッド立ててファイル
     書き出ししつつ元の配列の変数を初期化して再利用する並列処理した方がええのかな．
@@ -84,7 +87,8 @@ if __name__ == "__main__":
     →そこまで気にすることないか？
     →短時間でタブ切り替えされたアプリケーションは，使われないものとして除去するのもアリ
     →ガントチャートプロット時に1sより短かったら切り捨てるとか？
-    ・拡張ディスプレイで，タイマー(ブラウザ)を映すことやってみるか???????????????????????????????
+    ・拡張ディスプレイでやってもアクティブタブの単一検出はできた。
+    ・拡張ディスプレイで，タイマー(ブラウザ)を映すことやってみるか。休憩時刻確認の時に。
     '''
     # main()
     import platform
@@ -93,8 +97,7 @@ if __name__ == "__main__":
     import psutil
 
     os = platform.platform(terse=True)
-    recent_active_name = "START!"
-    recent_tab_text = ""
+    recent_active_tab_text = "START!"
     if "Windows" in os:
         import win32gui as wg
         import win32process as wp
@@ -109,36 +112,23 @@ if __name__ == "__main__":
                 # fwの実行ファイル名の取得
                 active_name = psutil.Process(active_pid).name()
                 # fwのステータスバーのテキスト取得
-                tab_text = wg.GetWindowText(fw)
-                if recent_active_name != active_name.upper():
+                active_tab_text = wg.GetWindowText(fw)
+                if recent_active_tab_text != active_tab_text.upper():
                     # タブ遷移時刻を取得
                     switched_time = datetime.now().strftime("%H:%M:%S.%f")
-                    # recent_active_nameの更新(大文字比較に備えておく)
-                    recent_active_name = active_name.upper()
+                    # recent_active_tab_textの更新(大文字比較に備えておく)
+                    recent_active_tab_text = active_tab_text.upper()
                     # ブラウザの場合に，取得したステータスバーのテキストの加工
                     if "CHROME" in active_name.upper(): # Chromeなら
-                        tab_text_list = tab_text.split(" - ")[:-1]
-                        tab_text = " - ".join(tab_text_list)
-                        recent_tab_text = tab_text
+                        splitted_active_tab_text = active_tab_text.split(" - ")[:-1]
+                        active_tab_text = " - ".join(splitted_active_tab_text)
 
                     # 確認
                     print("{time}: {pid}: {active_name}({tab_text})".format(
                         time=switched_time,
                         pid=active_pid,
                         active_name=active_name,
-                        tab_text=tab_text))
-                elif "CHROME" in active_name.upper(): # ブラウザ内切り替えがあるかもなので
-                    tab_text_list = tab_text.split(" - ")[:-1]
-                    tab_text = " - ".join(tab_text_list)
-                    if recent_tab_text != tab_text: # ステータスバーのページタイトルが違ってたら
-                        switched_time = datetime.now().strftime("%H:%M:%S.%f")
-                        recent_tab_text = tab_text
-
-                        print("{time}: {pid}: {active_name}({tab_text})".format(
-                        time=switched_time,
-                        pid=active_pid,
-                        active_name=active_name,
-                        tab_text=tab_text))
+                        tab_text=active_tab_text))
 
                 time.sleep(1)
         except KeyboardInterrupt:
@@ -160,37 +150,24 @@ if __name__ == "__main__":
                 # fwの実行ファイル名の取得
                 active_name = fw["NSApplicationName"]
                 # fwのステータスバーのテキスト取得
-                tab_text = ""
+                active_tab_text = ""
                 cg_windows = CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, kCGNullWindowID) # 詳細情報を含めたWindowリストを取得
                 for cg_window in cg_windows:
                     if active_name == cg_window["kCGWindowOwnerName"] and cg_window["kCGWindowName"]:
-                        tab_text = cg_window["kCGWindowName"]
+                        active_tab_text = cg_window["kCGWindowName"]
                         break
-                if recent_active_name != active_name.upper():
+                if recent_active_tab_text != active_tab_text.upper():
                     # タブ遷移時刻を取得
                     timestamp = datetime.now().strftime("%H:%M:%S.%f")
-                    # recent_active_nameの更新(大文字比較に備えておく)
-                    recent_active_name = active_name.upper()
-                    # ブラウザの場合に，取得したステータスバーのテキストの加工
-                    if "CHROME" in active_name.upper(): # Chromeなら
-                        recent_tab_text = tab_text
+                    # recent_active_tab_textの更新(大文字比較に備えておく)
+                    recent_active_tab_text = active_tab_text.upper()
                     
                     # 確認
                     print("{time}: {pid}: {active_name}({tab_text})".format(
                         time=timestamp,
                         pid=active_pid,
                         active_name=active_name,
-                        tab_text=tab_text))
-                elif "CHROME" in active_name.upper(): # ブラウザ内切り替えがあるかもなので
-                    if recent_tab_text != tab_text: # ステータスバーのページタイトルが違ってたら
-                        switched_time = datetime.now().strftime("%H:%M:%S.%f")
-                        recent_tab_text = tab_text
-
-                        print("{time}: {pid}: {active_name}({tab_text})".format(
-                        time=switched_time,
-                        pid=active_pid,
-                        active_name=active_name,
-                        tab_text=tab_text))
+                        tab_text=active_tab_text))
                 time.sleep(1)
         except KeyboardInterrupt:
             print("Exit")
