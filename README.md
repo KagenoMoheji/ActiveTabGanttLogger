@@ -20,7 +20,7 @@
 ## 名称やコマンドの改名
 - 「ActiveTabGanttLogger」や`ganttlogger`は微妙
 - アクティブウィンドウ遷移・マウス・キーボードを観測してガントチャート・折れ線・棒グラフを出力するし…
-- タスクを監視…「PCTaskObserver」と`taskobserver`？
+- タスクを監視…「PCTaskObserver」と`tskobsr`？
 - ほかに良い名前無いかな…
 
 ## 仕様
