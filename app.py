@@ -83,109 +83,67 @@ if __name__ == "__main__":
     ・仮想デスクトップだと，デスクトップ別のアクティブタブが選択される状態になる．
     →そこまで気にすることないか？
     →短時間でタブ切り替えされたアプリケーションは，使われないものとして除去するのもアリ
-    ・拡張ディスプレイで，タイマー(ブラウザ)を映すことやってみるか
+    →ガントチャートプロット時に1sより短かったら切り捨てるとか？
+    ・拡張ディスプレイで，タイマー(ブラウザ)を映すことやってみるか???????????????????????????????
     '''
     # main()
     import platform
     from datetime import datetime
     import time
-
-    '''
-    [Get PID and its name]
-    ・https://githubja.com/giampaolo/psutil
-    ・https://psutil.readthedocs.io/en/latest/#process-class
-    ●psutilモジュールではアクティブタブは分からなさそう．
-    ●psutil: {Windows: OK, MacOS: OK}
-    '''
     import psutil
-#     for ps in psutil.process_iter():
-#         text = """\
-# ppid: {ppid}
-# pid: {pid}
-# name: {name}
-# status: {status}
-# ============================
-# """.format(ppid=ps.ppid(), pid=ps.pid, name=ps.name(), status=ps.status())
-#         print(text)
-    os = platform.platform(terse=True)
-    if "Windows" in os:
-        '''
-        [Get active window ※Windows10-64bit]
-        ●win32guiモジュールのインストールについて
-        ・http://blog.livedoor.jp/kmiwa_project/archives/1058907748.html
-        ・https://sourceforge.net/projects/pywin32/files/pywin32/Build%20221/
-        ・https://github.com/mhammond/pywin32/releases
-        ・https://stackoverflow.com/questions/42370339/python-3-6-install-win32api
-        ・https://github.com/Googulator/pypiwin32
-        →Windows10-64bitに向けては，`pip install pypiwin32`を採用
-        ●win32系のドキュメント？
-        ・http://docs.activestate.com/activepython/2.4/pywin32/win32_modules.html
-        ●実装参考
-        ・https://www.reddit.com/r/learnpython/comments/90onta/getting_activeforeground_window_title_on_windows/
-        ●アクティブタブがchromeだった場合のリンクの取得について
-        ・https://stackoverflow.com/questions/11645123/how-do-i-get-the-url-of-the-active-google-chrome-tab-in-windows
-        ・https://codeday.me/jp/qa/20190401/509668.html
-        →上記リンクはいずれもダメ
 
-        '''
+    os = platform.platform(terse=True)
+    recent_active_name = "START!"
+    recent_tab_text = ""
+    if "Windows" in os:
         import win32gui as wg
         import win32process as wp
         import win32com.client as wcli
-        # import win32con as wc
 
-        # pids = wp.GetWindowThreadProcessId(w.GetForegroundWindow())
-        # print(psutil.Process(pids[-1]))
-        recent_active_pid = -1
         try:
             while True:
-                # ForegroundWindowのオブジェクト取得=============================================
+                # ForegroundWindowのオブジェクト取得
                 fw = wg.GetForegroundWindow()
-                # pidの取得=============================================
-                # 同じアプリケーションで異なるウィンドウを開いていても同じpidで区別はつかないらしい
-                # それだとブラウザ内のページの区別つかないな
+                # pidの取得
                 active_pid = wp.GetWindowThreadProcessId(fw)[-1]
-                if active_pid != recent_active_pid:
-                    # タブ遷移時刻を取得=============================================
-                    timestamp = datetime.now().strftime("%H:%M:%S.%f")
-                    # recent_active_pidの更新=============================================
-                    recent_active_pid = active_pid
-                    # fwの実行ファイル名の取得=============================================
-                    active_name = psutil.Process(recent_active_pid).name()
-                    # fwの詳細テキストの取得=============================================
-                    # 下記の一行でステータスバー(ブラウザならページのタイトル)のテキストを取得できる
-                    tab_text = wg.GetWindowText(fw)
+                # fwの実行ファイル名の取得
+                active_name = psutil.Process(active_pid).name()
+                # fwのステータスバーのテキスト取得
+                tab_text = wg.GetWindowText(fw)
+                if recent_active_name != active_name.upper():
+                    # タブ遷移時刻を取得
+                    switched_time = datetime.now().strftime("%H:%M:%S.%f")
+                    # recent_active_nameの更新(大文字比較に備えておく)
+                    recent_active_name = active_name.upper()
+                    # ブラウザの場合に，取得したステータスバーのテキストの加工
                     if "CHROME" in active_name.upper(): # Chromeなら
                         tab_text_list = tab_text.split(" - ")[:-1]
                         tab_text = " - ".join(tab_text_list)
+                        recent_tab_text = tab_text
 
-                    # ブラウザならtab_textはURL，それ以外はステータスバー=============================================
+                    # 確認
                     print("{time}: {pid}: {active_name}({tab_text})".format(
-                        time=timestamp,
-                        pid=recent_active_pid,
+                        time=switched_time,
+                        pid=active_pid,
                         active_name=active_name,
                         tab_text=tab_text))
+                elif "CHROME" in active_name.upper(): # ブラウザ内切り替えがあるかもなので
+                    tab_text_list = tab_text.split(" - ")[:-1]
+                    tab_text = " - ".join(tab_text_list)
+                    if recent_tab_text != tab_text: # ステータスバーのページタイトルが違ってたら
+                        switched_time = datetime.now().strftime("%H:%M:%S.%f")
+                        recent_tab_text = tab_text
+
+                        print("{time}: {pid}: {active_name}({tab_text})".format(
+                        time=switched_time,
+                        pid=active_pid,
+                        active_name=active_name,
+                        tab_text=tab_text))
+
                 time.sleep(1)
         except KeyboardInterrupt:
             print("Exit")
     elif "Darwin" in os:
-        '''
-        [Get active window ※MacOS Mojave]
-        ・(Win: win32gui, Mac: Appkit)https://stackoverflow.com/a/36419702
-        ・(Mac Appkit)https://codeday.me/jp/qa/20190523/885948.html
-        ・(Mac向け？xpropやxdotoolのインストールが必要？)https://stackoverflow.com/questions/3983946/get-active-window-title-in-x
-        ・(Quartz)https://stackoverflow.com/questions/29814634/what-is-an-alternative-to-win32gui-in-python-2-7-for-mac
-        ●Appkit・Quartzモジュールのインストールについて
-        ・http://palepoli.skr.jp/wp/2019/01/31/python3-pyobjc/
-        ・https://pypi.org/project/pyobjc/
-        ・https://pypi.org/project/pyobjc-framework-Quartz/
-        ●実装参考
-        ・https://developer.apple.com/documentation/appkit/nsworkspace#1965656
-        ・https://developer.apple.com/documentation/appkit/nswindow
-        ・https://stackoverflow.com/a/36419702
-        ・https://stackoverflow.com/questions/28815863/how-to-get-active-window-title-using-python-in-mac/37368813#37368813
-        ●アクティブタブがchromeだった場合のリンクの取得について
-
-        '''
         from AppKit import NSWorkspace as nsw
         from Quartz import (
             CGWindowListCopyWindowInfo,
@@ -193,34 +151,44 @@ if __name__ == "__main__":
             kCGNullWindowID
         )
 
-        recent_active_pid = -1
         try:
             while True:
-                # ForegroundWindowのオブジェクト取得=============================================
+                # ForegroundWindowのオブジェクト取得
                 fw = nsw.sharedWorkspace().activeApplication()
-                # pidの取得=============================================
+                # pidの取得
                 active_pid = fw["NSApplicationProcessIdentifier"]
-                if active_pid != recent_active_pid:
-                    # タブ遷移時刻を取得=============================================
+                # fwの実行ファイル名の取得
+                active_name = fw["NSApplicationName"]
+                # fwのステータスバーのテキスト取得
+                tab_text = ""
+                cg_windows = CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, kCGNullWindowID) # 詳細情報を含めたWindowリストを取得
+                for cg_window in cg_windows:
+                    if active_name == cg_window["kCGWindowOwnerName"] and cg_window["kCGWindowName"]:
+                        tab_text = cg_window["kCGWindowName"]
+                        break
+                if recent_active_name != active_name.upper():
+                    # タブ遷移時刻を取得
                     timestamp = datetime.now().strftime("%H:%M:%S.%f")
-                    # recent_active_pidの更新=============================================
-                    recent_active_pid = active_pid
-                    # fwの実行ファイル名の取得=============================================
-                    active_name = fw["NSApplicationName"]
-                    # fwの詳細テキストの取得=============================================
-                    tab_text = ""
-                    # 詳細情報を含めたWindowリストを取得
-                    cg_windows = CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, kCGNullWindowID)
-                    for cg_window in cg_windows:
-                        if active_name == cg_window["kCGWindowOwnerName"] and cg_window["kCGWindowName"]:
-                            tab_text = cg_window["kCGWindowName"]
-                            break
-                    # if "CHROME" in active_name.upper(): # Chromeなら
-
-                    # ブラウザならtab_textはURL，それ以外はステータスバー=============================================
+                    # recent_active_nameの更新(大文字比較に備えておく)
+                    recent_active_name = active_name.upper()
+                    # ブラウザの場合に，取得したステータスバーのテキストの加工
+                    if "CHROME" in active_name.upper(): # Chromeなら
+                        recent_tab_text = tab_text
+                    
+                    # 確認
                     print("{time}: {pid}: {active_name}({tab_text})".format(
                         time=timestamp,
-                        pid=recent_active_pid,
+                        pid=active_pid,
+                        active_name=active_name,
+                        tab_text=tab_text))
+                elif "CHROME" in active_name.upper(): # ブラウザ内切り替えがあるかもなので
+                    if recent_tab_text != tab_text: # ステータスバーのページタイトルが違ってたら
+                        switched_time = datetime.now().strftime("%H:%M:%S.%f")
+                        recent_tab_text = tab_text
+
+                        print("{time}: {pid}: {active_name}({tab_text})".format(
+                        time=switched_time,
+                        pid=active_pid,
                         active_name=active_name,
                         tab_text=tab_text))
                 time.sleep(1)
