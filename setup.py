@@ -13,6 +13,7 @@ import platform
 ・pypiwin32
 ●for MacOS Mojave
 ・pyobjc
+・pyobjc-framework-Quartz(included in "pyobjc"...??)
 '''
 
 os = platform.platform(terse=True)
