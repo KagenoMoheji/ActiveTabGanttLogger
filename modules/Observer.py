@@ -1,17 +1,6 @@
 '''
-●json形式にして渡したり送信したり
-{
-    uuid: UUID
-    activeTab: {
-        id: アクティブタブログでの一意の連続数値,
-    },
-    mouse: {
-        id: マウスログでの一意の連続数値,
-    },
-    keybord: {
-        id: キーボードログでの一意の連続数値,
-    }
-}
+●送信時はenv.jsonを読み込んで環境変数として使う
+●Aloneのときはjsonを使わずRawDataの後ろに格納するだけ
 '''
 
 '''
@@ -33,23 +22,29 @@ import platform
 from datetime import datetime
 import time
 import numpy as np
+# from collections import deque
 import psutil
 import math
 import pyautogui
 from modules.StrFormatter import StrFormatter
+from modules.Logger import RawDataStore
 
 class Observer:
     observer = None
     strfmr = None
     def __init__(self, os, uuid=""):
+        self.strfmr = StrFormatter()
         if os == "w":
             self.observer = WindowsObserver(uuid)
         elif os == "d":
             self.observer = MacObserver(uuid)
-        self.strfmr = StrFormatter()
+        else:
+            print(self.strfmr.get_colored_console_log("red",
+                "Error: This can work on 'Windows' or 'MacOS'"))
 
     def start(self):
-        print("Ready to start?(Y/n) : ", end="")
+        print(self.strfmr.get_colored_console_log("yellow",
+            "Start after finising setting logger.\nReady to start?(Y/n) : "), end="")
         st_input = input().strip()
         if st_input == "n":
             print("GanttLogger closed")
@@ -59,18 +54,13 @@ class Observer:
                 "Error: Invalid input. Input 'Y'(=yes) or 'n'(=no)."))
             exit()
         
-        # このあたりでスレッド展開
-        print("Hello, Observer!")
-        # self.observer.run()
+        self.observer.run()
 
-class RawDataStore():
-    raw_tab_data = np.array()
-    raw_mouse_data = np.array()
-    raw_keyboard_data = np.array()
 
 class WindowsObserver:
     uuid = ""
     store = None
+    common = None
     def __init__(self, uuid=""):
         import win32gui as wg
         import win32process as wp
@@ -79,11 +69,27 @@ class WindowsObserver:
         if uuid:
             self.uuid = uuid
         self.store = RawDataStore()
+        self.common = CommonObserver()
+
+    def run(self):
+        # このあたりでスレッド展開
+        print("Hello, WindowsObserver!")
+
+    def active_tab_observer(self):
+        pass
+
+    '''
+    Because we can run functions below with same code,we implemented them in class 'CommonObserver'.
+    But we can implement here when we have to implement following OS.
+    '''
+    # def mouse_distance_measurer(self):
+    # def keyboard_counter(self):
     
 
 class MacObserver:
     uuid = ""
     store = None
+    common = None
     def __init__(self, uuid=""):
         from AppKit import NSWorkspace as nsw
         from Quartz import (
@@ -95,3 +101,28 @@ class MacObserver:
         if uuid:
             self.uuid = uuid
         self.store = RawDataStore()
+        self.common = CommonObserver()
+
+    def run(self):
+        # このあたりでスレッド展開
+        print("Hello, MacObserver!")
+
+    def active_tab_observer(self):
+        pass
+
+    '''
+    Because we can run functions below with same code,we implemented them in class 'CommonObserver'.
+    But we can implement here when we have to implement following OS.
+    '''
+    # def mouse_distance_measurer(self):
+    # def keyboard_counter(self):
+
+
+class CommonObserver:
+    '''
+    Functions who can run regardress OS.
+    '''
+    def mouse_distance_measurer(self):
+        pass
+    def keyboard_counter(self):
+        pass
