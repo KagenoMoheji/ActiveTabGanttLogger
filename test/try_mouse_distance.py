@@ -42,7 +42,7 @@ if __name__ == "__main__":
         [マウスの移動ピクセル数を1s間隔で検出する]
         ●リアルタイムで動作確認するとき，出力されたログをVSCodeで開いて
         続けてアクションを起こすと更新を見ることができそう.
-        ●payautoguiで実装する(Windows・Mac両対応)
+        ●pyautoguiで実装する(Windows・Mac両対応)
         ・https://qiita.com/hirohiro77/items/78e26a59c2e45a0fe4e3
         ・https://pyautogui.readthedocs.io/en/latest/mouse.html#the-screen-and-mouse-position
         ●win32guiで実装する
