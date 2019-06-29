@@ -136,7 +136,7 @@ if __name__ == "__main__":
                 if current_time - recent_time > 1.0: # 1秒程度経ったら
                     recent_time = current_time
                     print(sum_mouse_move_pxs)
-                    sum_mouse_move_pixels = 0
+                    sum_mouse_move_pxs = 0
                 
         except KeyboardInterrupt:
             print("Exit")
@@ -173,7 +173,7 @@ if __name__ == "__main__":
                 if current_time - recent_time > 1.0: # 1秒程度経ったら
                     recent_time = current_time
                     print(sum_mouse_move_pxs)
-                    sum_mouse_move_pixels = 0
+                    sum_mouse_move_pxs = 0
                 
         except KeyboardInterrupt:
             print("Exit")
