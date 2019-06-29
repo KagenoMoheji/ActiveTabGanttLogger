@@ -7,6 +7,7 @@
 import concurrent.futures as confu
 from datetime import datetime # 定期間隔書き出しのタイムスタンプ用
 import numpy as np
+# from collections import deque
 
 class RawDataStore:
     # コメントアウトのJSON構造は単なる配列に置き換える際の参考に．
