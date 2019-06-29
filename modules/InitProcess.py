@@ -5,13 +5,13 @@ from modules.StrFormatter import StrFormatter
 
 class InitProcess:
     argparser = None
-    strformatter = None
+    strfmr = None
     def __init__(self):
         '''
         Prepare in some initial processes.
         '''
         self.argparser = ArgsParser()
-        self.strformatter = StrFormatter()
+        self.strfmr = StrFormatter()
 
     def get_init_parameters(self):
         '''
@@ -30,14 +30,14 @@ class InitProcess:
         '''
         os = self.get_os()
         mode = self.argparser.identify_mode()
-        if mode == "Alone": # or (mode == "Plotter")
+        if (mode == "Alone") or (mode == "Plotter"):
             uuid = "None"
         elif mode == "Observer":
             uuid = self.generate_uuid()
         elif mode == "Logger":
             uuid = self.argparser.uuid
         else:
-            print(self.strformatter.get_colored_console_log("red",
+            print(self.strfmr.get_colored_console_log("red",
                 "Error: Invalid variable in mode of InitProcess.py"))
             exit()
 
@@ -72,7 +72,7 @@ class InitProcess:
         if ("Windows" in os) or ("Darwin" in os):
             return os
         else:
-            print(self.strformatter.get_colored_console_log("red",
+            print(self.strfmr.get_colored_console_log("red",
                 "Error: This can work on 'Windows' or 'MacOS'"))
             exit()
 
@@ -95,7 +95,7 @@ class ArgsParser:
     parser = None
     args = None
     uuid = ""
-    strformatter = None
+    strfmr = None
     def __init__(self):
         '''
         Parse cli options.
@@ -108,15 +108,15 @@ class ArgsParser:
             https://qiita.com/Alice1017/items/0464a38ab335ac3b9336
             https://stackoverflow.com/a/3853776
         '''
-        self.strformatter = StrFormatter()
-        usage = "ganttlogger [--observer] [--logger] [--uuid <UUID>] [--help]" # [--plotter] [--mode <MODE>]
+        self.strfmr = StrFormatter()
+        usage = "ganttlogger [--observer] [--logger] [--uuid <UUID>] [--help] [--plotter]"
         self.parser = ArgumentParser(
             prog="ganttlogger",
             description="""\
 This CLI will do Observing active-tab, mouse, keyboard,
 and Logging them,
 and Plotting graphs (active-tab=ganttchart, mouse=line, keyboard=bar).
-{}""".format(self.strformatter.get_colored_console_log("yellow",
+{}""".format(self.strfmr.get_colored_console_log("yellow",
 "If you don't set any option, this work both of 'observer' and 'logger'.")),
             usage=usage,
             formatter_class=RawTextHelpFormatter
@@ -137,19 +137,11 @@ and Plotting graphs (active-tab=ganttchart, mouse=line, keyboard=bar).
             dest="uuid",
             help="When you set '--logger', you must also set this by being informed from 'observer' PC."
         )
-        '''
         self.parser.add_argument(
             "-p", "--plotter",
             action="store_true",
             help="Use this option if you want other outputs by a log after getting one and a graph."
         )
-        self.parser.add_argument(
-            "-m", "--mode",
-            type=str,
-            dest="mode",
-            help="When you set '--logger', you must also set this."
-        )
-        '''
         self.args = self.parser.parse_args()
 
     def identify_mode(self):
@@ -167,27 +159,18 @@ and Plotting graphs (active-tab=ganttchart, mouse=line, keyboard=bar).
             mode = "Observer"
         elif self.args.logger:
             if not self.args.uuid:
-                print(self.strformatter.get_colored_console_log("red",
+                print(self.strfmr.get_colored_console_log("red",
                     "Error: Logger missing an option '--uuid <UUID>'."))
                 exit()
             mode = "Logger"
             self.uuid = self.args.uuid
+        elif self.args.plotter:
+            mode = "Plotter"
         else:
             if self.args.uuid:
-                print(self.strformatter.get_colored_console_log("red",
+                print(self.strfmr.get_colored_console_log("red",
                     "Error: You may need '--logger'."))
                 exit()
             mode = "Alone"
-        '''
-        elif self.args.plotter:
-            if not self.args.mode:
-                print(self.strformatter.get_colored_console_log("red",
-                    "Error: Plotter missing an option '--mode <MODE>'."))
-                exit()
-            
-            if ...:
-                # Check whether valid value in args.mode
-                # Example, "removeTab" or "setDeltat
-            mode = "Plotter"
-        '''
+        
         return mode
