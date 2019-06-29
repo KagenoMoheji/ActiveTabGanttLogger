@@ -29,31 +29,69 @@ References:
 '''
 # import threading
 import concurrent.futures as confu
+import platform
+from datetime import datetime
+import time
+import numpy as np
+import psutil
+import math
+import pyautogui
+from modules.StrFormatter import StrFormatter
 
 class Observer:
-    os = ""
-    uuid = ""
+    observer = None
+    strfmr = None
     def __init__(self, os, uuid=""):
-        # ActiveTab，Mouse，Keybord(，PID)で並列処理するので，最大4？
-        self.os = os
+        if os == "w":
+            self.observer = WindowsObserver(uuid)
+        elif os == "d":
+            self.observer = MacObserver(uuid)
+        self.strfmr = StrFormatter()
+
+    def start(self):
+        print("Ready to start?(Y/n) : ", end="")
+        st_input = input().strip()
+        if st_input == "n":
+            print("GanttLogger closed")
+            exit()
+        elif st_input != "Y":
+            print(self.strfmr.get_colored_console_log("red",
+                "Error: Invalid input. Input 'Y'(=yes) or 'n'(=no)."))
+            exit()
+        
+        # このあたりでスレッド展開
+        print("Hello, Observer!")
+        # self.observer.run()
+
+class RawDataStore():
+    raw_tab_data = np.array()
+    raw_mouse_data = np.array()
+    raw_keyboard_data = np.array()
+
+class WindowsObserver:
+    uuid = ""
+    store = None
+    def __init__(self, uuid=""):
+        import win32gui as wg
+        import win32process as wp
+        import win32com.client as wcli
+        
         if uuid:
             self.uuid = uuid
-        pass
+        self.store = RawDataStore()
+    
 
-    def close(self): pass
+class MacObserver:
+    uuid = ""
+    store = None
+    def __init__(self, uuid=""):
+        from AppKit import NSWorkspace as nsw
+        from Quartz import (
+            CGWindowListCopyWindowInfo,
+            kCGWindowListOptionOnScreenOnly,
+            kCGNullWindowID
+        )
 
-class ActiveTabObserver:
-    def __init__(self):
-        pass
-
-class MouseObserver:
-    def __init__(self):
-        pass
-
-class KeybordObserver:
-    def __init__(self):
-        pass
-
-# class PidObserver:
-#     def __init__(self):
-#         pass
+        if uuid:
+            self.uuid = uuid
+        self.store = RawDataStore()
