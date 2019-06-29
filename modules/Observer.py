@@ -21,8 +21,8 @@ import concurrent.futures as confu
 import platform
 from datetime import datetime
 import time
-import numpy as np
-# from collections import deque
+# import numpy as np
+from collections import deque
 import psutil
 import math
 import pyautogui

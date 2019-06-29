@@ -6,13 +6,14 @@
 # import threading
 import concurrent.futures as confu
 from datetime import datetime # 定期間隔書き出しのタイムスタンプ用
-import numpy as np
-# from collections import deque
+# import numpy as np
+from collections import deque
 
 class RawDataStore:
     # コメントアウトのJSON構造は単なる配列に置き換える際の参考に．
     # 初期データはid=-1としているので，それでフィルタリングしておく
     # 送信時はJSONに変換してデータ取得時に送る
+    # 受信時にリストのインデックス2のidの連番で確認するなりソートするなりしてからファイル書き出しする
     '''
     {
         "uuid": "",
@@ -24,7 +25,7 @@ class RawDataStore:
         }
     }
     '''
-    raw_tab_data = np.array([["", "t", -1, "", "", ""]])
+    raw_tab_data = deque([["", "t", -1, "", "", ""]])
     '''
     {
         "uuid": "",
@@ -35,7 +36,7 @@ class RawDataStore:
         }
     }
     '''
-    raw_mouse_data = np.array([["", "m", -1, "", "", ""]])
+    raw_mouse_data = deque([["", "m", -1, "", "", ""]])
     '''
     {
         "uuid": "",
@@ -46,7 +47,7 @@ class RawDataStore:
         }
     }
     '''
-    raw_keyboard_data = np.array([["", "k", -1, "", "", ""]])
+    raw_keyboard_data = deque([["", "k", -1, "", "", ""]])
 
 
 class Logger:
