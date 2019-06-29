@@ -38,6 +38,7 @@
         - [Python キュー（queue）を使う（先入れ先出し）](https://pg-chain.com/python-queue)
         - [python と numpy の配列。追加や削除、ソートなど基本操作](http://ailaby.com/list_array/#id3_2)
         - [速度：Pythonの配列の末尾に要素追加 | Qiita](https://qiita.com/ykatsu111/items/be274f76d42f6b982ba4)
+        - [Pythonでリスト（配列）の要素を削除するclear, pop, remove, del](https://note.nkmk.me/python-list-clear-pop-remove-del/#pop)
 - Chrome(ブラウザ)のタブ遷移の検出について
     - タブ遷移の検出にはページタイトルの相違によって行われている
         - もしページタイトルが全部同じWebサイトだったら遷移を検出できない可能性
