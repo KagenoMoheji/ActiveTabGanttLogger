@@ -1,8 +1,14 @@
+'''
+●ログファイルを読み込んでガントチャート生成・出力
+・ファイル名にタイムスタンプつけとく
+'''
 import numpy as np
 import matplotlib.pyplot as plt
 
 class Plotter:
-    def __init__(self):
+    def __init__(self): pass
+
+    def start(self):
         '''
         ●標準入力で
         (1)出力モードの選択(filter_tab/set_interval)
@@ -10,4 +16,7 @@ class Plotter:
         ・fiter_tab -> 不要なタブ名(ログからコピペ)をまとめたテキストファイルの指定
         ・set_interval -> デルタtの数値指定(単位は秒)
         '''
-        pass
+        print("Start, Plotter!")
+
+    def run(self):
+        print("Run, Plotter!")
