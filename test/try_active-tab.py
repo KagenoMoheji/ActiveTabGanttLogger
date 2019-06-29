@@ -29,7 +29,6 @@ if __name__ == "__main__":
     ・拡張ディスプレイでやってもアクティブタブの単一検出はできた。
     ・拡張ディスプレイで，タイマー(ブラウザ)を映すことやってみるか。休憩時刻確認の時に。
     '''
-    # main()
     import platform
     from datetime import datetime
     import time
