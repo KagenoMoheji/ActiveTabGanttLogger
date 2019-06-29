@@ -1,8 +1,3 @@
-from modules.InitProcess import InitProcess
-from modules.StrFormatter import StrFormatter
-from modules.Observer import Observer
-from modules.Logger import Logger
-
 '''
 [How to test]
 If you have setted the pipenv, start from (3).
@@ -16,6 +11,13 @@ Or, if you have installed this CLI, start from (4).
 (4)Run CLI.
 `pipenv run ganttlogger`
 '''
+
+from modules.InitProcess import InitProcess
+from modules.StrFormatter import StrFormatter
+from modules.Alone import Alone
+from modules.Observer import Observer
+from modules.Logger import Logger
+from modules.Plotter import Plotter
 
 def main():
     '''
@@ -31,32 +33,16 @@ def main():
 
     # Start main process(thread-loop) in accordance with mode
     if mode == "Alone":
-        alone(os)
+        alone = Alone(os)
+        alone.start()
     elif mode == "Observer":
-        observer(os, uuid)
+        observer = Observer(os, uuid)
+        observer.start()
     elif mode == "Logger":
-        logger(os, uuid)
-    '''
+        logger = Logger(uuid)
+        plotter = Plotter()
     elif mode == "Plotter":
-        plotter(os)
-    '''
-
-    # Exit the loop above
-    # Close process here? or in functions below?
-
-def alone(os):
-    print("This mode is Alone")
-
-def observer(os, uuid):
-    print("This mode is Observer")
-
-def logger(os, uuid):
-    print("This mode is Logger")
-
-'''
-def plotter():
-    pass
-'''
+        plotter = Plotter()
 
 
 
@@ -101,17 +87,6 @@ if __name__ == "__main__":
     os = platform.platform(terse=True)
     if "Windows" in os:
         '''
-        [マウスの移動ピクセル数を1s間隔で検出する]
-        ●リアルタイムで動作確認するとき，出力されたログをVSCodeで開いて
-        続けてアクションを起こすと更新を見ることができそう.
-        ●[payautogui]
-        ・https://qiita.com/hirohiro77/items/78e26a59c2e45a0fe4e3
-        ・https://pyautogui.readthedocs.io/en/latest/mouse.html#the-screen-and-mouse-position
-        ●「1秒間隔」
-        ・unix時間の差分で求めるのが良さそう．
-        ・datetimeのmicrosecondsでやろうと思ったけど，1000000になる前に0にされるので差分計算できない
-        ・https://note.nkmk.me/python-datetime-timedelta-measure-time/
-
         [キーボード打鍵数を1s間隔で検出する]
         '''
         # import win32gui as wg
@@ -119,33 +94,12 @@ if __name__ == "__main__":
         # import win32com.client as wcli
 
         try:
-            print("Screen Size: {}".format(pyautogui.size()))
-            sum_mouse_move_pxs = 0
-            dif_x, dif_y = 0, 0
-            recent_time = time.time()
-            recent_x, recent_y = pyautogui.position()
-            while True:
-                current_time = time.time()
-                x, y = pyautogui.position()
-                if x != recent_x or y != recent_y: # 直前のカーソル座標との違いがあったら
-                    dif_x = x - recent_x
-                    dif_y = y - recent_y
-                    sum_mouse_move_pxs += math.sqrt(dif_x * dif_x + dif_y*dif_y)
-                    recent_x, recent_y = x, y
-
-                if current_time - recent_time > 1.0: # 1秒程度経ったら
-                    recent_time = current_time
-                    print(sum_mouse_move_pxs)
-                    sum_mouse_move_pxs = 0
-                
+            # while True:
+            print("Hello")
         except KeyboardInterrupt:
             print("Exit")
     elif "Darwin" in os:
         '''
-        [エラー回避のために]
-        ・https://teratail.com/questions/159780
-        [マウスの移動ピクセル数を1s間隔で検出する]
-        ・Windowsと同じくpyautoguiで可能？
         [キーボード打鍵数を1s間隔で検出する]
         '''
         # from AppKit import NSWorkspace as nsw
@@ -156,25 +110,8 @@ if __name__ == "__main__":
         # )
 
         try:
-            print("Screen Size: {}".format(pyautogui.size()))
-            sum_mouse_move_pxs = 0
-            dif_x, dif_y = 0, 0
-            recent_time = time.time()
-            recent_x, recent_y = pyautogui.position()
-            while True:
-                current_time = time.time()
-                x, y = pyautogui.position()
-                if x != recent_x or y != recent_y: # 直前のカーソル座標との違いがあったら
-                    dif_x = x - recent_x
-                    dif_y = y - recent_y
-                    sum_mouse_move_pxs += math.sqrt(dif_x * dif_x + dif_y*dif_y)
-                    recent_x, recent_y = x, y
-
-                if current_time - recent_time > 1.0: # 1秒程度経ったら
-                    recent_time = current_time
-                    print(sum_mouse_move_pxs)
-                    sum_mouse_move_pxs = 0
-                
+            # while True:
+            print("Hello")
         except KeyboardInterrupt:
             print("Exit")
 
