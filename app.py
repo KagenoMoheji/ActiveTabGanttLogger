@@ -156,25 +156,24 @@ if __name__ == "__main__":
         # )
 
         try:
+            print("Screen Size: {}".format(pyautogui.size()))
+            sum_mouse_move_pxs = 0
+            dif_x, dif_y = 0, 0
+            recent_time = time.time()
+            recent_x, recent_y = pyautogui.position()
             while True:
-                print("Screen Size: {}".format(pyautogui.size()))
-                sum_mouse_move_pxs = 0
-                dif_x, dif_y = 0, 0
-                recent_time = time.time()
-                recent_x, recent_y = pyautogui.position()
-                while True:
-                    current_time = time.time()
-                    x, y = pyautogui.position()
-                    if x != recent_x or y != recent_y: # 直前のカーソル座標との違いがあったら
-                        dif_x = x - recent_x
-                        dif_y = y - recent_y
-                        sum_mouse_move_pxs += math.sqrt(dif_x * dif_x + dif_y*dif_y)
-                        recent_x, recent_y = x, y
+                current_time = time.time()
+                x, y = pyautogui.position()
+                if x != recent_x or y != recent_y: # 直前のカーソル座標との違いがあったら
+                    dif_x = x - recent_x
+                    dif_y = y - recent_y
+                    sum_mouse_move_pxs += math.sqrt(dif_x * dif_x + dif_y*dif_y)
+                    recent_x, recent_y = x, y
 
-                    if current_time - recent_time > 1.0: # 1秒程度経ったら
-                        recent_time = current_time
-                        print(sum_mouse_move_pxs)
-                        sum_mouse_move_pixels = 0
+                if current_time - recent_time > 1.0: # 1秒程度経ったら
+                    recent_time = current_time
+                    print(sum_mouse_move_pxs)
+                    sum_mouse_move_pixels = 0
                 
         except KeyboardInterrupt:
             print("Exit")
