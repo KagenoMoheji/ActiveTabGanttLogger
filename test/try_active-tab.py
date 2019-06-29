@@ -31,7 +31,7 @@ if __name__ == "__main__":
     '''
     import platform
     from datetime import datetime
-    import time
+    # import time
     import psutil
 
     os = platform.platform(terse=True)
@@ -68,7 +68,7 @@ if __name__ == "__main__":
                         active_name=active_name,
                         tab_text=active_tab_text))
 
-                time.sleep(1)
+                # time.sleep(1)
         except KeyboardInterrupt:
             print("Exit")
     elif "Darwin" in os:
@@ -106,6 +106,7 @@ if __name__ == "__main__":
                         pid=active_pid,
                         active_name=active_name,
                         tab_text=active_tab_text))
-                time.sleep(1)
+
+                # time.sleep(1)
         except KeyboardInterrupt:
             print("Exit")
