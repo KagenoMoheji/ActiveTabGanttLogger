@@ -34,10 +34,10 @@ if __name__ == "__main__":
             sum_mouse_move_pxs = 0
             dif_x, dif_y = 0, 0
             recent_time = time.time()
-            recent_x, recent_y = mouse.position
+            recent_x, recent_y = mouse.position # pyautogui.position()
             while True:
                 current_time = time.time()
-                x, y = mouse.position
+                x, y = mouse.position # pyautogui.position()
                 if x != recent_x or y != recent_y: # 直前のカーソル座標との違いがあったら
                     dif_x = x - recent_x
                     dif_y = y - recent_y
@@ -72,10 +72,10 @@ if __name__ == "__main__":
             sum_mouse_move_pxs = 0
             dif_x, dif_y = 0, 0
             recent_time = time.time()
-            recent_x, recent_y = mouse.position
+            recent_x, recent_y = mouse.position # pyautogui.position()
             while True:
                 current_time = time.time()
-                x, y = mouse.position
+                x, y = mouse.position # pyautogui.position()
                 if x != recent_x or y != recent_y: # 直前のカーソル座標との違いがあったら
                     dif_x = x - recent_x
                     dif_y = y - recent_y
