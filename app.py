@@ -34,15 +34,19 @@ def main():
     # Start main process(thread-loop) in accordance with mode
     if mode == "Alone":
         alone = Alone(os)
-        alone.start()
+        alone.run()
     elif mode == "Observer":
         observer = Observer(os, uuid)
         observer.start()
     elif mode == "Logger":
         logger = Logger(uuid)
         plotter = Plotter()
+        logger.run()
+        plotter.run()
     elif mode == "Plotter":
         plotter = Plotter()
+        plotter.start() # ここでどんな出力モードにするかとかの標準入力を求めてからrun()する
+        plotter.run()
 
 
 
@@ -50,6 +54,8 @@ if __name__ == "__main__":
     '''
     ここの処理を実行する`pipenv run python app.py`は，お試し実装の場とする．
     コメントも日本語OKで．
+
+    ●start()は標準入力や注意書きをターミナルに表示させるとかのrun()を実行する直前の関数，run()はマジ実行(？)
 
     [メモ]
     ●アクティブタブのステータスバーのテキストの照合によってアクティブタブ遷移を検出
