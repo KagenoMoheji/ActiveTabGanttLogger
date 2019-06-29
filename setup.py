@@ -9,6 +9,11 @@ import platform
 
 '''
 [About 'install_requires']
+●for both
+・matplotlib
+・numpy
+・psutill
+・pynput (or pyautogui)
 ●for Windows10-64bit
 ・pypiwin32
 ●for MacOS Mojave
