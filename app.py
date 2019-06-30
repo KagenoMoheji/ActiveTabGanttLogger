@@ -99,7 +99,6 @@ if __name__ == "__main__":
     # import pyautogui
     # from pynput.mouse import Controller as mctrl
     from pynput import keyboard
-    import threading
 
     os = platform.platform(terse=True)
     if "Windows" in os:
