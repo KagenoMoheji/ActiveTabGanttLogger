@@ -31,8 +31,10 @@
 - モジュール選定
     - `threading.Thread`か？`concurrent.futures.ThreadPoolExecutor`か？
         - てかマルチスレッドかマルチプロセスかもわからん
-        - とりま`concurrent.futures`でやるか，最大数指定とかできるみたいだし．
+        - とりま`threading.Thread`でやるか，自前関数で外部からの操作ができるかもだし．  
+        `concurrent.futures`のは詳しく調べられないからよくわからん．
         - [Pythonの並列・並行処理サンプルコードまとめ | Qiita](https://qiita.com/castaneai/items/9cc33817419896667f34)
+        - [pythonでのスレッド](http://nobunaga.hatenablog.jp/entry/2016/06/03/204450)
     - `numpy.append()/pop()`か？`collections.deque.append()/popleft()`か？`[].append()/pop(0)`か？
         - 読んだ感じでは`collections.deque`>`[]`>`numpy`かねぇ．
         - [Python キュー（queue）を使う（先入れ先出し）](https://pg-chain.com/python-queue)
