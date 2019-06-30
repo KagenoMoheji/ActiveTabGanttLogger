@@ -1,5 +1,4 @@
-import platform
-import uuid
+import platform, uuid
 from argparse import ArgumentParser, RawTextHelpFormatter
 from modules.StrFormatter import StrFormatter
 
