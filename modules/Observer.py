@@ -16,15 +16,13 @@ References:
 ただしマルチプロセス化する関数間での変数の受け渡しが無い方が良さそう
 まずはマルチスレッドで．
 '''
+import platform, time, math
 # import threading
 import concurrent.futures as confu
-import platform
 from datetime import datetime
-import time
 # import numpy as np
 from collections import deque
 import psutil
-import math
 import pyautogui
 from modules.StrFormatter import StrFormatter
 from modules.Logger import RawDataStore
