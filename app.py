@@ -109,6 +109,14 @@ if __name__ == "__main__":
         ・https://stackoverflow.com/a/45592445
         ・https://pynput.readthedocs.io/en/latest/keyboard.html#monitoring-the-keyboard
         ・上の2つ目のリンクはThread使用だったので適していないと思ったけど，1つ目のリンクで行けた
+        ・ただしメインループとの互換が悪そう，工夫が必要．最有力候補ではある
+        ●msvcrt.kbhit()で実装
+        ・https://stackoverflow.com/a/303976
+        ・無限ループに入ってしまう，脱出方法がわからん
+        ●termios(とtty)を使って実装
+        ・http://www.jonwitts.co.uk/archives/896
+        ・https://qiita.com/tortuepin/items/e6c72f48115f20744ace
+        ・termiosがUnix向けなので無理そう
         '''
         try:
             recent_time = time.time()
