@@ -6,7 +6,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class Plotter:
-    def __init__(self): pass
+    uuid = ""
+    def __init__(self, uuid=""):
+        # uuidが空 -> plotterモード -> カレントディレクトリに出力
+        # uuidがある -> Alone or Logger -> 引数のuuidを使って出力先指定
+        if uuid:
+            self.uuid = uuid
+        pass
 
     def start(self):
         '''
