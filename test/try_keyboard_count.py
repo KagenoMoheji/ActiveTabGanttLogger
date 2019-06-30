@@ -17,8 +17,6 @@ import threading
 ●もう1つの懸念点は，マウスとキーボードの同時監視によるMacからの拒絶．まだわからんが…
 ・https://github.com/moses-palmer/pynput/issues/55
 
-●Macで，セミコロン「;」の入力カウントしてなくない？
-
 References:
     https://pynput.readthedocs.io/en/latest/keyboard.html#monitoring-the-keyboard
     https://github.com/moses-palmer/pynput/issues/20#issuecomment-290649632
