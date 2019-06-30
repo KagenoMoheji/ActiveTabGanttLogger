@@ -49,15 +49,6 @@ def main():
         plotter.run()
 
 
-
-# sum_keyboard_cnt = 0
-# def on_press(key):
-#     global sum_keyboard_cnt
-#     sum_keyboard_cnt += 1
-#     return False
-# def on_release(key):
-#     return False
-
 if __name__ == "__main__":
     '''
     ここの処理を実行する`pipenv run python app.py`は，お試し実装の場とする．
@@ -91,81 +82,27 @@ if __name__ == "__main__":
     ・拡張ディスプレイで，タイマー(ブラウザ)を映すことやってみるか。休憩時刻確認の時に。
     '''
     # main()
-    import platform
-    from datetime import datetime
-    import time
-    import psutil
-    import math
+
+
+
+    # import platform
+    # from datetime import datetime
+    # import time
+    # import psutil
+    # import math
     # import pyautogui
     # from pynput.mouse import Controller as mctrl
-    from pynput import keyboard
+    # from pynput import keyboard
 
-    os = platform.platform(terse=True)
-    if "Windows" in os:
-        '''
-        [キーボードの1sごとの打鍵数をカウントする]
-        ●pynputで実装
-        ・https://stackoverflow.com/a/45592445
-        ・https://pynput.readthedocs.io/en/latest/keyboard.html#monitoring-the-keyboard
-        ・上の2つ目のリンクはThread使用だったので適していないと思ったけど，1つ目のリンクで行けた
-        ・ただしメインループとの互換が悪そう，工夫が必要．最有力候補ではある
-        ●msvcrt.kbhit()で実装
-        ・https://stackoverflow.com/a/303976
-        ・無限ループに入ってしまう，脱出方法がわからん
-        ●termios(とtty)を使って実装
-        ・http://www.jonwitts.co.uk/archives/896
-        ・https://qiita.com/tortuepin/items/e6c72f48115f20744ace
-        ・termiosがUnix向けなので無理そう
-        '''
-        try:
-            recent_time = time.time()
-            sum_keyboard_cnt = 0
-            on_press = lambda key: False
-            on_release = lambda key: False 
-            while True:
-                current_time = time.time()
-
-                # with keyboard.Listener(on_press=on_press, on_release=on_release) as listener: # global使う場合
-                #     listener.join()
-
-                with keyboard.Listener(on_press=on_press) as listener: # lmbda使って挟む場合
-                    listener.join()
-                sum_keyboard_cnt += 1
-                with keyboard.Listener(on_release=on_release) as listener:
-                    listener.join()
-
-                if current_time - recent_time > 1.0: # 1秒程度経ったら
-                    recent_time = current_time
-                    print(sum_keyboard_cnt)
-                    sum_keyboard_cnt = 0
-                
-        except KeyboardInterrupt:
-            print("Exit")
-    elif "Darwin" in os:
-        try:
-            recent_time = time.time()
-            sum_keyboard_cnt = 0
-            on_press = lambda key: False
-            on_release = lambda key: False 
-            while True:
-                current_time = time.time()
-
-                # with keyboard.Listener(on_press=on_press, on_release=on_release) as listener: # global使う場合
-                #     listener.join()
-
-                with keyboard.Listener(on_press=on_press) as listener: # lmbda使って挟む場合
-                    listener.join()
-                sum_keyboard_cnt += 1
-                with keyboard.Listener(on_release=on_release) as listener:
-                    listener.join()
-
-                if current_time - recent_time > 1.0: # 1秒程度経ったら
-                    recent_time = current_time
-                    print(sum_keyboard_cnt)
-                    sum_keyboard_cnt = 0
-                
-        except KeyboardInterrupt:
-            print("Exit")
+    # os = platform.platform(terse=True)
+    # if "Windows" in os:
+    #     try:
+    #     except KeyboardInterrupt:
+    #         print("Exit")
+    # elif "Darwin" in os:
+    #     try:
+    #     except KeyboardInterrupt:
+    #         print("Exit")
 
 
 
