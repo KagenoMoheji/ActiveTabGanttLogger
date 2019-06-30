@@ -30,9 +30,9 @@ class InitProcess:
         '''
         os = self.get_os()
         mode = self.argparser.identify_mode()
-        if (mode == "Alone") or (mode == "Plotter"):
+        if mode == "Plotter":
             uuid = "None"
-        elif mode == "Observer":
+        elif (mode == "Alone") or (mode == "Observer"):
             uuid = self.generate_uuid()
         elif mode == "Logger":
             uuid = self.argparser.uuid
