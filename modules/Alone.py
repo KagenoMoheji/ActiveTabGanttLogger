@@ -11,11 +11,11 @@ class Alone:
     logger = None
     plotter = None
     strfmr = None
-    def __init__(self, os):
+    def __init__(self, os, uuid):
         self.store = RawDataStore()
         self.observer = Observer(os)
-        self.logger = Logger()
-        self.plotter = Plotter()
+        self.logger = Logger(uuid)
+        self.plotter = Plotter(uuid)
         self.strfmr = StrFormatter()
     
     def run(self):
