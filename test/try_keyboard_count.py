@@ -74,8 +74,15 @@ if __name__ == "__main__":
             th2.stop()
     elif "Darwin" in os:
         try:
-            print("Hello, Mac")
-                
+            listener = keyboard.Listener(on_release=on_release) # on_press=on_press, 
+            th1 = MyThread(target=listener.start)
+            th2 = MyThread(target=mainloop)
+            th1.start()
+            th2.start()
         except KeyboardInterrupt:
             print("Exit")
             exit()
+        finally:
+            print("Finally")
+            th1.stop()
+            th2.stop()
