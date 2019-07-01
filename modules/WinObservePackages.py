@@ -12,11 +12,16 @@ class ActiveTabObserver:
         recent_active_tab_text = "START!"
         try:
             while True:
-                fw = wg.GetForegroundWindow()
-                active_pid = wp.GetWindowThreadProcessId(fw)[-1]
-                # print("pids: {}".format(wp.GetWindowThreadProcessId(fw)))
-                active_name = psutil.Process(active_pid).name()
-                active_tab_text = wg.GetWindowText(fw)
+                try:
+                    fw = wg.GetForegroundWindow()
+                    active_pid = wp.GetWindowThreadProcessId(fw)[-1]
+                    # print("pids: {}".format(wp.GetWindowThreadProcessId(fw)))
+                    active_name = psutil.Process(active_pid).name()
+                    active_tab_text = wg.GetWindowText(fw)
+                except (ValueError, psutil.NoSuchProcess):
+                    # pid取得が間に合ってなかったら
+                    # print("Error: Failed in getting process information")
+                    continue
                 if recent_active_tab_text != active_tab_text.upper():
                     switched_time = datetime.now().strftime("%H:%M:%S.%f")
                     recent_active_tab_text = active_tab_text.upper()
@@ -33,7 +38,7 @@ class ActiveTabObserver:
                         pid=active_pid,
                         active_name=active_name,
                         tab_text=active_tab_text))
-                # time.sleep(0.001)
+                time.sleep(0.001)
         except KeyboardInterrupt:
             print("ActiveTabObserver.py: KeyboardInterrupt")
 

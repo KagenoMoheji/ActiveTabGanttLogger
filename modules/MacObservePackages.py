@@ -16,15 +16,20 @@ class ActiveTabObserver:
         recent_active_tab_text = "START!"
         try:
             while True:
-                fw = nsw.sharedWorkspace().activeApplication()
-                active_pid = fw["NSApplicationProcessIdentifier"]
-                active_name = fw["NSApplicationName"]
-                active_tab_text = ""
-                cg_windows = CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, kCGNullWindowID)
-                for cg_window in cg_windows:
-                    if active_name == cg_window["kCGWindowOwnerName"] and cg_window["kCGWindowName"]:
-                        active_tab_text = cg_window["kCGWindowName"]
-                        break
+                try:
+                    fw = nsw.sharedWorkspace().activeApplication()
+                    active_pid = fw["NSApplicationProcessIdentifier"]
+                    active_name = fw["NSApplicationName"]
+                    active_tab_text = ""
+                    cg_windows = CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, kCGNullWindowID)
+                    for cg_window in cg_windows:
+                        if active_name == cg_window["kCGWindowOwnerName"] and cg_window["kCGWindowName"]:
+                            active_tab_text = cg_window["kCGWindowName"]
+                            break
+                except (ValueError, psutil.NoSuchProcess):
+                    # pid取得が間に合ってなかったら
+                    # print("Error: Failed in getting process information")
+                    continue
                 if recent_active_tab_text != active_tab_text.upper():
                     switched_time = datetime.now().strftime("%H:%M:%S.%f")
                     recent_active_tab_text = active_tab_text.upper()
@@ -45,8 +50,6 @@ class ActiveTabObserver:
         pass
     def close(self):
         pass
-
-
 
 
 
