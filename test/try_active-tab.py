@@ -31,7 +31,7 @@ if __name__ == "__main__":
     '''
     import platform
     from datetime import datetime
-    # import time
+    import time
     import psutil
 
     os = platform.platform(terse=True)
@@ -51,24 +51,30 @@ if __name__ == "__main__":
                 active_name = psutil.Process(active_pid).name()
                 # fwのステータスバーのテキスト取得
                 active_tab_text = wg.GetWindowText(fw)
-                if recent_active_tab_text != active_tab_text.upper():
-                    # タブ遷移時刻を取得
-                    switched_time = datetime.now().strftime("%H:%M:%S.%f")
-                    # recent_active_tab_textの更新(大文字比較に備えておく)
-                    recent_active_tab_text = active_tab_text.upper()
-                    # ブラウザの場合に，取得したステータスバーのテキストの加工
-                    if "CHROME" in active_name.upper(): # Chromeなら
-                        splitted_active_tab_text = active_tab_text.split(" - ")[:-1]
-                        active_tab_text = " - ".join(splitted_active_tab_text)
+                # if recent_active_tab_text != active_tab_text.upper():
+                #     # タブ遷移時刻を取得
+                #     switched_time = datetime.now().strftime("%H:%M:%S.%f")
+                #     # recent_active_tab_textの更新(大文字比較に備えておく)
+                #     recent_active_tab_text = active_tab_text.upper()
+                #     # ブラウザの場合に，取得したステータスバーのテキストの加工
+                #     if "CHROME" in active_name.upper(): # Chromeなら
+                #         splitted_active_tab_text = active_tab_text.split(" - ")[:-1]
+                #         active_tab_text = " - ".join(splitted_active_tab_text)
 
-                    # 確認
-                    print("{time}: {pid}: {active_name}({tab_text})".format(
-                        time=switched_time,
+                #     # 確認
+                #     print("{time}: {pid}: {active_name}({tab_text})".format(
+                #         time=switched_time,
+                #         pid=active_pid,
+                #         active_name=active_name,
+                #         tab_text=active_tab_text))
+
+                print("{time}: {pid}: {active_name}({tab_text})".format(
+                        time=datetime.now().strftime("%H:%M:%S.%f"),
                         pid=active_pid,
                         active_name=active_name,
                         tab_text=active_tab_text))
 
-                # time.sleep(1)
+                time.sleep(1)
         except KeyboardInterrupt:
             print("Exit")
     elif "Darwin" in os:
