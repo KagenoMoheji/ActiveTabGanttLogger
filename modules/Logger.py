@@ -4,8 +4,6 @@
 ●受信の場合はenv.jsonを読み込んで環境変数にする
 '''
 import os
-# import threading
-import concurrent.futures as confu
 from datetime import datetime # 定期間隔書き出しのタイムスタンプ用
 # import numpy as np
 from collections import deque
