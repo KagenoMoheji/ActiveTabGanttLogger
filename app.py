@@ -54,7 +54,7 @@ if __name__ == "__main__":
     ここの処理を実行する`pipenv run python app.py`は，お試し実装の場とする．
     コメントも日本語OKで．
 
-    ●start()は標準入力や注意書きをターミナルに表示させるとかのrun()を実行する直前の関数，run()はマジ実行(？)
+    ●start()は標準入力や注意書きをターミナルに表示させるとかの直前の処理をしてからrun()する関数，run()はそのままrun()する．
 
     [メモ]
     ●アクティブタブのステータスバーのテキストの照合によってアクティブタブ遷移を検出
@@ -82,27 +82,6 @@ if __name__ == "__main__":
     ・拡張ディスプレイで，タイマー(ブラウザ)を映すことやってみるか。休憩時刻確認の時に。
     '''
     main()
-
-
-
-    # import platform
-    # from datetime import datetime
-    # import time
-    # import psutil
-    # import math
-    # import pyautogui
-    # from pynput.mouse import Controller as mctrl
-    # from pynput import keyboard
-
-    # os = platform.platform(terse=True)
-    # if "Windows" in os:
-    #     try:
-    #     except KeyboardInterrupt:
-    #         print("Exit")
-    # elif "Darwin" in os:
-    #     try:
-    #     except KeyboardInterrupt:
-    #         print("Exit")
 
 
 
