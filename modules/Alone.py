@@ -1,6 +1,4 @@
-# import threading
-import concurrent.futures as confu
-from modules.StrFormatter import StrFormatter
+from modules.Public import StrFormatter
 from modules.Observer import Observer
 from modules.Logger import Logger, RawDataStore
 from modules.Plotter import Plotter
@@ -13,7 +11,7 @@ class Alone:
     strfmr = None
     def __init__(self, os, uuid):
         self.store = RawDataStore()
-        self.observer = Observer(os)
+        self.observer = Observer(os, uuid)
         self.logger = Logger(uuid)
         self.plotter = Plotter(uuid)
         self.strfmr = StrFormatter()
@@ -34,6 +32,5 @@ class Alone:
         '''
         # このあたりでスレッド展開
         print("Hello, Alone!")
-        pass
 
 
