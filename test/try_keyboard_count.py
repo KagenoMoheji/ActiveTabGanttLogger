@@ -52,16 +52,22 @@ def on_release(key):
     #     return False # listener.stop()
     # prev_key = key
     return True
+
+# def mainloop():
+#     global sum_keyboard_cnt # ここではglobalだが，class内ではクラス変数として使えそう
+#     recent_time = time.time()
+#     while True:
+#         current_time = time.time()
+#         if current_time - recent_time > 1.0: # 1秒程度経ったら
+#             recent_time = current_time
+#             print(sum_keyboard_cnt)
+#             sum_keyboard_cnt = 0
 def mainloop():
     global sum_keyboard_cnt # ここではglobalだが，class内ではクラス変数として使えそう
-    recent_time = time.time()
     while True:
-        current_time = time.time()
-
-        if current_time - recent_time > 1.0: # 1秒程度経ったら
-            recent_time = current_time
-            print(sum_keyboard_cnt)
-            sum_keyboard_cnt = 0
+        print(sum_keyboard_cnt)
+        sum_keyboard_cnt = 0
+        time.sleep(1) # 上のifを使ったbusy waitingではなく，単にsleepでできる(by koturnさん)
 
 if __name__ == "__main__":
     os = platform.platform(terse=True)
