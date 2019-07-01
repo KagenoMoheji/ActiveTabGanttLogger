@@ -4,7 +4,7 @@
 ●受信の場合はenv.jsonを読み込んで環境変数にする
 '''
 import os
-from datetime import datetime # 定期間隔書き出しのタイムスタンプ用
+from datetime import datetime
 # import numpy as np
 from collections import deque
 
