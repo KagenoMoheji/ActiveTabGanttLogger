@@ -5,7 +5,7 @@ But we can implement in per class when we have to implement following OS.
 '''
 import math
 import time
-import datetime
+from datetime import datetime
 # import pyautogui
 from pynput import mouse, keyboard
 from modules.Public import MyThread
@@ -33,12 +33,18 @@ class MouseObserver:
                 if current_time - recent_time > 1.0:
                     # このあたりでsum_key_boardで操作する
                     # ログするとか？
-                    print(self.sec_sum_mouse_dist)
+                    print("Mouse[{datetime}]: {dist}".format(datetime=datetime.now().strftime("%H:%M:%S.%f"), dist=self.sec_sum_mouse_dist))
                     recent_time = current_time
                     self.sec_sum_mouse_dist = 0
                 time.sleep(0.001)
         except KeyboardInterrupt:
             print("MouseObserver.py: KeyboardInterrupt")
+    
+    def hand_data(self):
+        # キューに格納するか，送信するかはここで
+        pass
+    def close(self):
+        pass
 
 
 class KeyboardObserver:
@@ -60,7 +66,7 @@ class KeyboardObserver:
         while True:
             # このあたりでsum_key_boardで操作する
             # ログするとか？
-            print(self.sec_sum_keyboard_cnt)
+            print("Keyboard[{datetime}]: {cnt}".format(datetime=datetime.now().strftime("%H:%M:%S.%f"), cnt=self.sec_sum_keyboard_cnt))
             self.sec_sum_keyboard_cnt = 0
             time.sleep(1)
     
@@ -73,6 +79,9 @@ class KeyboardObserver:
         finally:
             self.close()
 
+    def hand_data(self):
+        # キューに格納するか，送信するかはここで
+        pass
     def close(self):
         self.th_on_release.stop()
         self.th_mainloop.stop()
