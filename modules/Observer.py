@@ -16,21 +16,17 @@ References:
 ただしマルチプロセス化する関数間での変数の受け渡しが無い方が良さそう
 まずはマルチスレッドで．
 '''
-import platform, time, math
-# import threading
-import concurrent.futures as confu
 from datetime import datetime
 # import numpy as np
 from collections import deque
-import psutil
-import pyautogui
-from modules.StrFormatter import StrFormatter
+from modules.Public import StrFormatter, MyThread
+from modules.CommonObservePackages import MouseObserver, KeyboardObserver
 from modules.Logger import RawDataStore
 
 class Observer:
     observer = None
     strfmr = None
-    def __init__(self, os, uuid=""):
+    def __init__(self, os, uuid):
         self.strfmr = StrFormatter()
         if os == "w":
             self.observer = WindowsObserver(uuid)
@@ -51,76 +47,66 @@ class Observer:
             print(self.strfmr.get_colored_console_log("red",
                 "Error: Invalid input. Input 'Y'(=yes) or 'n'(=no)."))
             exit()
-        
+        self.run()
+
+    def run(self):
         self.observer.run()
+
+    def close(self):
+        self.observer.close()
 
 
 class WindowsObserver:
-    uuid = ""
+    uuid = "" # If mode 'Alone', unused.
     store = None
-    common = None
-    def __init__(self, uuid=""):
-        import win32gui as wg
-        import win32process as wp
-        import win32com.client as wcli
-        
-        if uuid:
-            self.uuid = uuid
+    ob_activetab = None
+    ob_mouse = None
+    ob_keyboard = None
+    def __init__(self, uuid):
+        from modules.WinObservePackages import ActiveTabObserver
+        self.uuid = uuid
         self.store = RawDataStore()
-        self.common = CommonObserver()
+        self.ob_activetab = ActiveTabObserver()
+        self.ob_mouse = MouseObserver()
+        self.ob_keyboard = KeyboardObserver()
 
     def run(self):
         # このあたりでスレッド展開
         print("Hello, WindowsObserver!")
 
-    def active_tab_observer(self):
+    def close(self):
+        # self.ob_activetab.close()
+        # self.ob_mouse.close()
+        # self.ob_keyboard.close()
         pass
 
     '''
-    Because we can run functions below with same code,we implemented them in class 'CommonObserver'.
-    But we can implement here when we have to implement following OS.
+    rawdataへの格納はどうやる？
+    データ送信はどうやる？
     '''
-    # def mouse_distance_measurer(self):
-    # def keyboard_counter(self):
     
 
 class MacObserver:
-    uuid = ""
+    uuid = "" # If mode 'Alone', unused.
     store = None
-    common = None
-    def __init__(self, uuid=""):
-        from AppKit import NSWorkspace as nsw
-        from Quartz import (
-            CGWindowListCopyWindowInfo,
-            kCGWindowListOptionOnScreenOnly,
-            kCGNullWindowID
-        )
-
-        if uuid:
-            self.uuid = uuid
+    ob_activetab = None
+    ob_mouse = None
+    ob_keyboard = None
+    def __init__(self, uuid):
+        from modules.MacObservePackages import ActiveTabObserver
+        self.uuid = uuid
         self.store = RawDataStore()
-        self.common = CommonObserver()
+        self.ob_activetab = ActiveTabObserver()
+        self.ob_mouse = MouseObserver()
+        self.ob_keyboard = KeyboardObserver()
 
     def run(self):
         # このあたりでスレッド展開
         print("Hello, MacObserver!")
 
-    def active_tab_observer(self):
+    def close(self):
+        # self.ob_activetab.close()
+        # self.ob_mouse.close()
+        # self.ob_keyboard.close()
         pass
 
-    '''
-    Because we can run functions below with same code,we implemented them in class 'CommonObserver'.
-    But we can implement here when we have to implement following OS.
-    '''
-    # def mouse_distance_measurer(self):
-    # def keyboard_counter(self):
-
-
-class CommonObserver:
-    '''
-    Functions who can run regardress OS.
-    '''
-    def mouse_distance_measurer(self):
-        pass
-    def keyboard_counter(self):
-        pass
