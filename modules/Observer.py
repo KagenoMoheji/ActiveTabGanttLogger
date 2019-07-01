@@ -105,6 +105,9 @@ class MacObserver:
     ob_activetab = None
     ob_mouse = None
     ob_keyboard = None
+    th_activetab = None
+    th_mouse = None
+    th_keyboard = None
     def __init__(self, uuid):
         from modules.MacObservePackages import ActiveTabObserver
         self.ob_activetab = ActiveTabObserver()
@@ -112,14 +115,22 @@ class MacObserver:
         self.ob_keyboard = KeyboardObserver()
         self.store = RawDataStore()
         self.uuid = uuid
+        self.th_activetab = MyThread(target=self.ob_activetab.run)
+        self.th_mouse = MyThread(target=self.ob_mouse.run)
+        self.th_keyboard = MyThread(target=self.ob_keyboard.run)
 
     def run(self):
         # このあたりでスレッド展開
         print("Hello, MacObserver!")
+        self.th_activetab.start()
+        self.th_mouse.start()
+        self.th_keyboard.start()
 
     def close(self):
         # self.ob_activetab.close()
         # self.ob_mouse.close()
-        # self.ob_keyboard.close()
-        pass
+        self.ob_keyboard.close()
+        self.th_activetab.stop()
+        self.th_mouse.stop()
+        self.th_keyboard.stop()
 
