@@ -13,7 +13,7 @@ Or, if you have installed this CLI, start from (4).
 '''
 
 from modules.InitProcess import InitProcess
-from modules.StrFormatter import StrFormatter
+from modules.Public import StrFormatter
 from modules.Alone import Alone
 from modules.Observer import Observer
 from modules.Logger import Logger

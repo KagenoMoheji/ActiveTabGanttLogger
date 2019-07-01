@@ -1,6 +1,7 @@
-import platform, uuid
+import platform
+import uuid
 from argparse import ArgumentParser, RawTextHelpFormatter
-from modules.StrFormatter import StrFormatter
+from modules.Public import StrFormatter
 
 class InitProcess:
     argparser = None
