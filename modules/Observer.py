@@ -1,6 +1,8 @@
 '''
 ●送信時はenv.jsonを読み込んで環境変数として使う
 ●Aloneのときはjsonを使わずRawDataの後ろに格納するだけ
+
+もっと簡潔に書けるよな！？？！？！？？！？！？！OS判別でimportするやつ変えるだけだし！！
 '''
 
 '''
@@ -43,11 +45,11 @@ class Observer:
         if st_input == "n":
             print("GanttLogger closed")
             exit()
-        elif st_input != "Y":
+        if st_input != "Y":
             print(self.strfmr.get_colored_console_log("red",
                 "Error: Invalid input. Input 'Y'(=yes) or 'n'(=no)."))
             exit()
-        self.run()
+        self.observer.run() # self.run()
 
     def run(self):
         self.observer.run()
@@ -62,23 +64,34 @@ class WindowsObserver:
     ob_activetab = None
     ob_mouse = None
     ob_keyboard = None
+    th_activetab = None
+    th_mouse = None
+    th_keyboard = None
     def __init__(self, uuid):
         from modules.WinObservePackages import ActiveTabObserver
-        self.uuid = uuid
-        self.store = RawDataStore()
         self.ob_activetab = ActiveTabObserver()
         self.ob_mouse = MouseObserver()
         self.ob_keyboard = KeyboardObserver()
+        self.store = RawDataStore()
+        self.uuid = uuid
+        self.th_activetab = MyThread(target=self.ob_activetab.run)
+        self.th_mouse = MyThread(target=self.ob_mouse.run)
+        self.th_keyboard = MyThread(target=self.ob_keyboard.run)
 
     def run(self):
         # このあたりでスレッド展開
         print("Hello, WindowsObserver!")
+        self.th_activetab.start()
+        self.th_mouse.start()
+        self.th_keyboard.start()
 
     def close(self):
         # self.ob_activetab.close()
         # self.ob_mouse.close()
-        # self.ob_keyboard.close()
-        pass
+        self.ob_keyboard.close()
+        self.th_activetab.stop()
+        self.th_mouse.stop()
+        self.th_keyboard.stop()
 
     '''
     rawdataへの格納はどうやる？
@@ -94,11 +107,11 @@ class MacObserver:
     ob_keyboard = None
     def __init__(self, uuid):
         from modules.MacObservePackages import ActiveTabObserver
-        self.uuid = uuid
-        self.store = RawDataStore()
         self.ob_activetab = ActiveTabObserver()
         self.ob_mouse = MouseObserver()
         self.ob_keyboard = KeyboardObserver()
+        self.store = RawDataStore()
+        self.uuid = uuid
 
     def run(self):
         # このあたりでスレッド展開
