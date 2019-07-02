@@ -85,3 +85,4 @@ class KeyboardObserver:
     def close(self):
         self.th_on_release.stop()
         self.th_mainloop.stop()
+        # pass
