@@ -16,6 +16,7 @@ import platform
 ・pynput (or pyautogui)
 ●for Windows10-64bit
 ・pypiwin32
+・colorama
 ●for MacOS Mojave
 ・pyobjc
 ・pyobjc-framework-Quartz(included in "pyobjc"...??)
@@ -25,7 +26,8 @@ os = platform.platform(terse=True)
 install_requires = ["matplotlib", "numpy", "psutil", "pynput"] # "pyautogui"
 if "Windows" in os:
     install_requires += [
-        "pypiwin32"
+        "pypiwin32",
+        "colorama"
     ]
 elif "Darwin" in os:
     install_requires += [
