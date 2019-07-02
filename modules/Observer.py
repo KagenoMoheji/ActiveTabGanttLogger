@@ -20,6 +20,7 @@ References:
 '''
 from datetime import datetime
 # import numpy as np
+import concurrent.futures as confu
 from collections import deque
 from modules.Public import StrFormatter, MyThread
 from modules.CommonObservePackages import MouseObserver, KeyboardObserver
@@ -74,28 +75,42 @@ class WindowsObserver:
         self.ob_keyboard = KeyboardObserver()
         self.store = RawDataStore()
         self.uuid = uuid
-        self.th_activetab = MyThread(target=self.ob_activetab.run)
-        self.th_mouse = MyThread(target=self.ob_mouse.run)
-        self.th_keyboard = MyThread(target=self.ob_keyboard.run)
+        # ★："threading" can't work multi-threading well,
+        # but exit by "Ctrl+C" can work below.
+        # self.th_activetab = MyThread(target=self.ob_activetab.run)
+        # self.th_mouse = MyThread(target=self.ob_mouse.run)
+        # self.th_keyboard = MyThread(target=self.ob_keyboard.run)
+        # ▲："concurrent.future" can work multi-threading well,
+        # but we need to devise a way to exit("Ctrl+C" can't work).
+        self.executor = confu.ThreadPoolExecutor(max_workers=3)
 
     def run(self):
-        # このあたりでスレッド展開
-        print("Hello, WindowsObserver!")
-        self.th_activetab.start()
-        self.th_mouse.start()
-        self.th_keyboard.start()
+        # ★
+        # self.th_activetab.start()
+        # self.th_mouse.start()
+        # self.th_keyboard.start()
+        # ▲
+        self.executor.submit(self.ob_activetab.run)
+        self.executor.submit(self.ob_mouse.run)
+        self.executor.submit(self.ob_keyboard.run)
 
     def close(self):
         # self.ob_activetab.close()
         # self.ob_mouse.close()
-        self.ob_keyboard.close()
-        self.th_activetab.stop()
-        self.th_mouse.stop()
-        self.th_keyboard.stop()
+        # self.ob_keyboard.close()
+        # ★
+        # self.th_activetab.stop()
+        # self.th_mouse.stop()
+        # self.th_keyboard.stop()
+        # ▲
+        pass
 
     '''
     rawdataへの格納はどうやる？
     データ送信はどうやる？
+
+    ▲の場合の並列処理の離脱方法は？
+    どっか親のところで停止フラグを立てて，その停止フラグが3つのスレッドで共有する変数であるとして，それがFalseになっていたらwhileを抜けるみたいな？(pynputのListenerみたいなやつ)
     '''
     
 
@@ -120,8 +135,6 @@ class MacObserver:
         self.th_keyboard = MyThread(target=self.ob_keyboard.run)
 
     def run(self):
-        # このあたりでスレッド展開
-        print("Hello, MacObserver!")
         self.th_activetab.start()
         self.th_mouse.start()
         self.th_keyboard.start()
