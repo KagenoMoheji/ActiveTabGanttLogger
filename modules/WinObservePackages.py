@@ -25,11 +25,10 @@ class ActiveTabObserver:
                 if recent_active_tab_text != active_tab_text.upper():
                     switched_time = datetime.now().strftime("%H:%M:%S.%f")
                     recent_active_tab_text = active_tab_text.upper()
-                    if "CHROME" in active_name.upper():
-                        # In Windows10, we have to reshape the tab_text(title) when
-                        # active_name is Google Chrome.
-                        splitted_active_tab_text = active_tab_text.split(" - ")[:-1]
-                        active_tab_text = " - ".join(splitted_active_tab_text)
+                    splitted_active_tab_text = active_tab_text.split(" - ")
+                    if len(splitted_active_tab_text) > 1:
+                        # Remove application name from tab text
+                        active_tab_text = " - ".join(splitted_active_tab_text[:-1])
 
                     # このあたりでsum_key_boardで操作する
                     # ログするとか？hand_data()
