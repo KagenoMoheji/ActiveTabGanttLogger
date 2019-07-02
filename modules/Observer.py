@@ -130,20 +130,33 @@ class MacObserver:
         self.ob_keyboard = KeyboardObserver()
         self.store = RawDataStore()
         self.uuid = uuid
-        self.th_activetab = MyThread(target=self.ob_activetab.run)
-        self.th_mouse = MyThread(target=self.ob_mouse.run)
-        self.th_keyboard = MyThread(target=self.ob_keyboard.run)
+        # ★："threading" can't work multi-threading well,
+        # but exit by "Ctrl+C" can work below.
+        # self.th_activetab = MyThread(target=self.ob_activetab.run)
+        # self.th_mouse = MyThread(target=self.ob_mouse.run)
+        # self.th_keyboard = MyThread(target=self.ob_keyboard.run)
+        # ▲："concurrent.future" can work multi-threading well,
+        # but we need to devise a way to exit("Ctrl+C" can't work).
+        self.executor = confu.ThreadPoolExecutor(max_workers=3)
 
     def run(self):
-        self.th_activetab.start()
-        self.th_mouse.start()
-        self.th_keyboard.start()
+        # ★
+        # self.th_activetab.start()
+        # self.th_mouse.start()
+        # self.th_keyboard.start()
+        # ▲
+        self.executor.submit(self.ob_activetab.run)
+        self.executor.submit(self.ob_mouse.run)
+        self.executor.submit(self.ob_keyboard.run)
 
     def close(self):
         # self.ob_activetab.close()
         # self.ob_mouse.close()
-        self.ob_keyboard.close()
-        self.th_activetab.stop()
-        self.th_mouse.stop()
-        self.th_keyboard.stop()
+        # self.ob_keyboard.close()
+        # ★
+        # self.th_activetab.stop()
+        # self.th_mouse.stop()
+        # self.th_keyboard.stop()
+        # ▲
+        pass
 
