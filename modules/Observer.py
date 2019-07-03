@@ -18,10 +18,12 @@ References:
 ただしマルチプロセス化する関数間での変数の受け渡しが無い方が良さそう
 まずはマルチスレッドで．
 '''
+import time
 from datetime import datetime
 # import numpy as np
 import concurrent.futures as confu
 from collections import deque
+import modules.Global as global_v
 from modules.Public import StrFormatter, MyThread
 from modules.CommonObservePackages import MouseObserver, KeyboardObserver
 from modules.Logger import RawDataStore
@@ -55,12 +57,11 @@ class Observer:
     def run(self):
         self.observer.run()
 
-    def close(self):
-        self.observer.close()
 
 
 class WindowsObserver:
     uuid = "" # If mode 'Alone', unused.
+    strfmr = None
     store = None
     ob_activetab = None
     ob_mouse = None
@@ -70,6 +71,7 @@ class WindowsObserver:
     th_keyboard = None
     def __init__(self, uuid):
         from modules.WinObservePackages import ActiveTabObserver
+        self.strfmr = StrFormatter()
         self.ob_activetab = ActiveTabObserver()
         self.ob_mouse = MouseObserver()
         self.ob_keyboard = KeyboardObserver()
@@ -89,33 +91,46 @@ class WindowsObserver:
         # self.th_activetab.start()
         # self.th_mouse.start()
         # self.th_keyboard.start()
-        # ▲
-        self.executor.submit(self.ob_activetab.run)
-        self.executor.submit(self.ob_mouse.run)
-        self.executor.submit(self.ob_keyboard.run)
+        while True:
+            # ▲
+            self.executor.submit(self.ob_activetab.run)
+            self.executor.submit(self.ob_mouse.run)
+            self.executor.submit(self.ob_keyboard.run)
+            while not global_v.is_switched_to_exit:
+                time.sleep(1)
+            is_confirmed_exiting = self.confirm_exiting()
+            if is_confirmed_exiting:
+                print(self.strfmr.get_colored_console_log("yellow",
+                    "Observer exited."))
+                break
+            else:
+                print(self.strfmr.get_colored_console_log("yellow",
+                    "Observer restarted."))
+                global_v.is_switched_to_exit = False
+        self.executor.shutdown()
 
-    def close(self):
-        # self.ob_activetab.close()
-        # self.ob_mouse.close()
-        # self.ob_keyboard.close()
-        # ★
-        # self.th_activetab.stop()
-        # self.th_mouse.stop()
-        # self.th_keyboard.stop()
-        # ▲
-        pass
+    def confirm_exiting(self):
+        while True:
+            print(self.strfmr.get_colored_console_log("yellow",
+                "Logging is sleeping. Will you exit?(Y/n) : "), end="")
+            str_input = input().strip()
+            if str_input == "Y":
+                return True
+            elif str_input == "n":
+                return False
+            else:
+                print(self.strfmr.get_colored_console_log("red",
+                    "Error: Invalid input. Input 'Y'(=yes) or 'n'(=no)."))
 
     '''
     rawdataへの格納はどうやる？
     データ送信はどうやる？
-
-    ▲の場合の並列処理の離脱方法は？
-    どっか親のところで停止フラグを立てて，その停止フラグが3つのスレッドで共有する変数であるとして，それがFalseになっていたらwhileを抜けるみたいな？(pynputのListenerみたいなやつ)
     '''
     
 
 class MacObserver:
     uuid = "" # If mode 'Alone', unused.
+    strfmr = None
     store = None
     ob_activetab = None
     ob_mouse = None
@@ -125,6 +140,7 @@ class MacObserver:
     th_keyboard = None
     def __init__(self, uuid):
         from modules.MacObservePackages import ActiveTabObserver
+        self.strfmr = StrFormatter()
         self.ob_activetab = ActiveTabObserver()
         self.ob_mouse = MouseObserver()
         self.ob_keyboard = KeyboardObserver()
@@ -145,18 +161,34 @@ class MacObserver:
         # self.th_mouse.start()
         # self.th_keyboard.start()
         # ▲
-        self.executor.submit(self.ob_activetab.run)
-        self.executor.submit(self.ob_mouse.run)
-        self.executor.submit(self.ob_keyboard.run)
+        while True:
+            # ▲
+            self.executor.submit(self.ob_activetab.run)
+            self.executor.submit(self.ob_mouse.run)
+            self.executor.submit(self.ob_keyboard.run)
+            while not global_v.is_switched_to_exit:
+                time.sleep(1)
+            is_confirmed_exiting = self.confirm_exiting()
+            if is_confirmed_exiting:
+                print(self.strfmr.get_colored_console_log("yellow",
+                    "Observer exited."))
+                break
+            else:
+                print(self.strfmr.get_colored_console_log("yellow",
+                    "Observer restarted."))
+                global_v.is_switched_to_exit = False
+        self.executor.shutdown()
 
-    def close(self):
-        # self.ob_activetab.close()
-        # self.ob_mouse.close()
-        # self.ob_keyboard.close()
-        # ★
-        # self.th_activetab.stop()
-        # self.th_mouse.stop()
-        # self.th_keyboard.stop()
-        # ▲
-        pass
+    def confirm_exiting(self):
+        while True:
+            print(self.strfmr.get_colored_console_log("yellow",
+                "Logging is sleeping. Will you exit?(Y/n) : "), end="")
+            str_input = input().strip()
+            if str_input == "Y":
+                return True
+            elif str_input == "n":
+                return False
+            else:
+                print(self.strfmr.get_colored_console_log("red",
+                    "Error: Invalid input. Input 'Y'(=yes) or 'n'(=no)."))
 
