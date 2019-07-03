@@ -6,6 +6,7 @@ But we can implement in per class when we have to implement following OS.
 import math
 import time
 from datetime import datetime
+from collections import deque
 # import pyautogui
 from pynput import mouse, keyboard
 from modules.Public import MyThread, StrFormatter
@@ -47,20 +48,36 @@ class MouseObserver:
 
 
 class KeyboardObserver:
+    '''
+    References:
+        https://python.ms/sub/misc/list-comparison/
+    '''
     sec_sum_keyboard_cnt = 0
-    th_on_release = None
-    th_mainloop = None
     strfmr = None
+    current_4key = deque([], maxlen=4)
+    EXITCOMB = set([
+        keyboard.Key.ctrl_l,
+        keyboard.Key.shift_l,
+        keyboard.Key.ctrl_r,
+        keyboard.Key.shift_r
+        # keyboard.KeyCode(char = ''),
+        # keyboard.KeyCode(char = 'q')
+    ])
     def __init__(self):
         self.sec_sum_keyboard_cnt = 0
         self.strfmr = StrFormatter()
 
     def on_release(self, key):
-        if key == keyboard.KeyCode(char='c'):
+        if len(self.current_4key) == 4:
+            self.current_4key.popleft()
+            self.current_4key.append(key)
+        else:
+            self.current_4key.append(key)
+        if self.EXITCOMB == set(self.current_4key):
             # Here, switch a flag to exit children threads
             global_v.is_switched_to_exit = True
-            # Delete all text in terminal
-            # ????
+            # Delete all text in terminal(Flush stdin buffer?)
+            # ??????????????????????????????????????????
             return False
         self.sec_sum_keyboard_cnt += 1
         time.sleep(0.001) # Max type speed is 256 wpm -> 0.002 is OK?
@@ -84,7 +101,8 @@ class KeyboardObserver:
         # except KeyboardInterrupt:
         #     print("KeyboardObserver.py: KeyboardInterrupt")
         finally:
-            self.close()
+            th_on_release.stop()
+            th_mainloop.stop()
 
     def hand_data(self):
         # キューに格納するか，送信するかはここで
