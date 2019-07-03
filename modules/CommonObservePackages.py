@@ -79,7 +79,7 @@ class KeyboardObserver:
             self.current_4key.append(key)
         else:
             self.current_4key.append(key)
-        if self.EXITCOMB == set(self.current_4key):
+        if (self.EXITCOMB_WIN == set(self.current_4key)) or (self.EXITCOMB_MAC == set(self.current_4key)):
             # Here, switch a flag to exit children threads
             global_v.is_switched_to_exit = True
             # Delete all text in terminal(Flush stdin buffer?)
