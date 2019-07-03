@@ -55,13 +55,19 @@ class KeyboardObserver:
     sec_sum_keyboard_cnt = 0
     strfmr = None
     current_4key = deque([], maxlen=4)
-    EXITCOMB = set([
+    EXITCOMB_WIN = set([
         keyboard.Key.ctrl_l,
         keyboard.Key.shift_l,
         keyboard.Key.ctrl_r,
         keyboard.Key.shift_r
         # keyboard.KeyCode(char = ''),
         # keyboard.KeyCode(char = 'q')
+    ])
+    EXITCOMB_MAC = set([
+        keyboard.Key.cmd_l,
+        keyboard.Key.shift_l,
+        keyboard.Key.cmd_r,
+        keyboard.Key.shift_r
     ])
     def __init__(self):
         self.sec_sum_keyboard_cnt = 0
