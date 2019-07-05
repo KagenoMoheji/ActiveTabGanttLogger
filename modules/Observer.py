@@ -79,7 +79,7 @@ class WinObserver(Observer):
 
 class MacObserver(Observer):
     def __init__(self, uuid, is_alone):
-        super().__init__(uuid)
+        super().__init__(uuid, is_alone)
         from modules.MacObservePackages import ActiveTabObserver
         self.ob_activetab = ActiveTabObserver(uuid, is_alone)
 
