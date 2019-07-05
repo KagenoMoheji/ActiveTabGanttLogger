@@ -68,7 +68,7 @@ class InitProcess:
         '''
         os = platform.platform(terse=True)
 
-        # Check OS
+        # This CLI can work on Windows or Mac
         if ("Windows" in os) or ("Darwin" in os):
             return os
         else:
