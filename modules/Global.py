@@ -17,37 +17,36 @@ is_switched_to_exit = False
 '''
 {
     "uuid": "",
-    "tab": {
-        "id": -1,
-        "appName": "",
-        "title": "",
-        "startTime": ""
-    }
+    "type": "t",
+    "id": -1,
+    "activeName": "",
+    "tabText": "",
+    "startTime": ""
 }
 '''
-raw_tab_data = deque([["", "t", -1, "", "", ""]])
-tab_id = 0
+tab_queue = deque([])
+tab_id = -1
+
 '''
 {
     "uuid": "",
-    "mouse": {
-        "id": -1,
-        "distance": "",
-        "datetime": ""
-    }
+    "type": "m",
+    "id": -1,
+    "distance": "",
+    "time": ""
 }
 '''
-raw_mouse_data = deque([["", "m", -1, "", "", ""]])
-mouse_id = 0
+mouse_queue = deque([])
+mouse_id = -1
+
 '''
 {
     "uuid": "",
-    "keyboard": {
-        "id": -1,
-        "count": "",
-        "datetime": ""
-    }
+    "type": "k",
+    "id": -1,
+    "count": "",
+    "time": ""
 }
 '''
-raw_keyboard_data = deque([["", "k", -1, "", "", ""]])
-keyboard_id = 0
+keyboard_queue = deque([])
+keyboard_id = -1
