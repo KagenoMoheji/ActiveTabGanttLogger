@@ -36,9 +36,9 @@ def main():
         alone.run()
     elif mode == "Observer":
         if os == "w":
-            observer = WinObserver(uuid)
+            observer = WinObserver(uuid=uuid, is_alone=False)
         elif os == "d":
-            observer = MacObserver(uuid)
+            observer = MacObserver(uuid=uuid, is_alone=False)
         observer.start()
     elif mode == "Logger":
         logger = Logger(uuid)
