@@ -15,7 +15,7 @@ Or, if you have installed this CLI, start from (4).
 from modules.InitProcess import InitProcess
 from modules.Public import StrFormatter
 from modules.Alone import Alone
-from modules.Observer import Observer
+from modules.Observer import WinObserver, MacObserver
 from modules.Logger import Logger
 from modules.Plotter import Plotter
 
@@ -29,19 +29,21 @@ def main():
     # Main initialization
     init = InitProcess()
     os, mode, uuid = init.get_init_parameters()
-    # print("OS: {}".format(os)) # "w" or "d"
 
     # Start main process(thread-loop) in accordance with mode
     if mode == "Alone":
         alone = Alone(os, uuid)
         alone.run()
     elif mode == "Observer":
-        observer = Observer(os, uuid)
+        if os == "w":
+            observer = WinObserver(uuid)
+        elif os == "d":
+            observer = MacObserver(uuid)
         observer.start()
     elif mode == "Logger":
         logger = Logger(uuid)
         plotter = Plotter(uuid)
-        logger.run()
+        logger.run_logger()
         plotter.run()
     elif mode == "Plotter":
         plotter = Plotter()
