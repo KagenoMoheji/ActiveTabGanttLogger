@@ -1,17 +1,18 @@
 from modules.Public import StrFormatter
-from modules.Observer import Observer
-from modules.Logger import Logger, RawDataStore
+from modules.Observer import WinObserver, MacObserver
+from modules.Logger import Logger
 from modules.Plotter import Plotter
 
 class Alone:
-    store = None
     observer = None
     logger = None
     plotter = None
     strfmr = None
     def __init__(self, os, uuid):
-        self.store = RawDataStore()
-        self.observer = Observer(os, uuid)
+        if os == "w":
+            self.observer = WinObserver(uuid)
+        elif os == "d":
+            self.observer = MacObserver(uuid)
         self.logger = Logger(uuid)
         self.plotter = Plotter(uuid)
         self.strfmr = StrFormatter()
