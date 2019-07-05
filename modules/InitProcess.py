@@ -89,7 +89,7 @@ class InitProcess:
         References:
             https://www.python.ambitious-engineer.com/archives/1436
         '''
-        return uuid.uuid4()
+        return str(uuid.uuid4())
 
 class ArgsParser:
     parser = None
