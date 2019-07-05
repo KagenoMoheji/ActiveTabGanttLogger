@@ -6,51 +6,7 @@
 import os
 from datetime import datetime
 # import numpy as np
-from collections import deque
-
-class RawDataStore:
-    # コメントアウトのJSON構造は単なる配列に置き換える際の参考に．
-    # 初期データはid=-1としているので，それでフィルタリングしておく
-    # 送信時はJSONに変換してデータ取得時に送る
-    # 受信時にリストのインデックス2のidの連番で確認するなりソートするなりしてからファイル書き出しする
-    '''
-    {
-        "uuid": "",
-        "tab": {
-            "id": -1,
-            "appName": "",
-            "title": "",
-            "startTime": ""
-        }
-    }
-    '''
-    raw_tab_data = deque([["", "t", -1, "", "", ""]])
-    tab_id = 0
-    '''
-    {
-        "uuid": "",
-        "mouse": {
-            "id": -1,
-            "distance": "",
-            "datetime": ""
-        }
-    }
-    '''
-    raw_mouse_data = deque([["", "m", -1, "", "", ""]])
-    mouse_id = 0
-    '''
-    {
-        "uuid": "",
-        "keyboard": {
-            "id": -1,
-            "count": "",
-            "datetime": ""
-        }
-    }
-    '''
-    raw_keyboard_data = deque([["", "k", -1, "", "", ""]])
-    keyboard_id = 0
-
+import modules.Global as global_v
 
 class Logger:
     uuid = ""
@@ -63,7 +19,7 @@ class Logger:
         self.uuid = uuid
 
         # ログ・グラフの出力先フォルダ生成
-        filename = "{}/README.txt".format(uuid)
+        filename = "ganttlogger_logs/{}/README.txt".format(uuid)
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, "w") as f:
             startdate = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
@@ -78,14 +34,17 @@ Target User:
         # データ受け取り・定期間隔でのファイル書き出しの並列処理なので最大2？
         pass
 
-    def run(self):
+    def run_alone(self):
+        print("Hello, Logger!")
+
+    def run_logger(self):
         print("Hello, Logger!")
 
     def receive_json(self):
         # jsonデータを受信してRawDataに格納する
         pass
 
-    def file_logger(self):
+    def file_output(self):
         # RawDataの先頭から取り出して(かつ削除して)ファイル書き出し
         # ただしid=-1なら無視
         pass
