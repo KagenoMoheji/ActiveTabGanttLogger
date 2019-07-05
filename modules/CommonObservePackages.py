@@ -13,11 +13,18 @@ from modules.Public import MyThread, StrFormatter
 import modules.Global as global_v
 
 class MouseObserver:
+    uuid = ""
     sec_sum_mouse_dist = 0
     mouse_ctrl = None
-    def __init__(self):
+    data_process = None
+    def __init__(self, uuid, is_alone):
+        self.uuid = uuid
         self.sec_sum_mouse_dist = 0
         self.mouse_ctrl = mouse.Controller()
+        if is_alone:
+            self.data_process = self.enqueue_data
+        else:
+            self.data_process = self.send_json
 
     def run(self):
         # try:
@@ -33,18 +40,26 @@ class MouseObserver:
                 self.sec_sum_mouse_dist += math.sqrt(dif_x * dif_x + dif_y * dif_y)
                 recent_x, recent_y = x, y
             if current_time - recent_time > 1.0:
-                # このあたりでsum_key_boardで操作する
-                # ログするとか？
-                print("Mouse[{datetime}]: {dist}".format(datetime=datetime.now().strftime("%H:%M:%S.%f"), dist=self.sec_sum_mouse_dist))
+                self.data_process(datetime.now().strftime("%H:%M:%S.%f"), self.sec_sum_mouse_dist)
+                # print("Mouse[{datetime}]: {dist}".format(datetime=datetime.now().strftime("%H:%M:%S.%f"), dist=self.sec_sum_mouse_dist))
                 recent_time = current_time
                 self.sec_sum_mouse_dist = 0
             time.sleep(0.001)
         # except KeyboardInterrupt:
         #     print("MouseObserver.py: KeyboardInterrupt")
     
-    def hand_data(self):
-        # キューに格納するか，送信するかはここで
+    def send_json(self, t, dis_sec):
         pass
+
+    def enqueue_data(self, t, dis_sec):
+        global_v.mouse_id += 1
+        global_v.mouse_queue.append({
+            "uuid": self.uuid,
+            "type": "m",
+            "id": global_v.mouse_id,
+            "distance": dis_sec,
+            "time": t
+        })
 
 
 class KeyboardObserver:
@@ -52,8 +67,9 @@ class KeyboardObserver:
     References:
         https://python.ms/sub/misc/list-comparison/
     '''
+    uuid = ""
+    data_process = None
     sec_sum_keyboard_cnt = 0
-    strfmr = None
     current_4key = deque([], maxlen=4)
     EXITCOMB_WIN = set([
         keyboard.Key.ctrl_l,
@@ -69,9 +85,13 @@ class KeyboardObserver:
         keyboard.Key.cmd_r,
         keyboard.Key.shift_r
     ])
-    def __init__(self):
+    def __init__(self, uuid, is_alone):
+        self.uuid = uuid
         self.sec_sum_keyboard_cnt = 0
-        self.strfmr = StrFormatter()
+        if is_alone:
+            self.data_process = self.enqueue_data
+        else:
+            self.data_process = self.send_json
 
     def on_release(self, key):
         if len(self.current_4key) == 4:
@@ -89,11 +109,18 @@ class KeyboardObserver:
         time.sleep(0.001) # Max type speed is 256 wpm -> 0.002 is OK?
         return True
     
-    def get_key_seconds(self):
+    def get_key_second(self):
         while not global_v.is_switched_to_exit:
-            # このあたりでsum_key_boardで操作する
-            # ログするとか？
-            print("Keyboard[{datetime}]: {cnt}".format(datetime=datetime.now().strftime("%H:%M:%S.%f"), cnt=self.sec_sum_keyboard_cnt))
+            self.data_process(datetime.now().strftime("%H:%M:%S.%f"), self.sec_sum_keyboard_cnt)
+            # print("Keyboard[{datetime}]: {cnt}".format(datetime=datetime.now().strftime("%H:%M:%S.%f"), cnt=self.sec_sum_keyboard_cnt))
+            print("""\
+============[tab]==============\n
+{t}
+-----------[mouse]-----------\n
+{m}
+-----------[keyboard]-----------\n
+{k}
+""".format(t=global_v.tab_queue, m=global_v.mouse_queue, k=global_v.keyboard_queue))
             self.sec_sum_keyboard_cnt = 0
             time.sleep(1)
     
@@ -101,7 +128,7 @@ class KeyboardObserver:
         try:
             listener = keyboard.Listener(on_release=self.on_release)
             th_on_release = MyThread(target=listener.start)
-            th_mainloop = MyThread(target=self.get_key_seconds)
+            th_mainloop = MyThread(target=self.get_key_second)
             th_on_release.start()
             th_mainloop.start()
         # except KeyboardInterrupt:
@@ -110,6 +137,15 @@ class KeyboardObserver:
             th_on_release.stop()
             th_mainloop.stop()
 
-    def hand_data(self):
-        # キューに格納するか，送信するかはここで
+    def send_json(self, t, cnt_sec):
         pass
+
+    def enqueue_data(self, t, cnt_sec):
+        global_v.keyboard_id += 1
+        global_v.keyboard_queue.append({
+            "uuid": self.uuid,
+            "type": "k",
+            "id": global_v.keyboard_id,
+            "count": cnt_sec,
+            "time": t
+        })
