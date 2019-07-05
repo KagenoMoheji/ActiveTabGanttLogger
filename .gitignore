@@ -4,3 +4,4 @@ Pipfile*
 ganttlogger.egg-info
 .vscode
 env.json
+ganttlogger_logs
