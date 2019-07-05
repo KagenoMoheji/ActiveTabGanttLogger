@@ -14,17 +14,15 @@ References:
 '''
 
 class Observer:
-    uuid = ""
     strfmr = None
     ob_activetab = None
     ob_mouse = None
     ob_keyboard = None
     executor = None
-    def __init__(self, uuid): # , is_alone
+    def __init__(self, uuid, is_alone):
+        self.ob_mouse = MouseObserver(uuid, is_alone)
+        self.ob_keyboard = KeyboardObserver(uuid, is_alone)
         self.strfmr = StrFormatter()
-        self.ob_mouse = MouseObserver()
-        self.ob_keyboard = KeyboardObserver()
-        self.uuid = uuid
         self.executor = confu.ThreadPoolExecutor(max_workers=3)
 
     def start(self):
@@ -70,17 +68,17 @@ class Observer:
             else:
                 print(self.strfmr.get_colored_console_log("red",
                     "Error: Invalid input. Input 'Y'(=yes) or 'n'(=no)."))
-
+    
 
 class WinObserver(Observer):
-    def __init__(self, uuid):
-        super().__init__(uuid)
+    def __init__(self, uuid, is_alone):
+        super().__init__(uuid, is_alone)
         from modules.WinObservePackages import ActiveTabObserver
-        self.ob_activetab = ActiveTabObserver()
+        self.ob_activetab = ActiveTabObserver(uuid, is_alone)
 
 
 class MacObserver(Observer):
-    def __init__(self, uuid):
+    def __init__(self, uuid, is_alone):
         super().__init__(uuid)
         from modules.MacObservePackages import ActiveTabObserver
         self.ob_activetab = ActiveTabObserver()
