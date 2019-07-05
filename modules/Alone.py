@@ -9,7 +9,6 @@ class Alone:
     logger = None
     plotter = None
     strfmr = None
-    executor = None
     def __init__(self, os, uuid):
         if os == "w":
             self.observer = WinObserver(uuid=uuid, is_alone=True)
@@ -18,7 +17,6 @@ class Alone:
         self.logger = Logger(uuid=uuid)
         self.plotter = Plotter(uuid)
         self.strfmr = StrFormatter()
-        # self.executor = confu.ThreadPoolExecutor(max_workers=5)
     
     def run(self):
         th_observer = threading.Thread(target=self.observer.run)
