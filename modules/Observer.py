@@ -81,5 +81,5 @@ class MacObserver(Observer):
     def __init__(self, uuid, is_alone):
         super().__init__(uuid)
         from modules.MacObservePackages import ActiveTabObserver
-        self.ob_activetab = ActiveTabObserver()
+        self.ob_activetab = ActiveTabObserver(uuid, is_alone)
 
