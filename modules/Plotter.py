@@ -26,3 +26,12 @@ class Plotter:
 
     def run(self):
         print("Run, Plotter!")
+
+    def plot_activetab(self):
+        pass
+    
+    def plot_mouse(self):
+        pass
+
+    def plot_keyboard(self):
+        pass
