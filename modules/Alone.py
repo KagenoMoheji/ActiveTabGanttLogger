@@ -24,7 +24,7 @@ class Alone:
         th_observer.start()
         th_logger.start()
         # while True:
-        #     if global_v.is_switched_to_exit:
+        #     if global_v.is_switched_to_exit: # ほんまにこれか？もう1個ログ書き出し終了後であるというフラグ作ったほうが良くないか？
         #         self.plotter.run()
         #     sleep(5)
 
