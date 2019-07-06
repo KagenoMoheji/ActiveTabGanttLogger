@@ -47,8 +47,8 @@ Target User:
 
     def output(self):
         with open("{}/active_tab.csv".format(self.dirname), "a", encoding="utf-8") as ft,\
-            open("{}/active_mouse.csv".format(self.dirname), "a", encoding="utf-8") as fm,\
-            open("{}/active_keyboard.csv".format(self.dirname), "a", encoding="utf-8") as fk:
+            open("{}/mouse.csv".format(self.dirname), "a", encoding="utf-8") as fm,\
+            open("{}/keyboard.csv".format(self.dirname), "a", encoding="utf-8") as fk:
             # Write attributes
             ft.write("StartTime,ApplicationName,TabText\n")
             fm.write("Time,MoveDistance\n")
