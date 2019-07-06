@@ -43,12 +43,11 @@ def main():
     elif mode == "Logger":
         logger = Logger(uuid)
         plotter = Plotter(uuid)
-        logger.run_logger()
-        plotter.run()
+        # logger.run_logger()
+        # plotter.run()
     elif mode == "Plotter":
         plotter = Plotter()
-        plotter.start() # ここでどんな出力モードにするかとかの標準入力を求めてからrun()する
-        plotter.run()
+        plotter.start()
 
 
 if __name__ == "__main__":
