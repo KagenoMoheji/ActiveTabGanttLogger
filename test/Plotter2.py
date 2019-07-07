@@ -10,7 +10,7 @@ from modules.Public import StrFormatter
 
 '''
 本番のPlotter.pyと違い，2の冪和を用いたパーミッション(rwx)と同様の手法を条件分岐に用いている．
-しかしうまく動作できず断念．本番ではBool型のフラグを使用．
+しかしうまく動作できず断念(修正した．これで動くはず)．本番ではBool型のフラグを使用．
 
 References:
     http://ailaby.com/matplotlib_fig/#id4_1
@@ -93,32 +93,11 @@ class Plotter:
                 elif plot_type == "select_data":
                     sum_powers_of_two += 4
             # Get arguments from stdin following the sum of powers of 2 below
-            if sum_powers_of_two % 2 != 0:
-                while True:
-                    print(self.strfmr.get_colored_console_log("yellow",
-                        "[set_interval]\nSet the number of interval by seconds: "), end="")
-                    self.sec_interval = input().strip()
-                    if re.compile(r'^[0-9]+$').match(self.sec_interval):
-                        break
-                    else:
-                        print(self.strfmr.get_colored_console_log("red",
-                            "Error: Invalid input.\n(Example)If you want set 2 seconds for the interval, input '2'."))
-            if sum_powers_of_two - 2 == 0 or \
-                ((sum_powers_of_two - 2 > 0) and (np.log2(sum_powers_of_two - 2)).is_integer()):
-                while True:
-                    try:
-                        print(self.strfmr.get_colored_console_log("yellow",
-                        "[filter_tab]\nInput a file name written a list of tab text you want to filter.: "), end="")
-                        txtname = "{dirname}/{filename}".format(dirname=self.dirname, filename=input().strip())
-                        with open(txtname, "r", encoding="utf-8") as f:
-                            self.filter_tab_list = f.read().split("\n")
-                            break
-                    except FileNotFoundError:
-                        print(self.strfmr.get_colored_console_log("red",
-                            "Error: File not found."))
-                # print(self.filter_tab_list)
-            if sum_powers_of_two - 4 == 0 or \
-                ((sum_powers_of_two - 4 > 0) and (np.log2(sum_powers_of_two - 4)).is_integer()):
+            # if sum_powers_of_two - 8 >= 0:
+            #     sum_powers_of_two -= 8
+            #     pass
+            if sum_powers_of_two - 4 >= 0:
+                sum_powers_of_two -= 4
                 while True:
                     print(self.strfmr.get_colored_console_log("yellow",
                         "[select_data]\nSelect 'all' or list separated by ',' with some csv file names like 'active_tab'.: "), end="")
@@ -139,8 +118,31 @@ class Plotter:
                         else:
                             print(self.strfmr.get_colored_console_log("red",
                                 "Error: There are some Invalid names of csv files."))
-            # if sum_powers_of_two - 8 == 0 or \
-            #     ((sum_powers_of_two - 8 > 0) and (np.log2(sum_powers_of_two - 8)).is_integer()):
+            if sum_powers_of_two - 2 >= 0:
+                sum_powers_of_two -= 2
+                while True:
+                    try:
+                        print(self.strfmr.get_colored_console_log("yellow",
+                        "[filter_tab]\nInput a file name written a list of tab text you want to filter.: "), end="")
+                        txtname = "{dirname}/{filename}".format(dirname=self.dirname, filename=input().strip())
+                        with open(txtname, "r", encoding="utf-8") as f:
+                            self.filter_tab_list = f.read().split("\n")
+                            break
+                    except FileNotFoundError:
+                        print(self.strfmr.get_colored_console_log("red",
+                            "Error: File not found."))
+                # print(self.filter_tab_list)
+            if sum_powers_of_two - 1 >= 0:
+                sum_powers_of_two -= 1
+                while True:
+                    print(self.strfmr.get_colored_console_log("yellow",
+                        "[set_interval]\nSet the number of interval by seconds: "), end="")
+                    self.sec_interval = input().strip()
+                    if re.compile(r'^[0-9]+$').match(self.sec_interval):
+                        break
+                    else:
+                        print(self.strfmr.get_colored_console_log("red",
+                            "Error: Invalid input.\n(Example)If you want set 2 seconds for the interval, input '2'."))
 
             print("sum_powers_of_two: {}".format(sum_powers_of_two))
             print("sec_interval: {}".format(self.sec_interval))
@@ -173,13 +175,17 @@ class Plotter:
 
     def get_activetab(self):
         # ファイル読み込み・データ加工をここで行う
-        with open("{}/active_tab.csv".format(self.dirname), "r", encoding="utf-8") as f:
+        with open("{}/active_tab.csv".format(self.dirname), "r", encoding="utf-8") as ft:
+            raw_data = ft.read().split("\n")
+        if len(self.filter_tab_list) > 0:
             pass
     
     def get_mouse(self):
-        with open("{}/mouse.csv".format(self.dirname), "r", encoding="utf-8") as f:
+        with open("{}/mouse.csv".format(self.dirname), "r", encoding="utf-8") as fm:
+            raw_data = fm.read().split("\n")
             pass
 
     def get_keyboard(self):
-        with open("{}/keyboard.csv".format(self.dirname), "r", encoding="utf-8") as f:
+        with open("{}/keyboard.csv".format(self.dirname), "r", encoding="utf-8") as fk:
+            raw_data = fk.read().split("\n")
             pass
