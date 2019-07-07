@@ -56,7 +56,6 @@ Target User:
             # Add logs
             is_all_empty = True
             while True:
-                print("Hello!!!!!!")
                 len_tab_queue = len(global_v.tab_queue)
                 len_mouse_queue = len(global_v.mouse_queue)
                 len_keyboard_queue = len(global_v.keyboard_queue)
