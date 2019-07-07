@@ -4,6 +4,7 @@
 '''
 import os
 import re
+import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from modules.Public import StrFormatter
@@ -25,6 +26,7 @@ class Plotter:
     dirname = ""
     sec_interval = 1 # The minimum interval is value is 1 second
     filter_tab_list = []
+    hide_filtered_tab_duration = False
     select_data = ["all"]
     strfmr = None
     def __init__(self, uuid=""):
@@ -43,6 +45,7 @@ class Plotter:
         print(self.dirname)
         self.sec_interval = 1
         self.filter_tab_list = []
+        self.hide_filtered_tab_duration = False
         self.select_data = ["all"]
 
     def start(self):
@@ -61,9 +64,9 @@ class Plotter:
                 "filter_tab": False,
                 "select_data": False
             }
-            sum_powers_of_two = 0
 
-            print(self.strfmr.get_colored_console_log("yellow", "[select plot types]"))
+            print(self.strfmr.get_colored_console_log("yellow",
+                "===============[select plot types]==============="))
             print("""\
 'set_interval': Set interval by seconds.
 'filter_tab'  : Filter unnecessary tab texts in a text file before plotting.
@@ -89,9 +92,12 @@ class Plotter:
                 plot_types_flags[plot_type] = True
             # Get arguments from stdin following 'plot_types_flags'
             if plot_types_flags["set_interval"]:
+                print(self.strfmr.get_colored_console_log("yellow",
+                    "-----------------[set_interval]-----------------"))
+                print("There are a required setting.")
                 while True:
                     print(self.strfmr.get_colored_console_log("yellow",
-                        "[set_interval]\nSet the number of interval by seconds: "), end="")
+                        "Set the number of interval by seconds: "), end="")
                     self.sec_interval = input().strip()
                     if re.compile(r'^[0-9]+$').match(self.sec_interval):
                         break
@@ -99,10 +105,13 @@ class Plotter:
                         print(self.strfmr.get_colored_console_log("red",
                             "Error: Invalid input.\n(Example)If you want set 2 seconds for the interval, input '2'."))
             if plot_types_flags["filter_tab"]:
+                print(self.strfmr.get_colored_console_log("yellow",
+                    "-----------------[filter_tab]-----------------"))
+                print("There are two required settings.")
                 while True:
                     try:
                         print(self.strfmr.get_colored_console_log("yellow",
-                        "[filter_tab]\nInput a file name written a list of tab text you want to filter.: "), end="")
+                        "(1)Input a file name written a list of tab text you want to filter.: "), end="")
                         txtname = "{dirname}/{filename}".format(dirname=self.dirname, filename=input().strip())
                         with open(txtname, "r", encoding="utf-8") as f:
                             self.filter_tab_list = f.read().split("\n")
@@ -110,10 +119,25 @@ class Plotter:
                     except FileNotFoundError:
                         print(self.strfmr.get_colored_console_log("red",
                             "Error: File not found."))
-            if plot_types_flags["select_data"]:
                 while True:
                     print(self.strfmr.get_colored_console_log("yellow",
-                        "[select_data]\nSelect 'all' or list separated by ',' with some csv file names like 'active_tab'.: "), end="")
+                        "(2)Do you want to hide mouse and keyboard graph depictions of the duration filtered regarding tab text?(Y/n) : "), end="")
+                    st_input = input().strip()
+                    if st_input == "Y":
+                        self.hide_filtered_tab_duration = True
+                        break
+                    elif st_input == "n":
+                        # self.hide_filtered_tab_duration = False
+                        break
+                    print(self.strfmr.get_colored_console_log("red",
+                            "Error: Invalid input."))
+            if plot_types_flags["select_data"]:
+                print(self.strfmr.get_colored_console_log("yellow",
+                    "-----------------[select_data]-----------------"))
+                while True:
+                    print(self.strfmr.get_colored_console_log("yellow",
+                        "Select 'all' or list separated by ',' with some csv file names like 'active_tab'.: "), end="")
+                    print("There are a required setting.")
                     input_select_data = list(map(lambda s: s.strip(), (input().strip()).split(",")))
                     if not input_select_data[0]:
                         # No need to update self.select_data
@@ -150,31 +174,98 @@ class Plotter:
 
     def run(self): # plot(self)
         '''
-        ●plot_activetab，plot_mouse，plot_keyboardの全部を行う．
+        ●get_activetab，get_mouse，get_keyboardの全部を行う．
         ●plotで3つのサブプロットを用意するとして，どうやってサブプロットを
         上記3つの関数に渡すのか？？？？
         ●上記3つの関数でファイル読み込み・データ加工したリストを用意して，ここで
         サブプロットにプロット？
+
+        References:
+            http://pineplanter.moo.jp/non-it-salaryman/2018/03/23/python-2axis-graph/
+            https://qiita.com/supersaiakujin/items/e2ee4019adefce08e381
         '''
         print("Run, Plotter!")
+        self.get_activetab()
 
     def run_each(self): # plot_each(self)
         '''
         ●run()が3つのサブプロットで1つのファイル出力をするのに対し，run_each()は
         1つのプロットで1つのファイル出力をする，つまり独立した出力をする関数．
+        ●self.select_dataに従って，get_activetab，get_mouse，get_keyboardのいずれかを実行して各々の独立ファイルを出力．
         ●各出力ファイル名に日時を追加する．
         '''
         print("Run, Plotter-Each!")
 
     def get_activetab(self):
-        # ファイル読み込み・データ加工をここで行う
-        with open("{}/active_tab.csv".format(self.dirname), "r", encoding="utf-8") as f:
-            pass
+        '''
+        ファイル読み込み・データ加工をここで行い，縦軸と横軸のリストを返す
+        
+        References:
+
+        '''
+        try:
+            df = pd.read_csv("{dirname}/active_tab.csv".format(dirname=self.dirname), sep=",", encoding="utf-8")
+            if len(self.filter_tab_list) > 0:
+                print("Fitering tabs done!")
+            print(list(df.columns))
+            print(df)
+        except FileNotFoundError:
+            print(self.strfmr.get_colored_console_log("red",
+                "Error: 'active_tab.csv' not found."))
+            exit()
     
     def get_mouse(self):
-        with open("{}/mouse.csv".format(self.dirname), "r", encoding="utf-8") as f:
-            pass
+        '''
+        ●get_activetab()で削除したタブの期間のデータの削除も必要ありそうかな．
+        これやるのはget_activetab()を行った場合のみにするか．
+        でもグラフでどう表現する？データの削除というより0埋め？でも0だったとグラフで示すのもな…
+        ●None埋めとかにして，グラフプロット前にデータをNone期間で分割していってそれぞれでグラフプロットして後から重ねていくとか？
+        http://natsutan.hatenablog.com/entry/20110713/1310513258
+        というか普通に同じとこに，同じ色でプロットしていけばよくね？でも空白期間の表現できるのかな？
+        ●(Pandasで)NaN埋めしていけばPandasとmatplotlibの組み合わせで途切れさせられる？
+        ちなみにcsvで部分セルを空にしてPandasに読み込んでもNaNにはなった．これは関係ない．
+        https://qiita.com/damyarou/items/19f19658b618fd05b3b6
+        https://teratail.com/questions/106411
+        というかnp.nanでいけるっぽい？
+        https://matplotlib.org/3.1.0/gallery/lines_bars_and_markers/nan_test.html
+        ●それともget_activetab()で除去した部分のマークをしないようにNone埋めする？
+        https://stackoverflow.com/questions/14399689/matplotlib-drawing-lines-between-points-ignoring-missing-data
+        ●その他よくわからんけど参考になりそうな…
+        https://codeday.me/jp/qa/20190318/374532.html
+
+        ※ただし，self.hide_filtered_tab_duration=Trueの場合にNaN・None埋めする．Falseならmouse・keyboardはactive_tabでフィルタリングされた期間もグラフ描写する．
+        '''
+        try:
+            df = pd.read_csv("{dirname}/mouse.csv".format(dirname=self.dirname), sep=",", encoding="utf-8")
+        except FileNotFoundError:
+            print(self.strfmr.get_colored_console_log("red",
+                "Error: 'mouse.csv' not found."))
+            exit()
 
     def get_keyboard(self):
-        with open("{}/keyboard.csv".format(self.dirname), "r", encoding="utf-8") as f:
-            pass
+        '''
+        ●get_activetab()で削除したタブの期間のデータの削除も必要ありそうかな．
+        これやるのはget_activetab()を行った場合のみにするか．
+        でもグラフでどう表現する？データの削除というより0埋め？でも0だったとグラフで示すのもな…
+        ●None埋めとかにして，グラフプロット前にデータをNone期間で分割していってそれぞれでグラフプロットして後から重ねていくとか？
+        http://natsutan.hatenablog.com/entry/20110713/1310513258
+        というか普通に同じとこに，同じ色でプロットしていけばよくね？でも空白期間の表現できるのかな？
+        ●(Pandasで)NaN埋めしていけばPandasとmatplotlibの組み合わせで途切れさせられる？
+        ちなみにcsvで部分セルを空にしてPandasに読み込んでもNaNにはなった．これは関係ない．
+        https://qiita.com/damyarou/items/19f19658b618fd05b3b6
+        https://teratail.com/questions/106411
+        というかnp.nanでいけるっぽい？
+        https://matplotlib.org/3.1.0/gallery/lines_bars_and_markers/nan_test.html
+        ●それともget_activetab()で除去した部分のマークをしないようにNone埋めする？
+        https://stackoverflow.com/questions/14399689/matplotlib-drawing-lines-between-points-ignoring-missing-data
+        ●その他よくわからんけど参考になりそうな…
+        https://codeday.me/jp/qa/20190318/374532.html
+
+        ※ただし，self.hide_filtered_tab_duration=Trueの場合にNaN・None埋めする．Falseならmouse・keyboardはactive_tabでフィルタリングされた期間もグラフ描写する．
+        '''
+        try:
+            df = pd.read_csv("{dirname}/keyboard.csv".format(dirname=self.dirname), sep=",", encoding="utf-8")
+        except FileNotFoundError:
+            print(self.strfmr.get_colored_console_log("red",
+                "Error: 'keyboard.csv' not found."))
+            exit()
