@@ -4,7 +4,6 @@
 '''
 import os
 import re
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from modules.Public import StrFormatter
@@ -27,6 +26,7 @@ class Plotter:
     sec_interval = 1 # The minimum interval is value is 1 second
     filter_tab_list = []
     hide_filtered_tab_duration = False
+    filter_tab_durations = [] # ex. [["2017/01/01 12:53:23.525", "2017/01/01 12:55:03.121"], [?,?], ...]
     select_data = ["all"]
     strfmr = None
     def __init__(self, uuid=""):
@@ -46,6 +46,7 @@ class Plotter:
         self.sec_interval = 1
         self.filter_tab_list = []
         self.hide_filtered_tab_duration = False
+        self.filter_tab_durations = []
         self.select_data = ["all"]
 
     def start(self):
@@ -201,14 +202,30 @@ class Plotter:
         ファイル読み込み・データ加工をここで行い，縦軸と横軸のリストを返す
         
         References:
-
+            http://oimokihujin.hatenablog.com/entry/2015/10/01/112450
+            https://deepage.net/features/numpy-empty.html
         '''
         try:
-            df = pd.read_csv("{dirname}/active_tab.csv".format(dirname=self.dirname), sep=",", encoding="utf-8")
-            if len(self.filter_tab_list) > 0:
-                print("Fitering tabs done!")
-            print(list(df.columns))
-            print(df)
+            with open("{dirname}/active_tab.csv".format(dirname=self.dirname), "r", encoding="utf-8") as ft:
+                raw_columns = ft.read().split("\n")
+                if "StartTime" in raw_columns[0]:
+                    raw_columns.pop(0)
+                if len(raw_columns[-1].split(",")) != 3:
+                    raw_columns.pop(-1)
+                raw_data = []
+                for raw_column in raw_columns:
+                    splitted_column = raw_column.split(",")
+                    if len(splitted_column) != 3:
+                        print(self.strfmr.get_colored_console_log("red",
+                            "Error: Invalid count of separating by ',' in 'active_tab.csv'"))
+                        exit()
+                    if not splitted_column[2]:
+                        splitted_column[2] = None # If np.nan, its type will change str, so set None
+                    raw_data.append(splitted_column)
+                raw_data = np.array(raw_data)
+            print(raw_data)
+            print(raw_data[:,2])
+            # print(raw_data[:,2][3] == None) # This is a check when '新しいタブ' is replaced by None in active_tab.csv
         except FileNotFoundError:
             print(self.strfmr.get_colored_console_log("red",
                 "Error: 'active_tab.csv' not found."))
@@ -222,21 +239,22 @@ class Plotter:
         ●None埋めとかにして，グラフプロット前にデータをNone期間で分割していってそれぞれでグラフプロットして後から重ねていくとか？
         http://natsutan.hatenablog.com/entry/20110713/1310513258
         というか普通に同じとこに，同じ色でプロットしていけばよくね？でも空白期間の表現できるのかな？
-        ●(Pandasで)NaN埋めしていけばPandasとmatplotlibの組み合わせで途切れさせられる？
-        ちなみにcsvで部分セルを空にしてPandasに読み込んでもNaNにはなった．これは関係ない．
-        https://qiita.com/damyarou/items/19f19658b618fd05b3b6
-        https://teratail.com/questions/106411
-        というかnp.nanでいけるっぽい？
+        ●np.nan埋めでいけるっぽい？
         https://matplotlib.org/3.1.0/gallery/lines_bars_and_markers/nan_test.html
         ●それともget_activetab()で除去した部分のマークをしないようにNone埋めする？
         https://stackoverflow.com/questions/14399689/matplotlib-drawing-lines-between-points-ignoring-missing-data
         ●その他よくわからんけど参考になりそうな…
         https://codeday.me/jp/qa/20190318/374532.html
 
-        ※ただし，self.hide_filtered_tab_duration=Trueの場合にNaN・None埋めする．Falseならmouse・keyboardはactive_tabでフィルタリングされた期間もグラフ描写する．
+        ※ただし，self.hide_filtered_tab_duration=Trueの場合に，self.filter_tab_durationsに従ってNaN・None埋めする．Falseならmouse・keyboardはactive_tabでフィルタリングされた期間もグラフ描写する．
         '''
         try:
-            df = pd.read_csv("{dirname}/mouse.csv".format(dirname=self.dirname), sep=",", encoding="utf-8")
+            with open("{dirname}/mouse.csv".format(dirname=self.dirname), "r", encoding="utf-8") as ft:
+                raw_columns = ft.read().split("\n")
+                if "Time" in raw_columns[0]:
+                    raw_columns.pop(0)
+                if len(raw_columns[-1].split(",")) != 3:
+                    raw_columns.pop(-1)
         except FileNotFoundError:
             print(self.strfmr.get_colored_console_log("red",
                 "Error: 'mouse.csv' not found."))
@@ -250,21 +268,22 @@ class Plotter:
         ●None埋めとかにして，グラフプロット前にデータをNone期間で分割していってそれぞれでグラフプロットして後から重ねていくとか？
         http://natsutan.hatenablog.com/entry/20110713/1310513258
         というか普通に同じとこに，同じ色でプロットしていけばよくね？でも空白期間の表現できるのかな？
-        ●(Pandasで)NaN埋めしていけばPandasとmatplotlibの組み合わせで途切れさせられる？
-        ちなみにcsvで部分セルを空にしてPandasに読み込んでもNaNにはなった．これは関係ない．
-        https://qiita.com/damyarou/items/19f19658b618fd05b3b6
-        https://teratail.com/questions/106411
-        というかnp.nanでいけるっぽい？
+        ●np.nan埋めでいけるっぽい？
         https://matplotlib.org/3.1.0/gallery/lines_bars_and_markers/nan_test.html
         ●それともget_activetab()で除去した部分のマークをしないようにNone埋めする？
         https://stackoverflow.com/questions/14399689/matplotlib-drawing-lines-between-points-ignoring-missing-data
         ●その他よくわからんけど参考になりそうな…
         https://codeday.me/jp/qa/20190318/374532.html
 
-        ※ただし，self.hide_filtered_tab_duration=Trueの場合にNaN・None埋めする．Falseならmouse・keyboardはactive_tabでフィルタリングされた期間もグラフ描写する．
+        ※ただし，self.hide_filtered_tab_duration=Trueの場合に，self.filter_tab_durationsに従ってNaN・None埋めする．Falseならmouse・keyboardはactive_tabでフィルタリングされた期間もグラフ描写する．
         '''
         try:
-            df = pd.read_csv("{dirname}/keyboard.csv".format(dirname=self.dirname), sep=",", encoding="utf-8")
+            with open("{dirname}/keyboard.csv".format(dirname=self.dirname), "r", encoding="utf-8") as ft:
+                raw_columns = ft.read().split("\n")
+                if "Time" in raw_columns[0]:
+                    raw_columns.pop(0)
+                if len(raw_columns[-1].split(",")) != 3:
+                    raw_columns.pop(-1)
         except FileNotFoundError:
             print(self.strfmr.get_colored_console_log("red",
                 "Error: 'keyboard.csv' not found."))
