@@ -91,7 +91,7 @@ Target User:
                 if is_all_empty and global_v.is_switched_to_exit:
                     # This is a signal that all logging finished and CLI will exit 
                     print(self.strfmr.get_colored_console_log("yellow",
-                        "Logging maybe all finished"))
+                        "Logging all finished")) # maybe...
                     break
                 elif is_all_empty:
                     # This is a signal that logging is finishing
