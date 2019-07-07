@@ -140,7 +140,7 @@ and Plotting graphs (active-tab=ganttchart, mouse=line, keyboard=bar).
         self.parser.add_argument(
             "-p", "--plotter",
             action="store_true",
-            help="Use this option if you want other outputs by a log after getting one and a graph."
+            help="Use this option if you want other outputs by a log in the current directory after getting one and a graph."
         )
         self.args = self.parser.parse_args()
 
