@@ -5,7 +5,8 @@
 import os
 import re
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
+import plotly
 from modules.Public import StrFormatter
 
 '''
@@ -162,9 +163,10 @@ class Plotter:
                             print(self.strfmr.get_colored_console_log("red",
                                 "Error: There are some Invalid names of csv files."))
 
-            print("sec_interval: {}".format(self.sec_interval))
-            print(self.filter_tab_list)
-            print("select_data: {}".format(self.select_data))
+            print("""\
+sec_interval: {0}
+filter_tab_list: {1}
+select_data: {2}""".format(self.sec_interval, self.filter_tab_list, self.select_data))
             if self.select_data[0] == "all":
                 self.run()
             else:
@@ -187,6 +189,9 @@ class Plotter:
         '''
         print("Run, Plotter!")
         self.get_activetab()
+        print("""\
+hide_filtered_tab_duration: {0}
+filter_tab_durations: {1}""".format(self.hide_filtered_tab_duration, self.filter_tab_durations))
 
     def run_each(self): # plot_each(self)
         '''
@@ -194,6 +199,8 @@ class Plotter:
         1つのプロットで1つのファイル出力をする，つまり独立した出力をする関数．
         ●self.select_dataに従って，get_activetab，get_mouse，get_keyboardのいずれかを実行して各々の独立ファイルを出力．
         ●各出力ファイル名に日時を追加する．
+        
+        ●We must implement get_activetab() ahead.
         '''
         print("Run, Plotter-Each!")
 
@@ -204,6 +211,7 @@ class Plotter:
         References:
             http://oimokihujin.hatenablog.com/entry/2015/10/01/112450
             https://deepage.net/features/numpy-empty.html
+            https://note.nkmk.me/python-numpy-delete/
         '''
         try:
             with open("{dirname}/active_tab.csv".format(dirname=self.dirname), "r", encoding="utf-8") as ft:
@@ -223,9 +231,29 @@ class Plotter:
                         splitted_column[2] = None # If np.nan, its type will change str, so set None
                     raw_data.append(splitted_column)
                 raw_data = np.array(raw_data)
-            print(raw_data)
-            print(raw_data[:,2])
+            print("before: {}".format(raw_data))
+            # print(raw_data[:,2])
             # print(raw_data[:,2][3] == None) # This is a check when '新しいタブ' is replaced by None in active_tab.csv
+
+            if len(self.filter_tab_list) > 0:
+                del_indexs = []
+                # Get duration of filtered tab text before filtering
+                for i in range(len(raw_data) - 1): # The last row has the time logging finished
+                    if raw_data[i][2] in self.filter_tab_list:
+                        self.filter_tab_durations.append([raw_data[i][0], raw_data[i+1][0]])
+                        del_indexs.append(i)
+                # Filter tab text
+                '''
+                ###############################################################
+                This code below maybe bad.
+                Delete columns during loop, length of array changes...
+                ###############################################################
+                '''
+                gap_i = 0
+                for del_i in del_indexs:
+                    raw_data = np.delete(raw_data, del_i - gap_i, axis=0)
+                    gap_i += 1
+            print("after: {}".format(raw_data))
         except FileNotFoundError:
             print(self.strfmr.get_colored_console_log("red",
                 "Error: 'active_tab.csv' not found."))
@@ -245,6 +273,7 @@ class Plotter:
         https://stackoverflow.com/questions/14399689/matplotlib-drawing-lines-between-points-ignoring-missing-data
         ●その他よくわからんけど参考になりそうな…
         https://codeday.me/jp/qa/20190318/374532.html
+        ●plotlyを使う場合，np.nanではなくNoneでいけそう
 
         ※ただし，self.hide_filtered_tab_duration=Trueの場合に，self.filter_tab_durationsに従ってNaN・None埋めする．Falseならmouse・keyboardはactive_tabでフィルタリングされた期間もグラフ描写する．
         '''
@@ -274,6 +303,7 @@ class Plotter:
         https://stackoverflow.com/questions/14399689/matplotlib-drawing-lines-between-points-ignoring-missing-data
         ●その他よくわからんけど参考になりそうな…
         https://codeday.me/jp/qa/20190318/374532.html
+        ●plotlyを使う場合，np.nanではなくNoneでいけそう
 
         ※ただし，self.hide_filtered_tab_duration=Trueの場合に，self.filter_tab_durationsに従ってNaN・None埋めする．Falseならmouse・keyboardはactive_tabでフィルタリングされた期間もグラフ描写する．
         '''
