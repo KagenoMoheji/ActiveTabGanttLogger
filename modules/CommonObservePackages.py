@@ -40,8 +40,8 @@ class MouseObserver:
                 self.sec_sum_mouse_dist += math.sqrt(dif_x * dif_x + dif_y * dif_y)
                 recent_x, recent_y = x, y
             if current_time - recent_time > 1.0:
-                self.data_process(datetime.now().strftime("%H:%M:%S.%f"), self.sec_sum_mouse_dist)
-                # print("Mouse[{datetime}]: {dist}".format(datetime=datetime.now().strftime("%H:%M:%S.%f"), dist=self.sec_sum_mouse_dist))
+                self.data_process(datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), self.sec_sum_mouse_dist)
+                # print("Mouse[{datetime}]: {dist}".format(datetime=datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), dist=self.sec_sum_mouse_dist))
                 recent_time = current_time
                 self.sec_sum_mouse_dist = 0
             time.sleep(0.001)
@@ -111,8 +111,8 @@ class KeyboardObserver:
     
     def get_key_second(self):
         while not global_v.is_switched_to_exit:
-            self.data_process(datetime.now().strftime("%H:%M:%S.%f"), self.sec_sum_keyboard_cnt)
-            # print("Keyboard[{datetime}]: {cnt}".format(datetime=datetime.now().strftime("%H:%M:%S.%f"), cnt=self.sec_sum_keyboard_cnt))
+            self.data_process(datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), self.sec_sum_keyboard_cnt)
+            # print("Keyboard[{datetime}]: {cnt}".format(datetime=datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), cnt=self.sec_sum_keyboard_cnt))
             print("""\
 ============[tab]==============\n
 {t}

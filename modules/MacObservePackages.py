@@ -38,7 +38,7 @@ class ActiveTabObserver:
                 # print("Error: Failed in getting process information")
                 continue
             if recent_active_tab_text != active_tab_text.upper():
-                switched_time = datetime.now().strftime("%H:%M:%S.%f")
+                switched_time = datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f")
                 recent_active_tab_text = active_tab_text.upper()
                 self.data_process(switched_time, active_name, active_tab_text)
                 # print("ActiveTab[{time}]: {pid}: {active_name}({tab_text})".format(
