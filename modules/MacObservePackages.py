@@ -47,6 +47,8 @@ class ActiveTabObserver:
                 #     active_name=active_name,
                 #     tab_text=active_tab_text))
             time.sleep(0.001)
+        # Output the last log
+        self.data_process(switched_time, active_name, active_tab_text)
         # except KeyboardInterrupt:
         #     print("ActiveTabObserver.py: KeyboardInterrupt")
 

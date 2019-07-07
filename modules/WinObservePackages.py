@@ -43,6 +43,12 @@ class ActiveTabObserver:
                 #     active_name=active_name,
                 #     tab_text=active_tab_text))
             time.sleep(0.001)
+        # Output the last log
+        splitted_active_tab_text = active_tab_text.split(" - ")
+        if len(splitted_active_tab_text) > 1:
+            # Remove application name from tab text
+            active_tab_text = " - ".join(splitted_active_tab_text[:-1])
+        self.data_process(switched_time, active_name, active_tab_text)
         # except KeyboardInterrupt:
         #     print("ActiveTabObserver.py: KeyboardInterrupt")
 
