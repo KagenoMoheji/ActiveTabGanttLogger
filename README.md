@@ -28,6 +28,7 @@
 ## 仕様
 - MouseObserver・KeyboardObserverの最低デルタtは1s．
     - 1s間の操作量ごとに取得
+- 出力される`active_tab.csv`の最後のレコードは終了のタイムスタンプ用なので削除しないように
 
 ## 課題点
 - モジュール選定
