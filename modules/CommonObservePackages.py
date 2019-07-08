@@ -32,19 +32,23 @@ class MouseObserver:
             recent_time = time.time()
             recent_x, recent_y = self.mouse_ctrl.position # pyautogui.position()
             while not global_v.is_switched_to_exit:
-                current_time = time.time()
-                x, y = self.mouse_ctrl.position # pyautogui.position()
-                if (x != recent_x) or (y != recent_y):
-                    dif_x = x - recent_x
-                    dif_y = y - recent_y
-                    self.sec_sum_mouse_dist += math.sqrt(dif_x * dif_x + dif_y * dif_y)
-                    recent_x, recent_y = x, y
-                if current_time - recent_time > 1.0:
-                    self.data_process(datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), self.sec_sum_mouse_dist)
-                    # print("Mouse[{datetime}]: {dist}".format(datetime=datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), dist=self.sec_sum_mouse_dist))
-                    recent_time = current_time
-                    self.sec_sum_mouse_dist = 0
-                time.sleep(0.001)
+                try:
+                    current_time = time.time()
+                    x, y = self.mouse_ctrl.position # pyautogui.position()
+                    if (x != recent_x) or (y != recent_y):
+                        dif_x = x - recent_x
+                        dif_y = y - recent_y
+                        self.sec_sum_mouse_dist += math.sqrt(dif_x * dif_x + dif_y * dif_y)
+                        recent_x, recent_y = x, y
+                    if current_time - recent_time > 1.0:
+                        self.data_process(datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), self.sec_sum_mouse_dist)
+                        # print("Mouse[{datetime}]: {dist}".format(datetime=datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), dist=self.sec_sum_mouse_dist))
+                        recent_time = current_time
+                        self.sec_sum_mouse_dist = 0
+                    time.sleep(0.001)
+                except TypeError:
+                    # Avoid to exit thread loop (by rebooting from pc sleep)
+                    continue
         except:
             # If this thread stopped by rebooting from sleep, maybe...
             import traceback
