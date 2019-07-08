@@ -10,7 +10,8 @@ import platform
 '''
 [About 'install_requires']
 ●for both
-・plotly (better than matplotlib about ganttchart)
+(・plotly) (seems better than matplotlib about ganttchart)
+・matplotlib
 ・numpy
 ・psutill
 ・pynput (or pyautogui)
@@ -23,7 +24,7 @@ import platform
 '''
 
 os = platform.platform(terse=True)
-install_requires = ["plotly", "numpy", "psutil", "pynput"] # "pyautogui"
+install_requires = ["matplotlib", "plotly", "numpy", "psutil", "pynput"] # "pyautogui"
 if "Windows" in os:
     install_requires += [
         "pypiwin32",
