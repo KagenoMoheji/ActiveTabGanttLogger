@@ -48,6 +48,7 @@ class MouseObserver:
         except:
             # If this thread stopped by rebooting from sleep, maybe...
             import traceback
+            print("Thread loop exited by any problem!!!!")
             global_v.is_switched_to_exit = True
             traceback.print_exc()
         # except KeyboardInterrupt:
@@ -132,6 +133,7 @@ class KeyboardObserver:
         except:
             # If this thread stopped by rebooting from sleep, maybe...
             import traceback
+            print("Thread loop exited by any problem!!!!")
             global_v.is_switched_to_exit = True
             traceback.print_exc()
     
