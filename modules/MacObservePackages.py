@@ -33,7 +33,7 @@ class ActiveTabObserver:
                         if active_name == cg_window["kCGWindowOwnerName"] and cg_window["kCGWindowName"]:
                             active_tab_text = cg_window["kCGWindowName"]
                             break
-                except (ValueError, psutil.NoSuchProcess):
+                except (KeyError, ValueError, psutil.NoSuchProcess):
                     # pid取得が間に合ってなかったら
                     # print("Error: Failed in getting process information")
                     continue
