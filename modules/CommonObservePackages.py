@@ -27,24 +27,29 @@ class MouseObserver:
             self.data_process = self.send_json
 
     def run(self):
-        # try:
-        dif_x, dif_y = 0, 0
-        recent_time = time.time()
-        recent_x, recent_y = self.mouse_ctrl.position # pyautogui.position()
-        while not global_v.is_switched_to_exit:
-            current_time = time.time()
-            x, y = self.mouse_ctrl.position # pyautogui.position()
-            if (x != recent_x) or (y != recent_y):
-                dif_x = x - recent_x
-                dif_y = y - recent_y
-                self.sec_sum_mouse_dist += math.sqrt(dif_x * dif_x + dif_y * dif_y)
-                recent_x, recent_y = x, y
-            if current_time - recent_time > 1.0:
-                self.data_process(datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), self.sec_sum_mouse_dist)
-                # print("Mouse[{datetime}]: {dist}".format(datetime=datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), dist=self.sec_sum_mouse_dist))
-                recent_time = current_time
-                self.sec_sum_mouse_dist = 0
-            time.sleep(0.001)
+        try:
+            dif_x, dif_y = 0, 0
+            recent_time = time.time()
+            recent_x, recent_y = self.mouse_ctrl.position # pyautogui.position()
+            while not global_v.is_switched_to_exit:
+                current_time = time.time()
+                x, y = self.mouse_ctrl.position # pyautogui.position()
+                if (x != recent_x) or (y != recent_y):
+                    dif_x = x - recent_x
+                    dif_y = y - recent_y
+                    self.sec_sum_mouse_dist += math.sqrt(dif_x * dif_x + dif_y * dif_y)
+                    recent_x, recent_y = x, y
+                if current_time - recent_time > 1.0:
+                    self.data_process(datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), self.sec_sum_mouse_dist)
+                    # print("Mouse[{datetime}]: {dist}".format(datetime=datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), dist=self.sec_sum_mouse_dist))
+                    recent_time = current_time
+                    self.sec_sum_mouse_dist = 0
+                time.sleep(0.001)
+        except:
+            # If this thread stopped by rebooting from sleep, maybe...
+            import traceback
+            global_v.is_switched_to_exit = True
+            traceback.print_exc()
         # except KeyboardInterrupt:
         #     print("MouseObserver.py: KeyboardInterrupt")
     
@@ -110,10 +115,11 @@ class KeyboardObserver:
         return True
     
     def get_key_second(self):
-        while not global_v.is_switched_to_exit:
-            self.data_process(datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), self.sec_sum_keyboard_cnt)
-            # print("Keyboard[{datetime}]: {cnt}".format(datetime=datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), cnt=self.sec_sum_keyboard_cnt))
-            print("""\
+        try:
+            while not global_v.is_switched_to_exit:
+                self.data_process(datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), self.sec_sum_keyboard_cnt)
+                # print("Keyboard[{datetime}]: {cnt}".format(datetime=datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), cnt=self.sec_sum_keyboard_cnt))
+                print("""\
 ============[tab]==============\n
 {t}
 -----------[mouse]-----------\n
@@ -121,8 +127,13 @@ class KeyboardObserver:
 -----------[keyboard]-----------\n
 {k}
 """.format(t=global_v.tab_queue, m=global_v.mouse_queue, k=global_v.keyboard_queue))
-            self.sec_sum_keyboard_cnt = 0
-            time.sleep(1)
+                self.sec_sum_keyboard_cnt = 0
+                time.sleep(1)
+        except:
+            # If this thread stopped by rebooting from sleep, maybe...
+            import traceback
+            global_v.is_switched_to_exit = True
+            traceback.print_exc()
     
     def run(self):
         try:

@@ -20,35 +20,40 @@ class ActiveTabObserver:
             self.data_process = self.send_json
     
     def run(self):
-        # try:
-        recent_active_tab_text = "START!"
-        while not global_v.is_switched_to_exit:
-            try:
-                fw = nsw.sharedWorkspace().activeApplication()
-                # active_pid = fw["NSApplicationProcessIdentifier"]
-                active_name = fw["NSApplicationName"]
-                active_tab_text = ""
-                cg_windows = CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, kCGNullWindowID)
-                for cg_window in cg_windows:
-                    if active_name == cg_window["kCGWindowOwnerName"] and cg_window["kCGWindowName"]:
-                        active_tab_text = cg_window["kCGWindowName"]
-                        break
-            except (ValueError, psutil.NoSuchProcess):
-                # pid取得が間に合ってなかったら
-                # print("Error: Failed in getting process information")
-                continue
-            if recent_active_tab_text != active_tab_text.upper():
-                switched_time = datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f")
-                recent_active_tab_text = active_tab_text.upper()
-                self.data_process(switched_time, active_name, active_tab_text)
-                # print("ActiveTab[{time}]: {pid}: {active_name}({tab_text})".format(
-                #     time=switched_time,
-                #     pid=active_pid,
-                #     active_name=active_name,
-                #     tab_text=active_tab_text))
-            time.sleep(0.001)
-        # Output the last log
-        self.data_process(switched_time, active_name, active_tab_text)
+        try:
+            recent_active_tab_text = "START!"
+            while not global_v.is_switched_to_exit:
+                try:
+                    fw = nsw.sharedWorkspace().activeApplication()
+                    # active_pid = fw["NSApplicationProcessIdentifier"]
+                    active_name = fw["NSApplicationName"]
+                    active_tab_text = ""
+                    cg_windows = CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, kCGNullWindowID)
+                    for cg_window in cg_windows:
+                        if active_name == cg_window["kCGWindowOwnerName"] and cg_window["kCGWindowName"]:
+                            active_tab_text = cg_window["kCGWindowName"]
+                            break
+                except (ValueError, psutil.NoSuchProcess):
+                    # pid取得が間に合ってなかったら
+                    # print("Error: Failed in getting process information")
+                    continue
+                if recent_active_tab_text != active_tab_text.upper():
+                    switched_time = datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f")
+                    recent_active_tab_text = active_tab_text.upper()
+                    self.data_process(switched_time, active_name, active_tab_text)
+                    # print("ActiveTab[{time}]: {pid}: {active_name}({tab_text})".format(
+                    #     time=switched_time,
+                    #     pid=active_pid,
+                    #     active_name=active_name,
+                    #     tab_text=active_tab_text))
+                time.sleep(0.001)
+            # Output the last log
+            self.data_process(switched_time, active_name, active_tab_text)
+        except:
+            # If this thread stopped by rebooting from sleep, maybe...
+            import traceback
+            global_v.is_switched_to_exit = True
+            traceback.print_exc()
         # except KeyboardInterrupt:
         #     print("ActiveTabObserver.py: KeyboardInterrupt")
 
