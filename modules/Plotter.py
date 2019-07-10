@@ -286,10 +286,12 @@ class Plotter:
             finish = datetime.datetime.strptime(self.plot_active_tab[i+1][0], "%Y/%m/%d %H:%M:%S.%f")
             if name in df.keys():
                 # df[name].append([start, finish, (finish - start).total_seconds()])
-                df[name].append((pld.date2num(start), pld.date2num(finish)))
+                # df[name].append((start, finish)) # df[name].append((pld.date2num(start), pld.date2num(finish)))
+                df[name].append((start, finish - start))
             else:
                 # df[name] = [[start, finish, (finish - start).total_seconds()]]
-                df[name] = [(pld.date2num(start), pld.date2num(finish))]
+                # df[name] = [(start, finish)] # df[name] = [(pld.date2num(start), pld.date2num(finish))]
+                df[name] = [(start, finish - start)]
         # print(df)
         '''
         ここまでのdf実装，get_active_tab()に移して，dfをself.plot_active_tabに格納で良いと思う？
@@ -300,6 +302,9 @@ class Plotter:
 
         こっから下は横方向の棒グラフの描写をしていく．matplotlib.dates.DateFormatter()やmatplotlib.dates.date2num()とかを使う．
         棒の長さにdfにもあるDiffのsecondsを使用？
+
+        datetime.dates.date2numによるdatenumsとか無くてもいけるっぽい？？？
+
         References:
             https://stackoverflow.com/questions/4090383/plotting-unix-timestamps-in-matplotlib
             https://stackoverflow.com/questions/40395227/minute-and-second-format-for-x-label-of-matplotlib
@@ -315,6 +320,7 @@ class Plotter:
             https://datumstudio.jp/blog/matplotlib%E3%81%AE%E6%97%A5%E6%9C%AC%E8%AA%9E%E6%96%87%E5%AD%97%E5%8C%96%E3%81%91%E3%82%92%E8%A7%A3%E6%B6%88%E3%81%99%E3%82%8Bwindows%E7%B7%A8
             https://qiita.com/canard0328/items/a859bffc9c9e11368f37
             http://bicycle1885.hatenablog.com/entry/2014/02/14/023734 (sharexによるx軸の共有がax1とax2の一致に使えるのでは？)
+            http://ailaby.com/subplots_adjust/#id1
         '''
 
         # ログの開始時刻から終了時刻までのself.sec_interval刻み？
@@ -329,13 +335,16 @@ class Plotter:
         # if last_t.second - dates[len(dates) - 1].second > 0:
         #     dates.append(last_t)
         # それともactivetabの開始時刻(と最終時刻)のみ？
-        # dates = [datetime.datetime.strptime(t, "%Y/%m/%d %H:%M:%S.%f") for t in self.plot_active_tab[:-1, 0]]
-        # last_t = datetime.datetime.strptime(self.plot_active_tab[len(self.plot_active_tab) - 1][0], "%Y/%m/%d %H:%M:%S.%f")
-        # if last_t != dates[len(dates) - 1]:
-        #     dates.append(last_t)
+        dates = [datetime.datetime.strptime(t, "%Y/%m/%d %H:%M:%S.%f") for t in self.plot_active_tab[:-1, 0]]
+        last_t = datetime.datetime.strptime(self.plot_active_tab[len(self.plot_active_tab) - 1][0], "%Y/%m/%d %H:%M:%S.%f")
+        if last_t != dates[len(dates) - 1]:
+            dates.append(last_t)
         # datenums = pld.date2num(dates)
-        ax1.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d\n%H:%M:%S")) # .%f
-        # ax1.set_xticks(datenums)
+        init = datetime.datetime.strptime(self.plot_active_tab[0][0], "%Y/%m/%d %H:%M:%S.%f") # pld.date2num(datetime.datetime.strptime(self.plot_active_tab[0][0], "%Y/%m/%d %H:%M:%S.%f"))
+        last = datetime.datetime.strptime(self.plot_active_tab[len(self.plot_active_tab) - 1][0], "%Y/%m/%d %H:%M:%S.%f") # pld.date2num(datetime.datetime.strptime(self.plot_active_tab[len(self.plot_active_tab) - 1][0], "%Y/%m/%d %H:%M:%S.%f"))
+        ax1.set_xlim(init, last) # これいれたら良くなった
+        # ax1.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
+        ax1.set_xticks(dates) # datenums
         fp = plf.FontProperties(fname="\\".join(__file__.split("\\")[:-1]) + r'\..\config\font\ipaexg.ttf', size=8)
         y = [7.5 + i * 10 for i in range(len(df.keys()))]
         y.append(y[len(y) - 1] + 10)
@@ -344,13 +353,12 @@ class Plotter:
         for i, k in enumerate(df.keys()): # 上のy軸方向の順(=df.keys()の順)に従ってx軸方向のガントチャートを描写
             print(df[k])
             ax1.broken_barh(df[k], (5 + i * 10, 5), facecolor="red")
-        # ax1.xaxis.set_major_locator(pld.SecondLocator(bysecond=range(0, 2, 2), tz=None))
-        plt.tick_params(axis="x", labelsize=7, rotation=25) # rotation=270
-        # plt.subplots_adjust(left=0.3, right=0.9)
+        plt.tick_params(axis="x", labelsize=7, rotation=270) # rotation=25
+        plt.subplots_adjust(hspace=0.5) # left=0.3, right=0.9
         ax1.grid(axis="y") # 縦軸のグリッド線を引く
         
 
-        ax2 = fig.add_subplot(2, 1, 2)
+        ax2 = fig.add_subplot(2, 1, 2, sharex=ax1)
 
         plt.savefig("{dirname}/graphs/output_all_{datetime}".format(
             dirname=self.dirname,
