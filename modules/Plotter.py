@@ -238,16 +238,17 @@ class Plotter:
 # hide_filtered_tab_duration: {0}
 # filter_tab_durations: {1}""".format(self.hide_filtered_tab_duration, self.filter_tab_durations))
         self.get_mouse()
-        # self.get_keyboard()
+        self.get_keyboard()
         print("""
 =================================================
 ----------------[plot_active_tab]----------------
 {t}
-----------------[moouse]----------------
+----------------[mouse]----------------
 {m}
 ----------------[keyboard]----------------
+{k}
 =================================================
-""".format(t=self.plot_active_tab , m=self.plot_mouse)) #, k=self.plot_keyboard
+""".format(t=self.plot_active_tab , m=self.plot_mouse, k=self.plot_keyboard))
 
     def run_each(self): # plot_each(self)
         '''
@@ -328,7 +329,7 @@ class Plotter:
         '''
         ●(完)activetabで最後に終了タイムスタンプをしているけど，それより後の分もkeyboardとmouseはログが残っているので，除去すべきかも？
         したがって，開始時刻・終了時刻はactivetabのself.plot_active_tabの0番目と最後の時刻に基づく．
-        ●self.hide_filtered_tab_duration=Trueの場合に，self.filter_tab_durationsに従ってNaN・None埋めする．Falseならmouse・keyboardはactive_tabでフィルタリングされた期間もグラフ描写する．
+        ●(完)self.hide_filtered_tab_duration=Trueの場合に，self.filter_tab_durationsに従ってNaN・None埋めする．Falseならmouse・keyboardはactive_tabでフィルタリングされた期間もグラフ描写する．
         ●None埋めとかにして，グラフプロット前にデータをNone期間で分割していってそれぞれでグラフプロットして後から重ねていくとか？
         http://natsutan.hatenablog.com/entry/20110713/1310513258
         というか普通に同じとこに，同じ色でプロットしていけばよくね？でも空白期間の表現できるのかな？
@@ -464,11 +465,9 @@ class Plotter:
 
     def get_keyboard(self):
         '''
-        ●activetabで最後に終了タイムスタンプをしているけど，それより後の分もkeyboardとmouseはログが残っているので，除去すべきかも？
+        ●(完)activetabで最後に終了タイムスタンプをしているけど，それより後の分もkeyboardとmouseはログが残っているので，除去すべきかも？
         したがって，開始時刻・終了時刻はactivetabのself.plot_active_tabの0番目と最後の時刻に基づく．
-        ●get_activetab()で削除したタブの期間のデータの削除も必要ありそうかな．
-        これやるのはget_activetab()を行った場合のみにするか．
-        でもグラフでどう表現する？データの削除というより0埋め？でも0だったとグラフで示すのもな…
+        ●(完)self.hide_filtered_tab_duration=Trueの場合に，self.filter_tab_durationsに従ってNaN・None埋めする．Falseならmouse・keyboardはactive_tabでフィルタリングされた期間もグラフ描写する．
         ●None埋めとかにして，グラフプロット前にデータをNone期間で分割していってそれぞれでグラフプロットして後から重ねていくとか？
         http://natsutan.hatenablog.com/entry/20110713/1310513258
         というか普通に同じとこに，同じ色でプロットしていけばよくね？でも空白期間の表現できるのかな？
@@ -479,8 +478,6 @@ class Plotter:
         ●その他よくわからんけど参考になりそうな…
         https://codeday.me/jp/qa/20190318/374532.html
         ●plotlyを使う場合，np.nanではなくNoneでいけそう
-
-        ※ただし，self.hide_filtered_tab_duration=Trueの場合に，self.filter_tab_durationsに従ってNaN・None埋めする．Falseならmouse・keyboardはactive_tabでフィルタリングされた期間もグラフ描写する．
         '''
         try:
             with open("{dirname}/keyboard.csv".format(dirname=self.dirname), "r", encoding="utf-8") as ft:
@@ -497,10 +494,104 @@ class Plotter:
                             "Error: Invalid count of separating by ',' in 'keyboard.csv'"))
                         exit()
                     # Digit check (If error, catch ValueError)
-                    splitted_column[1] = int(splitted_column[1])
+                    splitted_column[1] = float(splitted_column[1])
                     raw_data.append(splitted_column)
-                raw_data = np.array(raw_data, dtype=object)
-            print("before: {}".format(raw_data))
+            # print("before: {}".format(raw_data))
+
+            # [1st] Reshape raw_data to 1-second interval data (and fill in the blanks with None)
+            # Get initial timestamp from self.plot_active_tab
+            # Use as 1-second interval timestamp 
+            current_time = datetime.datetime.strptime(self.plot_active_tab[0][0].split(".")[0], "%Y/%m/%d %H:%M:%S")
+            '''
+            # This code below is fixing current_time because the timestamp of mouse is earlier than the one of active_tab.
+            # But there is also keyboard, so we should define the first timestamp of active_tab is the fastest log. (And the last timestamp of active_tab is the last log of active_tab, mouse, and keyboard)
+            current_time = datetime.datetime.strptime(self.plot_active_tab[0][0], "%Y/%m/%d %H:%M:%S.%f")
+            if (current_time - datetime.datetime.strptime(raw_data[0][0], "%Y/%m/%d %H:%M:%S.%f")).total_seconds() > 0:
+                for mouse_i in range(1, len(raw_data)):
+                    mouse_time = datetime.datetime.strptime(raw_data[mouse_i][0], "%Y/%m/%d %H:%M:%S.%f")
+                    if (current_time - mouse_time).total_seconds() < 0:
+                        break
+                current_time = mouse_time
+            '''
+            # Get final timestamp from self.plot_active_tab
+            # This final timestamp is also used in [3rd]
+            final_time = datetime.datetime.strptime(self.plot_active_tab[len(self.plot_active_tab) - 1][0].split(".")[0], "%Y/%m/%d %H:%M:%S")
+            new_raw_data = []
+            raw_i = 0
+            while (final_time - current_time).total_seconds() >= 0:
+                str_current_time = current_time.strftime("%Y/%m/%d %H:%M:%S")
+                if str_current_time in raw_data[raw_i][0]:
+                    new_raw_data.append([str_current_time, raw_data[raw_i][1]])
+                    if str_current_time in raw_data[raw_i + 1][0]:
+                        # Rarely, the same seconds duplicates in consecutive two timestamps
+                        # print("Duplicated!!!: " + str_current_time)
+                        new_raw_data[len(new_raw_data) - 1][1] += raw_data[raw_i + 1][1]
+                        raw_i += 1
+                    raw_i += 1
+                else:
+                    new_raw_data.append([str_current_time, None])
+                current_time += datetime.timedelta(seconds=1)
+            raw_data = new_raw_data
+            # print(np.array(raw_data))
+            # print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            
+            # [2nd]If self.hide_filtered_tab_duration=True, replace value to None in the duration of filtered tab
+            if self.hide_filtered_tab_duration:
+                durations_i = 0
+                # filter_start = datetime.datetime.strptime(self.filter_tab_durations[durations_i][0], "%Y/%m/%d %H:%M:%S")
+                # filter_end = datetime.datetime.strptime(self.filter_tab_durations[durations_i][1], "%Y/%m/%d %H:%M:%S")
+                for i in range(len(raw_data) - 1): # Don't filter because the last row has the time logging finished (But the first can be filtered)
+                    '''
+                    ###############################################################
+                    Because we removed '.%f' at [1st], we calculate in seconds.
+                    But maybe we should calculate in milliseconds...
+                    ###############################################################
+                    '''
+                    if (datetime.datetime.strptime(self.filter_tab_durations[durations_i][1], "%Y/%m/%d %H:%M:%S") \
+                        - datetime.datetime.strptime(raw_data[i][0], "%Y/%m/%d %H:%M:%S")).total_seconds() < 0:
+                        durations_i += 1
+                    if durations_i == len(self.filter_tab_durations):
+                        break
+
+                    after_filter_start = (datetime.datetime.strptime(self.filter_tab_durations[durations_i][0], "%Y/%m/%d %H:%M:%S") \
+                        - datetime.datetime.strptime(raw_data[i][0], "%Y/%m/%d %H:%M:%S")).total_seconds() <= 0
+                    before_filter_end = (datetime.datetime.strptime(self.filter_tab_durations[durations_i][1], "%Y/%m/%d %H:%M:%S") \
+                        - datetime.datetime.strptime(raw_data[i][0], "%Y/%m/%d %H:%M:%S")).total_seconds() > 0 # Don't add timestamp of next tab
+                    if after_filter_start and before_filter_end:
+                        raw_data[i][1] = None
+            # print(np.array(raw_data))
+            # print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+            # [3rd] If user setted set_interval, reshape data following the user-setted interval
+            if self.sec_interval > 1:
+                current_time = datetime.datetime.strptime(raw_data[0][0], "%Y/%m/%d %H:%M:%S")
+                new_raw_data = [raw_data[0]]
+                raw_i = 1
+                while raw_i < len(raw_data):
+                    current_time += datetime.timedelta(seconds=self.sec_interval)
+                    raw_time = datetime.datetime.strptime(raw_data[raw_i][0], "%Y/%m/%d %H:%M:%S")
+                    sum_interval = None
+                    while (current_time - raw_time).total_seconds() >= 0:
+                        if sum_interval is not None:
+                            if raw_data[raw_i][1] is not None:
+                                sum_interval += raw_data[raw_i][1]
+                        else:
+                            if raw_data[raw_i][1] is not None:
+                                sum_interval = raw_data[raw_i][1]
+                        raw_i += 1
+                        if raw_i == len(raw_data):
+                            break
+                        raw_time = datetime.datetime.strptime(raw_data[raw_i][0], "%Y/%m/%d %H:%M:%S")
+                    if (current_time - final_time).total_seconds() > 0:
+                        # If current_time added by final interval is larger than 
+                        # final_time(final timestamp of active_tab), replace the 
+                        # value of current_time to the value of final_time.
+                        current_time = final_time
+                    new_raw_data.append([current_time.strftime("%Y/%m/%d %H:%M:%S"), sum_interval])
+                raw_data = new_raw_data
+            # print(np.array(raw_data))
+
+            self.plot_keyboard = np.array(raw_data, dtype=object)
         except FileNotFoundError:
             print(self.strfmr.get_colored_console_log("red",
                 "Error: 'keyboard.csv' not found."))
