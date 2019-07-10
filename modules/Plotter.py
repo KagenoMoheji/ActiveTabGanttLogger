@@ -6,9 +6,14 @@ import os
 import re
 import datetime
 import numpy as np
-# import matplotlib.pyplot as plt
-import plotly.offline as ploff
-import plotly.graph_objs as plgo
+# import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.dates as pld
+import matplotlib.font_manager as plf
+# import plotly.offline as ploff
+# import plotly.tools as pltl
+# import plotly.graph_objs as plgo
+# import plotly.figure_factory as plff
 from modules.Public import StrFormatter
 
 '''
@@ -39,15 +44,35 @@ class Plotter:
     '''
     ●List construction of plotting data
     plot_active_tab = np.array(
-        [StartTime, Active(App)Name, TabText],
+        [StartTime, Active(App)Name, TabText], # type(StartTime)=str
         ...
     )
+    (((((((((((((((((((((((((((((((((((or)))))))))))))))))))))))))))))))))))
+    ※参考リンク(https://codeday.me/jp/qa/20190324/471800.html)やplotly.figure_factory.create_ganttにある"Task"を辞書のキーにし，
+    "Start"・"Finish"・"Diff"をリストにしつつグループ化(pandasのgroupby)する．"Resource"の色は統一で良いので別途設定．
+    plot_active_tab = dict{
+        "ActiveName(TabText|Empty)": [
+            [StartTime, StartTimeOfNextTab, Diff(=(StartTimeOfNextTab-StartTime).total_seconds())], # type(StartTime,StartTimeOfNextTab)=datetime.datetime
+            ...
+        ],
+        ...
+    }
+    (((((((((((((((((((((((((((((((((((or)))))))))))))))))))))))))))))))))))
+    ※matplot.dates.date2numを使う場合
+    plot_active_tab = dict{
+        "ActiveName(TabText|Empty)": [
+            (StartTime, StartTimeOfNextTab), # type(StartTime,StartTimeOfNextTab)=matplot.dates.date2num
+            ...
+        ],
+        ...
+    }
+
     plot_mouse = np.array(
-        [CurrentTimeFollowingInterval, SumOfDistance|None],
+        [CurrentTimeFollowingInterval, SumOfDistance|None], # type(CurrentTimeFollowingInterval)=str
         ...
     )
     plot_keyboard = np.array(
-        [CurrentTimeFollowingInterval, SumOfCount|None],
+        [CurrentTimeFollowingInterval, SumOfCount|None], # type(CurrentTimeFollowingInterval)=str
         ...
     )
     '''
@@ -67,7 +92,7 @@ class Plotter:
             self.dirname = "ganttlogger_logs/{}".format(uuid)
         else:
             self.dirname = os.getcwd()
-        print(self.dirname)
+        os.makedirs(os.path.dirname("{dirname}/graphs/".format(dirname=self.dirname)), exist_ok=True)
         self.sec_interval = 1
         self.filter_tab_list = []
         self.hide_filtered_tab_duration = False
@@ -226,11 +251,10 @@ class Plotter:
         ●上記3つの関数でファイル読み込み・データ加工したリストを用意して，ここで
         サブプロットにプロット？
 
-        ●plotlyとmatplotlibの両方で実装！！(plotlyでのネット不通に備えて)
-
         References:
             http://pineplanter.moo.jp/non-it-salaryman/2018/03/23/python-2axis-graph/
             https://qiita.com/supersaiakujin/items/e2ee4019adefce08e381
+            https://sabopy.com/py/matplotlib-26/
         '''
         print("Run, Plotter!")
         self.get_activetab()
@@ -250,6 +274,94 @@ class Plotter:
 =================================================
 """.format(t=self.plot_active_tab , m=self.plot_mouse, k=self.plot_keyboard))
 
+        # ここでサブプロット定義とかしてグラフプロットをまとめてやる
+        fig = plt.figure(figsize=(15, 9))
+        ax1 = fig.add_subplot(2, 1, 1)
+        df = {}
+        for i in range(len(self.plot_active_tab) - 1):
+            name = self.plot_active_tab[i][1]
+            if self.plot_active_tab[i][2]:
+                name += "({})".format(self.plot_active_tab[i][2])
+            start = datetime.datetime.strptime(self.plot_active_tab[i][0], "%Y/%m/%d %H:%M:%S.%f")
+            finish = datetime.datetime.strptime(self.plot_active_tab[i+1][0], "%Y/%m/%d %H:%M:%S.%f")
+            if name in df.keys():
+                # df[name].append([start, finish, (finish - start).total_seconds()])
+                df[name].append((pld.date2num(start), pld.date2num(finish)))
+            else:
+                # df[name] = [[start, finish, (finish - start).total_seconds()]]
+                df[name] = [(pld.date2num(start), pld.date2num(finish))]
+        # print(df)
+        '''
+        ここまでのdf実装，get_active_tab()に移して，dfをself.plot_active_tabに格納で良いと思う？
+        あ，でも前のself.plot_active_tabの構造のままの方がいいかも．時系列が必要だった．ただFinishの項目を加えた方がいいかな．
+        それでいてself.plot_active_tabを引数に渡して，関数内でdict型のdfにすることでグループバイすればいいかな．
+
+        また，各データのタイムスタンプの型はstrではなくdatetime.datetime型にした方が良さそう
+
+        こっから下は横方向の棒グラフの描写をしていく．matplotlib.dates.DateFormatter()やmatplotlib.dates.date2num()とかを使う．
+        棒の長さにdfにもあるDiffのsecondsを使用？
+        References:
+            https://stackoverflow.com/questions/4090383/plotting-unix-timestamps-in-matplotlib
+            https://stackoverflow.com/questions/40395227/minute-and-second-format-for-x-label-of-matplotlib
+            https://triplepulu.blogspot.com/2013/06/pythonmatplotlib_285.html
+            https://sabopy.com/py/matplotlib-26/
+            http://www.jiajianhudong.com/question/382840.html
+            ▲https://stackoverflow.com/questions/24425908/matplotlib-how-to-use-timestamps-with-broken-barh
+            https://codeday.me/jp/qa/20190324/471800.html
+            https://note.nkmk.me/python-datetime-usage/#datetime
+            https://teratail.com/questions/74084
+            http://naga-tsuzuki.sblo.jp/article/179645369.html#tick-y-
+            https://qiita.com/Yoterph/items/e0039309a47c75dade05
+            https://datumstudio.jp/blog/matplotlib%E3%81%AE%E6%97%A5%E6%9C%AC%E8%AA%9E%E6%96%87%E5%AD%97%E5%8C%96%E3%81%91%E3%82%92%E8%A7%A3%E6%B6%88%E3%81%99%E3%82%8Bwindows%E7%B7%A8
+            https://qiita.com/canard0328/items/a859bffc9c9e11368f37
+            http://bicycle1885.hatenablog.com/entry/2014/02/14/023734 (sharexによるx軸の共有がax1とax2の一致に使えるのでは？)
+        '''
+
+        # ログの開始時刻から終了時刻までのself.sec_interval刻み？
+        # dates = []
+        # t = datetime.datetime.strptime(self.plot_active_tab[0][0], "%Y/%m/%d %H:%M:%S.%f")
+        # last_t = datetime.datetime.strptime(self.plot_active_tab[len(self.plot_active_tab)-1][0], "%Y/%m/%d %H:%M:%S.%f")
+        # while (last_t - t).total_seconds() >= 0:
+        #     dates.append(t)
+        #     t += datetime.timedelta(seconds=self.sec_interval)
+        # # print(last_t.second - dates[len(dates) - 1].second)
+        # # print(dates[len(dates) - 1].second - last_t.second)
+        # if last_t.second - dates[len(dates) - 1].second > 0:
+        #     dates.append(last_t)
+        # それともactivetabの開始時刻(と最終時刻)のみ？
+        # dates = [datetime.datetime.strptime(t, "%Y/%m/%d %H:%M:%S.%f") for t in self.plot_active_tab[:-1, 0]]
+        # last_t = datetime.datetime.strptime(self.plot_active_tab[len(self.plot_active_tab) - 1][0], "%Y/%m/%d %H:%M:%S.%f")
+        # if last_t != dates[len(dates) - 1]:
+        #     dates.append(last_t)
+        # datenums = pld.date2num(dates)
+        ax1.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d\n%H:%M:%S")) # .%f
+        # ax1.set_xticks(datenums)
+        fp = plf.FontProperties(fname="\\".join(__file__.split("\\")[:-1]) + r'\..\config\font\ipaexg.ttf', size=8)
+        y = [7.5 + i * 10 for i in range(len(df.keys()))]
+        y.append(y[len(y) - 1] + 10)
+        ax1.set_yticks(y)
+        ax1.set_yticklabels(df.keys(), fontproperties=fp)
+        for i, k in enumerate(df.keys()): # 上のy軸方向の順(=df.keys()の順)に従ってx軸方向のガントチャートを描写
+            print(df[k])
+            ax1.broken_barh(df[k], (5 + i * 10, 5), facecolor="red")
+        # ax1.xaxis.set_major_locator(pld.SecondLocator(bysecond=range(0, 2, 2), tz=None))
+        plt.tick_params(axis="x", labelsize=7, rotation=25) # rotation=270
+        # plt.subplots_adjust(left=0.3, right=0.9)
+        ax1.grid(axis="y") # 縦軸のグリッド線を引く
+        
+
+        ax2 = fig.add_subplot(2, 1, 2)
+
+        plt.savefig("{dirname}/graphs/output_all_{datetime}".format(
+            dirname=self.dirname,
+            datetime=datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        ))
+        plt.show()
+
+
+
+
+
     def run_each(self): # plot_each(self)
         '''
         ●run()が3つのサブプロットで1つのファイル出力をするのに対し，run_each()は
@@ -260,6 +372,13 @@ class Plotter:
         ●We must implement get_activetab() ahead.
         '''
         print("Run, Plotter-Each!")
+        self.get_activetab()
+        self.get_mouse()
+        self.get_keyboard()
+
+        # if active_tabの出力が選択されていたら～
+        # if mouseの出力が選択されていたら～
+        # if keyboardの出力が選択されていたら～
 
     def get_activetab(self):
         '''
@@ -494,7 +613,7 @@ class Plotter:
                             "Error: Invalid count of separating by ',' in 'keyboard.csv'"))
                         exit()
                     # Digit check (If error, catch ValueError)
-                    splitted_column[1] = float(splitted_column[1])
+                    splitted_column[1] = int(splitted_column[1])
                     raw_data.append(splitted_column)
             # print("before: {}".format(raw_data))
 
@@ -600,3 +719,4 @@ class Plotter:
             print(self.strfmr.get_colored_console_log("red",
                 "Error: Invalid record in 'keyboard.csv'."))
             exit()
+    
