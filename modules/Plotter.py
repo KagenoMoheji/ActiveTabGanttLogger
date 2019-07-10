@@ -143,7 +143,12 @@ class Plotter:
                     try:
                         print(self.strfmr.get_colored_console_log("yellow",
                         "(1)Input a file name written a list of tab text you want to filter.: "), end="")
-                        txtname = "{dirname}/{filename}".format(dirname=self.dirname, filename=input().strip())
+                        filename = input().strip()
+                        if not filename:
+                            print(self.strfmr.get_colored_console_log("red",
+                            "Error: Invalid input."))
+                            continue
+                        txtname = "{dirname}/{filename}".format(dirname=self.dirname, filename=filename)
                         with open(txtname, "r", encoding="utf-8") as f:
                             self.filter_tab_list = f.read().split("\n")
                             i_none = self.index_safety(self.filter_tab_list, "None")
@@ -239,9 +244,10 @@ class Plotter:
 ----------------[plot_active_tab]----------------
 {t}
 ----------------[moouse]----------------
+{m}
 ----------------[keyboard]----------------
 =================================================
-""".format(t=self.plot_active_tab)) # , m=self.plot_mouse, k=self.plot_keyboard
+""".format(t=self.plot_active_tab , m=self.plot_mouse)) #, k=self.plot_keyboard
 
     def run_each(self): # plot_each(self)
         '''
@@ -287,9 +293,15 @@ class Plotter:
             if len(self.filter_tab_list) > 0:
                 del_indexs = []
                 # Get duration of filtered tab text before filtering
-                for i in range(len(raw_data) - 1): # The last row has the time logging finished
+                for i in range(1, len(raw_data) - 1): # We don't filter the first and last row not to break the timing of timestamps
                     if raw_data[i][2] in self.filter_tab_list:
-                        self.filter_tab_durations.append([raw_data[i][0], raw_data[i+1][0]])
+                        '''
+                        ###############################################################
+                        Because we don't need '.%f' in filtering at mouse and keyboard, split by '.' and remove '.%f'.
+                        But maybe we should calculate in milliseconds...
+                        ###############################################################
+                        '''
+                        self.filter_tab_durations.append([raw_data[i][0].split(".")[0], raw_data[i+1][0].split(".")[0]])
                         del_indexs.append(i)
                 # Filter tab text
                 '''
@@ -363,7 +375,7 @@ class Plotter:
                 current_time = mouse_time
             '''
             # Get final timestamp from self.plot_active_tab
-            # This final timestamp is also used in [2nd]
+            # This final timestamp is also used in [3rd]
             final_time = datetime.datetime.strptime(self.plot_active_tab[len(self.plot_active_tab) - 1][0].split(".")[0], "%Y/%m/%d %H:%M:%S")
             new_raw_data = []
             raw_i = 0
@@ -387,14 +399,29 @@ class Plotter:
             # [2nd]If self.hide_filtered_tab_duration=True, replace value to None in the duration of filtered tab
             if self.hide_filtered_tab_duration:
                 durations_i = 0
-                filter_start = datetime.datetime.strptime(self.filter_tab_durations[durations_i][0], "%Y/%m/%d %H:%M:%S")
-                filter_end = datetime.datetime.strptime(self.filter_tab_durations[durations_i][1], "%Y/%m/%d %H:%M:%S")
-                for raw_column in raw_data:
-                    raw_time = datetime.datetime.strptime(raw_column[0], "%Y/%m/%d %H:%M:%S")
-                    if filter_end
+                # filter_start = datetime.datetime.strptime(self.filter_tab_durations[durations_i][0], "%Y/%m/%d %H:%M:%S")
+                # filter_end = datetime.datetime.strptime(self.filter_tab_durations[durations_i][1], "%Y/%m/%d %H:%M:%S")
+                for i in range(len(raw_data) - 1): # Don't filter because the last row has the time logging finished (But the first can be filtered)
+                    '''
+                    ###############################################################
+                    Because we removed '.%f' at [1st], we calculate in seconds.
+                    But maybe we should calculate in milliseconds...
+                    ###############################################################
+                    '''
+                    if (datetime.datetime.strptime(self.filter_tab_durations[durations_i][1], "%Y/%m/%d %H:%M:%S") \
+                        - datetime.datetime.strptime(raw_data[i][0], "%Y/%m/%d %H:%M:%S")).total_seconds() < 0:
+                        durations_i += 1
+                    if durations_i == len(self.filter_tab_durations):
+                        break
 
-            print(np.array(raw_data))
-            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                    after_filter_start = (datetime.datetime.strptime(self.filter_tab_durations[durations_i][0], "%Y/%m/%d %H:%M:%S") \
+                        - datetime.datetime.strptime(raw_data[i][0], "%Y/%m/%d %H:%M:%S")).total_seconds() <= 0
+                    before_filter_end = (datetime.datetime.strptime(self.filter_tab_durations[durations_i][1], "%Y/%m/%d %H:%M:%S") \
+                        - datetime.datetime.strptime(raw_data[i][0], "%Y/%m/%d %H:%M:%S")).total_seconds() > 0 # Don't add timestamp of next tab
+                    if after_filter_start and before_filter_end:
+                        raw_data[i][1] = None
+            # print(np.array(raw_data))
+            # print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
             # [3rd] If user setted set_interval, reshape data following the user-setted interval
             if self.sec_interval > 1:
@@ -423,7 +450,7 @@ class Plotter:
                         current_time = final_time
                     new_raw_data.append([current_time.strftime("%Y/%m/%d %H:%M:%S"), sum_interval])
                 raw_data = new_raw_data
-            print(np.array(raw_data))
+            # print(np.array(raw_data))
 
             self.plot_mouse = np.array(raw_data, dtype=object)
         except FileNotFoundError:
