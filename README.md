@@ -28,9 +28,13 @@
 ## 仕様
 - MouseObserver・KeyboardObserverの最低デルタtは1s．
     - 1s間の操作量ごとに取得
-- 出力される`active_tab.csv`の最後のレコードは終了のタイムスタンプ用なので削除しないように
+- 出力される`active_tab.csv`の最後のレコードは終了のタイムスタンプ用なので削除しないように．
+- `ganttlogger -p`について
+    - `filter_tab`において`active_tab.csv`のTabTextが空欄になっている行を削除したい場合は，フィルタータブのリストのテキストファイルに`None`を追加する．
 
 ## 課題点
+- [ ] `active_tab.csv`における`TabText=""=None`をどう定義する…？
+    - よくわからない「アプリケーション別その他」に統一？
 - モジュール選定
     - [x] `threading.Thread`か？`concurrent.futures.ThreadPoolExecutor`か？
         - てかマルチスレッドかマルチプロセスかもわからん
