@@ -345,7 +345,7 @@ class Plotter:
         ax1.set_xlim(init, last) # これいれたら良くなった
         # ax1.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
         ax1.set_xticks(dates) # datenums
-        fp = plf.FontProperties(fname="\\".join(__file__.split("\\")[:-1]) + r'\font\ipaexg.ttf', size=8)
+        fp = plf.FontProperties(fname="{}/font/ipaexg.ttf".format(os.path.dirname(__file__)), size=8)
         y = [7.5 + i * 10 for i in range(len(df.keys()))]
         y.append(y[len(y) - 1] + 10)
         ax1.set_yticks(y)
@@ -354,7 +354,7 @@ class Plotter:
             print(df[k])
             ax1.broken_barh(df[k], (5 + i * 10, 5), facecolor="red")
         plt.tick_params(axis="x", labelsize=7, rotation=270) # rotation=25
-        plt.subplots_adjust(top=0.95, hspace=0.3) # left=0.3, right=0.9
+        plt.subplots_adjust(top=0.95, hspace=0.5) # left=0.3, right=0.9
         ax1.grid(axis="y") # 縦軸のグリッド線を引く
         
 
