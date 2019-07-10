@@ -24,7 +24,7 @@ import platform
 '''
 
 os = platform.platform(terse=True)
-install_requires = ["matplotlib", "plotly", "numpy", "psutil", "pynput"] # "pyautogui"
+install_requires = ["matplotlib", "numpy", "psutil", "pynput"] # "pyautogui"
 if "Windows" in os:
     install_requires += [
         "pypiwin32",
