@@ -4,9 +4,11 @@
 '''
 import os
 import re
+import datetime
 import numpy as np
 # import matplotlib.pyplot as plt
-import plotly
+import plotly.offline as ploff
+import plotly.graph_objs as plgo
 from modules.Public import StrFormatter
 
 '''
@@ -19,6 +21,10 @@ References:
     https://note.nkmk.me/python-check-int-float/
     https://pythondatascience.plavox.info/numpy/%E6%95%B0%E5%AD%A6%E7%B3%BB%E3%81%AE%E9%96%A2%E6%95%B0
     https://yukun.info/python-file/
+    https://qiita.com/shibainurou/items/0b0f8b0233c45fc163cd
+    https://note.nkmk.me/python-numpy-dtype-astype/
+    https://www.javadrive.jp/python/list/index10.html#section3
+    https://note.nkmk.me/python-datetime-timedelta-measure-time/
 '''
 
 class Plotter:
@@ -30,6 +36,24 @@ class Plotter:
     filter_tab_durations = [] # ex. [["2017/01/01 12:53:23.525", "2017/01/01 12:55:03.121"], [?,?], ...]
     select_data = ["all"]
     strfmr = None
+    '''
+    ●List construction of plotting data
+    plot_active_tab = np.array(
+        [StartTime, Active(App)Name, TabText],
+        ...
+    )
+    plot_mouse = np.array(
+        [CurrentTimeFollowingInterval, SumOfDistance|None],
+        ...
+    )
+    plot_keyboard = np.array(
+        [CurrentTimeFollowingInterval, SumOfCount|None],
+        ...
+    )
+    '''
+    plot_active_tab = np.array([["", "", ""]])
+    plot_mouse = np.array([["", None]])
+    plot_keyboard = np.array([["", None]])
     def __init__(self, uuid=""):
         '''
         When arg "uuid" is empty, the mode is "plotter".
@@ -49,6 +73,9 @@ class Plotter:
         self.hide_filtered_tab_duration = False
         self.filter_tab_durations = []
         self.select_data = ["all"]
+        self.plot_active_tab = np.array([["", "", ""]])
+        self.plot_mouse = np.array([["", None]])
+        self.plot_keyboard = np.array([["", None]])
 
     def start(self):
         '''
@@ -70,7 +97,7 @@ class Plotter:
             print(self.strfmr.get_colored_console_log("yellow",
                 "===============[select plot types]==============="))
             print("""\
-'set_interval': Set interval by seconds.
+'set_interval': Set interval by seconds(Integer). Default is 1-second.
 'filter_tab'  : Filter unnecessary tab texts in a text file before plotting.
 'select_data' : Select whether you use all data to plot to an output or some data plot to each output. 
                 Default - when you don't input in 'select_data' - is the former.''""")
@@ -101,7 +128,9 @@ class Plotter:
                     print(self.strfmr.get_colored_console_log("yellow",
                         "Set the number of interval by seconds: "), end="")
                     self.sec_interval = input().strip()
-                    if re.compile(r'^[0-9]+$').match(self.sec_interval):
+                    # To avoid allowing the input with full-width digit, we don't use try-except(ValueError).
+                    if re.compile(r'^[0-9]+$').match(self.sec_interval) and int(self.sec_interval) > 0:
+                        self.sec_interval = int(self.sec_interval)
                         break
                     else:
                         print(self.strfmr.get_colored_console_log("red",
@@ -117,6 +146,9 @@ class Plotter:
                         txtname = "{dirname}/{filename}".format(dirname=self.dirname, filename=input().strip())
                         with open(txtname, "r", encoding="utf-8") as f:
                             self.filter_tab_list = f.read().split("\n")
+                            i_none = self.index_safety(self.filter_tab_list, "None")
+                            if i_none != -1:
+                                self.filter_tab_list[i_none] = None
                             break
                     except FileNotFoundError:
                         print(self.strfmr.get_colored_console_log("red",
@@ -163,10 +195,10 @@ class Plotter:
                             print(self.strfmr.get_colored_console_log("red",
                                 "Error: There are some Invalid names of csv files."))
 
-            print("""\
-sec_interval: {0}
-filter_tab_list: {1}
-select_data: {2}""".format(self.sec_interval, self.filter_tab_list, self.select_data))
+#             print("""\
+# sec_interval: {0}
+# filter_tab_list: {1}
+# select_data: {2}""".format(self.sec_interval, self.filter_tab_list, self.select_data))
             if self.select_data[0] == "all":
                 self.run()
             else:
@@ -174,6 +206,12 @@ select_data: {2}""".format(self.sec_interval, self.filter_tab_list, self.select_
         except KeyboardInterrupt:
             print("Exit")
             exit()
+
+    def index_safety(self, l, target):
+        try:
+            return l.index(target)
+        except ValueError:
+            return -1
 
     def run(self): # plot(self)
         '''
@@ -183,15 +221,27 @@ select_data: {2}""".format(self.sec_interval, self.filter_tab_list, self.select_
         ●上記3つの関数でファイル読み込み・データ加工したリストを用意して，ここで
         サブプロットにプロット？
 
+        ●plotlyとmatplotlibの両方で実装！！(plotlyでのネット不通に備えて)
+
         References:
             http://pineplanter.moo.jp/non-it-salaryman/2018/03/23/python-2axis-graph/
             https://qiita.com/supersaiakujin/items/e2ee4019adefce08e381
         '''
         print("Run, Plotter!")
         self.get_activetab()
-        print("""\
-hide_filtered_tab_duration: {0}
-filter_tab_durations: {1}""".format(self.hide_filtered_tab_duration, self.filter_tab_durations))
+#         print("""\
+# hide_filtered_tab_duration: {0}
+# filter_tab_durations: {1}""".format(self.hide_filtered_tab_duration, self.filter_tab_durations))
+        self.get_mouse()
+        # self.get_keyboard()
+        print("""
+=================================================
+----------------[plot_active_tab]----------------
+{t}
+----------------[moouse]----------------
+----------------[keyboard]----------------
+=================================================
+""".format(t=self.plot_active_tab)) # , m=self.plot_mouse, k=self.plot_keyboard
 
     def run_each(self): # plot_each(self)
         '''
@@ -231,9 +281,8 @@ filter_tab_durations: {1}""".format(self.hide_filtered_tab_duration, self.filter
                         splitted_column[2] = None # If np.nan, its type will change str, so set None
                     raw_data.append(splitted_column)
                 raw_data = np.array(raw_data)
-            print("before: {}".format(raw_data))
+            # print("before: {}".format(raw_data))
             # print(raw_data[:,2])
-            # print(raw_data[:,2][3] == None) # This is a check when '新しいタブ' is replaced by None in active_tab.csv
 
             if len(self.filter_tab_list) > 0:
                 del_indexs = []
@@ -253,7 +302,11 @@ filter_tab_durations: {1}""".format(self.hide_filtered_tab_duration, self.filter
                 for del_i in del_indexs:
                     raw_data = np.delete(raw_data, del_i - gap_i, axis=0)
                     gap_i += 1
-            print("after: {}".format(raw_data))
+            # print("after: {}".format(raw_data))
+            
+            # こっから下は，matplotlib・plotlyでデータ渡ししやすい配列の形に変形させてself.plot_active_tabに格納
+
+            self.plot_active_tab = raw_data
         except FileNotFoundError:
             print(self.strfmr.get_colored_console_log("red",
                 "Error: 'active_tab.csv' not found."))
@@ -261,9 +314,9 @@ filter_tab_durations: {1}""".format(self.hide_filtered_tab_duration, self.filter
     
     def get_mouse(self):
         '''
-        ●get_activetab()で削除したタブの期間のデータの削除も必要ありそうかな．
-        これやるのはget_activetab()を行った場合のみにするか．
-        でもグラフでどう表現する？データの削除というより0埋め？でも0だったとグラフで示すのもな…
+        ●(完)activetabで最後に終了タイムスタンプをしているけど，それより後の分もkeyboardとmouseはログが残っているので，除去すべきかも？
+        したがって，開始時刻・終了時刻はactivetabのself.plot_active_tabの0番目と最後の時刻に基づく．
+        ●self.hide_filtered_tab_duration=Trueの場合に，self.filter_tab_durationsに従ってNaN・None埋めする．Falseならmouse・keyboardはactive_tabでフィルタリングされた期間もグラフ描写する．
         ●None埋めとかにして，グラフプロット前にデータをNone期間で分割していってそれぞれでグラフプロットして後から重ねていくとか？
         http://natsutan.hatenablog.com/entry/20110713/1310513258
         というか普通に同じとこに，同じ色でプロットしていけばよくね？でも空白期間の表現できるのかな？
@@ -274,23 +327,118 @@ filter_tab_durations: {1}""".format(self.hide_filtered_tab_duration, self.filter
         ●その他よくわからんけど参考になりそうな…
         https://codeday.me/jp/qa/20190318/374532.html
         ●plotlyを使う場合，np.nanではなくNoneでいけそう
-
-        ※ただし，self.hide_filtered_tab_duration=Trueの場合に，self.filter_tab_durationsに従ってNaN・None埋めする．Falseならmouse・keyboardはactive_tabでフィルタリングされた期間もグラフ描写する．
         '''
         try:
             with open("{dirname}/mouse.csv".format(dirname=self.dirname), "r", encoding="utf-8") as ft:
                 raw_columns = ft.read().split("\n")
                 if "Time" in raw_columns[0]:
                     raw_columns.pop(0)
-                if len(raw_columns[-1].split(",")) != 3:
+                if len(raw_columns[-1].split(",")) != 2:
                     raw_columns.pop(-1)
+                raw_data = []
+                for raw_column in raw_columns:
+                    splitted_column = raw_column.split(",")
+                    if len(splitted_column) != 2:
+                        print(self.strfmr.get_colored_console_log("red",
+                            "Error: Invalid count of separating by ',' in 'mouse.csv'"))
+                        exit()
+                    # Digit check (If error, catch ValueError)
+                    splitted_column[1] = float(splitted_column[1])
+                    raw_data.append(splitted_column)
+            # print("before: {}".format(raw_data))
+
+            # [1st] Reshape raw_data to 1-second interval data (and fill in the blanks with None)
+            # Get initial timestamp from self.plot_active_tab
+            # Use as 1-second interval timestamp 
+            current_time = datetime.datetime.strptime(self.plot_active_tab[0][0].split(".")[0], "%Y/%m/%d %H:%M:%S")
+            '''
+            # This code below is fixing current_time because the timestamp of mouse is earlier than the one of active_tab.
+            # But there is also keyboard, so we should define the first timestamp of active_tab is the fastest log. (And the last timestamp of active_tab is the last log of active_tab, mouse, and keyboard)
+            current_time = datetime.datetime.strptime(self.plot_active_tab[0][0], "%Y/%m/%d %H:%M:%S.%f")
+            if (current_time - datetime.datetime.strptime(raw_data[0][0], "%Y/%m/%d %H:%M:%S.%f")).total_seconds() > 0:
+                for mouse_i in range(1, len(raw_data)):
+                    mouse_time = datetime.datetime.strptime(raw_data[mouse_i][0], "%Y/%m/%d %H:%M:%S.%f")
+                    if (current_time - mouse_time).total_seconds() < 0:
+                        break
+                current_time = mouse_time
+            '''
+            # Get final timestamp from self.plot_active_tab
+            # This final timestamp is also used in [2nd]
+            final_time = datetime.datetime.strptime(self.plot_active_tab[len(self.plot_active_tab) - 1][0].split(".")[0], "%Y/%m/%d %H:%M:%S")
+            new_raw_data = []
+            raw_i = 0
+            while (final_time - current_time).total_seconds() >= 0:
+                str_current_time = current_time.strftime("%Y/%m/%d %H:%M:%S")
+                if str_current_time in raw_data[raw_i][0]:
+                    new_raw_data.append([str_current_time, raw_data[raw_i][1]])
+                    if str_current_time in raw_data[raw_i + 1][0]:
+                        # Rarely, the same seconds duplicates in consecutive two timestamps
+                        # print("Duplicated!!!: " + str_current_time)
+                        new_raw_data[len(new_raw_data) - 1][1] += raw_data[raw_i + 1][1]
+                        raw_i += 1
+                    raw_i += 1
+                else:
+                    new_raw_data.append([str_current_time, None])
+                current_time += datetime.timedelta(seconds=1)
+            raw_data = new_raw_data
+            # print(np.array(raw_data))
+            # print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            
+            # [2nd]If self.hide_filtered_tab_duration=True, replace value to None in the duration of filtered tab
+            if self.hide_filtered_tab_duration:
+                durations_i = 0
+                filter_start = datetime.datetime.strptime(self.filter_tab_durations[durations_i][0], "%Y/%m/%d %H:%M:%S")
+                filter_end = datetime.datetime.strptime(self.filter_tab_durations[durations_i][1], "%Y/%m/%d %H:%M:%S")
+                for raw_column in raw_data:
+                    raw_time = datetime.datetime.strptime(raw_column[0], "%Y/%m/%d %H:%M:%S")
+                    if filter_end
+
+            print(np.array(raw_data))
+            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+            # [3rd] If user setted set_interval, reshape data following the user-setted interval
+            if self.sec_interval > 1:
+                current_time = datetime.datetime.strptime(raw_data[0][0], "%Y/%m/%d %H:%M:%S")
+                new_raw_data = [raw_data[0]]
+                raw_i = 1
+                while raw_i < len(raw_data):
+                    current_time += datetime.timedelta(seconds=self.sec_interval)
+                    raw_time = datetime.datetime.strptime(raw_data[raw_i][0], "%Y/%m/%d %H:%M:%S")
+                    sum_interval = None
+                    while (current_time - raw_time).total_seconds() >= 0:
+                        if sum_interval is not None:
+                            if raw_data[raw_i][1] is not None:
+                                sum_interval += raw_data[raw_i][1]
+                        else:
+                            if raw_data[raw_i][1] is not None:
+                                sum_interval = raw_data[raw_i][1]
+                        raw_i += 1
+                        if raw_i == len(raw_data):
+                            break
+                        raw_time = datetime.datetime.strptime(raw_data[raw_i][0], "%Y/%m/%d %H:%M:%S")
+                    if (current_time - final_time).total_seconds() > 0:
+                        # If current_time added by final interval is larger than 
+                        # final_time(final timestamp of active_tab), replace the 
+                        # value of current_time to the value of final_time.
+                        current_time = final_time
+                    new_raw_data.append([current_time.strftime("%Y/%m/%d %H:%M:%S"), sum_interval])
+                raw_data = new_raw_data
+            print(np.array(raw_data))
+
+            self.plot_mouse = np.array(raw_data, dtype=object)
         except FileNotFoundError:
             print(self.strfmr.get_colored_console_log("red",
                 "Error: 'mouse.csv' not found."))
             exit()
+        except ValueError:
+            print(self.strfmr.get_colored_console_log("red",
+                "Error: Invalid record in 'mouse.csv'."))
+            exit()
 
     def get_keyboard(self):
         '''
+        ●activetabで最後に終了タイムスタンプをしているけど，それより後の分もkeyboardとmouseはログが残っているので，除去すべきかも？
+        したがって，開始時刻・終了時刻はactivetabのself.plot_active_tabの0番目と最後の時刻に基づく．
         ●get_activetab()で削除したタブの期間のデータの削除も必要ありそうかな．
         これやるのはget_activetab()を行った場合のみにするか．
         でもグラフでどう表現する？データの削除というより0埋め？でも0だったとグラフで示すのもな…
@@ -312,9 +460,25 @@ filter_tab_durations: {1}""".format(self.hide_filtered_tab_duration, self.filter
                 raw_columns = ft.read().split("\n")
                 if "Time" in raw_columns[0]:
                     raw_columns.pop(0)
-                if len(raw_columns[-1].split(",")) != 3:
+                if len(raw_columns[-1].split(",")) != 2:
                     raw_columns.pop(-1)
+                raw_data = []
+                for raw_column in raw_columns:
+                    splitted_column = raw_column.split(",")
+                    if len(splitted_column) != 2:
+                        print(self.strfmr.get_colored_console_log("red",
+                            "Error: Invalid count of separating by ',' in 'keyboard.csv'"))
+                        exit()
+                    # Digit check (If error, catch ValueError)
+                    splitted_column[1] = int(splitted_column[1])
+                    raw_data.append(splitted_column)
+                raw_data = np.array(raw_data, dtype=object)
+            print("before: {}".format(raw_data))
         except FileNotFoundError:
             print(self.strfmr.get_colored_console_log("red",
                 "Error: 'keyboard.csv' not found."))
+            exit()
+        except ValueError:
+            print(self.strfmr.get_colored_console_log("red",
+                "Error: Invalid record in 'keyboard.csv'."))
             exit()
