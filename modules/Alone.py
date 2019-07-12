@@ -27,11 +27,11 @@ class Alone:
         th_logger = threading.Thread(target=self.logger.output)
         th_observer.start()
         th_logger.start()
-        while not global_v.is_switched_to_exit:
-            time.sleep(1)
-        if global_v.is_threadloop_error: # When "Thread loop exited by any problem!!!!" occured
-            exit()
         while not global_v.all_thread_exited:
+            while not global_v.is_switched_to_exit:
+                time.sleep(1)
+            if global_v.is_threadloop_error: # When "Thread loop exited by any problem!!!!" occured
+                exit()
             time.sleep(1)
         if self.withplot:
             plotter = Plotter(self.uuid)
