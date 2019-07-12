@@ -5,6 +5,7 @@
 import os
 import re
 import datetime
+import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.dates as pld
@@ -294,6 +295,7 @@ class Plotter:
             http://kuroneko0208.hatenablog.com/entry/2014/07/28/161453
             http://pineplanter.moo.jp/non-it-salaryman/2018/03/23/python-2axis-graph/
             https://qiita.com/supersaiakujin/items/e2ee4019adefce08e381
+            http://nok0714.hatenablog.com/entry/2017/04/13/140525
         '''
         fig = plt.figure(figsize=(15, 9))
         # Get range of x axis
@@ -302,6 +304,8 @@ class Plotter:
 
         # Create upper graph(ganttchart)
         ax1 = fig.add_subplot(2, 1, 1)
+        ax1.set_xlim(init, last) # Important for plotting ganttchart by seconds!
+        ax1.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
         # ログの開始時刻から終了時刻までのself.sec_interval刻み？
         # dates = []
         # t = self.plot_active_tab[0][0]
@@ -319,8 +323,6 @@ class Plotter:
         if last_t != dates[len(dates) - 1]:
             dates.append(last_t)
         # datenums = pld.date2num(dates)
-        ax1.set_xlim(init, last) # Important for plotting ganttchart by seconds!
-        ax1.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
         ax1.set_xticks(dates) # ax1.set_xticks(datenums)
         fp = plf.FontProperties(fname="{}/font/ipaexg.ttf".format(os.path.dirname(__file__)), size=8)
         y = [7.5 + i * 10 for i in range(len(self.df_active_tab.keys()))]
@@ -329,7 +331,7 @@ class Plotter:
         ax1.set_yticklabels(self.df_active_tab.keys(), fontproperties=fp)
         for i, k in enumerate(self.df_active_tab.keys()): # 上のy軸方向の順(=self.df_active_tab.keys()の順)に従ってx軸方向のガントチャートを描写
             # print(self.df_active_tab[k])
-            ax1.broken_barh(self.df_active_tab[k], (5 + i * 10, 5), facecolor="red")
+            ax1.broken_barh(self.df_active_tab[k], (5+i*10, 5), facecolor="red")
         plt.tick_params(axis="x", labelsize=7, rotation=270) # rotation=25
         plt.subplots_adjust(top=0.85, bottom=0.15, right=0.95, hspace=0) # left=0.3, right=0.9
         plt.title("SwitchActiveTab(interval: {}s)".format(self.sec_interval))
@@ -353,10 +355,10 @@ class Plotter:
         # plt.tick_params(axis="x", labelsize=7, rotation=270)
 
         # Save and Show
-        plt.savefig("{dirname}/graphs/output_all_{datetime}".format(
-            dirname=self.dirname,
-            datetime=datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        ))
+        filetime = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        with open("{dirname}/graphs/output_all_{datetime}.pkl".format(dirname=self.dirname, datetime=filetime), "wb") as f:
+            pickle.dump(fig, f)
+        plt.savefig("{dirname}/graphs/output_all_{datetime}".format(dirname=self.dirname, datetime=filetime))
         # plt.show()
 
 

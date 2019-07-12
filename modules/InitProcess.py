@@ -30,7 +30,7 @@ class InitProcess:
         '''
         os = self.get_os()
         mode = self.argparser.identify_mode()
-        if mode == "Plotter":
+        if (mode == "Plotter") or (mode == "Displayer"):
             uuid = "None"
         elif (mode == "Alone") or (mode == "Observer") or (mode=="AloneWithPlot"):
             uuid = self.generate_uuid()
@@ -109,7 +109,7 @@ class ArgsParser:
             https://stackoverflow.com/a/3853776
         '''
         self.strfmr = StrFormatter()
-        usage = "ganttlogger [--observer] [--logger] [--uuid <UUID>] [--help] [--plotter] [--withplot]"
+        usage = "ganttlogger [--observer] [--logger] [--uuid <UUID>] [--help] [--plotter] [--withplot] [--displayer]"
         self.parser = ArgumentParser(
             prog="ganttlogger",
             description="""\
@@ -147,6 +147,11 @@ and Plotting graphs (active-tab=ganttchart, mouse=line, keyboard=bar).
             action="store_true",
             help="Use this option when you want to get a graph after running 'Alone'."
         )
+        self.parser.add_argument(
+            "-d", "--displayer",
+            action="store_true",
+            help="Use this option when you want to look a graph from a '.pkl' file."
+        )
         self.args = self.parser.parse_args()
 
     def identify_mode(self):
@@ -171,6 +176,8 @@ and Plotting graphs (active-tab=ganttchart, mouse=line, keyboard=bar).
             self.uuid = self.args.uuid
         elif self.args.plotter:
             mode = "Plotter"
+        elif self.args.displayer:
+            mode = "Displayer"
         else:
             if self.args.uuid:
                 print(self.strfmr.get_colored_console_log("red",

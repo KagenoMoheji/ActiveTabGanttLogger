@@ -18,6 +18,7 @@ from modules.Alone import Alone
 from modules.Observer import WinObserver, MacObserver
 from modules.Logger import Logger
 from modules.Plotter import Plotter
+from modules.Displayer import Displayer
 
 def main():
     '''
@@ -53,6 +54,9 @@ def main():
     elif mode == "Plotter":
         plotter = Plotter()
         plotter.start()
+    elif mode == "Displayer":
+        displayer = Displayer()
+        displayer.start()
 
 
 if __name__ == "__main__":
