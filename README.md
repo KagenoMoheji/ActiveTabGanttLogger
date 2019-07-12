@@ -37,6 +37,7 @@
     - スリープ中である
     - 運悪く同じ秒のタイムスタンプが2連続してしまった(ごくまれかつ短時間なので除去しても気にしない？)
     - `ganttlogger`の監視が中断されて`Logging is sleeping. Will you exit?(Y/n) :`の入力待ちである
+        - スリープ中との区別は，`Shift + Ctrl(Command)`の入力による直前のキーボード打鍵数の増加かな？
 
 ## 課題点
 - [x] `active_tab.csv`における`TabText=""=None`をどう定義する…？
