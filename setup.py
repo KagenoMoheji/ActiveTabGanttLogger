@@ -15,6 +15,7 @@ import platform
 ・numpy
 ・psutill
 ・pynput (or pyautogui)
+(・pickle)
 ●for Windows10-64bit
 ・pypiwin32
 ・colorama
