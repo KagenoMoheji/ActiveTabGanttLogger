@@ -54,6 +54,7 @@ class MouseObserver:
             import traceback
             print("Thread loop exited by any problem!!!!")
             global_v.is_switched_to_exit = True
+            global_v.is_threadloop_error = True
             traceback.print_exc()
         # except KeyboardInterrupt:
         #     print("MouseObserver.py: KeyboardInterrupt")
@@ -139,6 +140,7 @@ class KeyboardObserver:
             import traceback
             print("Thread loop exited by any problem!!!!")
             global_v.is_switched_to_exit = True
+            global_v.is_threadloop_error = True
             traceback.print_exc()
     
     def run(self):

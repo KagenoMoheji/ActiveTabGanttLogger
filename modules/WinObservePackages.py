@@ -54,6 +54,7 @@ class ActiveTabObserver:
             import traceback
             print("Thread loop exited by any problem!!!!")
             global_v.is_switched_to_exit = True
+            global_v.is_threadloop_error = True
             traceback.print_exc()
         # except KeyboardInterrupt:
         #     print("ActiveTabObserver.py: KeyboardInterrupt")
