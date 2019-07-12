@@ -89,7 +89,7 @@ class WinObserver:
             self.executor.submit(self.ob_activetab.run)
             self.executor.submit(self.ob_mouse.run)
             self.executor.submit(self.ob_keyboard.run)
-            while not global_v.is_switched_to_exit:
+            while not global_v.is_sleeping:
                 time.sleep(1)
             is_confirmed_exiting = self.confirm_exiting()
             if is_confirmed_exiting:
@@ -99,7 +99,7 @@ class WinObserver:
             else:
                 print(self.strfmr.get_colored_console_log("yellow",
                     "Observer restarted."))
-                global_v.is_switched_to_exit = False
+                global_v.is_sleeping = False
         self.executor.shutdown()
 
     def confirm_exiting(self):
@@ -152,7 +152,7 @@ class MacObserver:
             self.executor.submit(self.ob_activetab.run)
             self.executor.submit(self.ob_mouse.run)
             self.executor.submit(self.ob_keyboard.run)
-            while not global_v.is_switched_to_exit:
+            while not global_v.is_sleeping:
                 time.sleep(1)
             is_confirmed_exiting = self.confirm_exiting()
             if is_confirmed_exiting:
@@ -162,7 +162,7 @@ class MacObserver:
             else:
                 print(self.strfmr.get_colored_console_log("yellow",
                     "Observer restarted."))
-                global_v.is_switched_to_exit = False
+                global_v.is_sleeping = False
         self.executor.shutdown()
 
     def confirm_exiting(self):

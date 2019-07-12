@@ -18,7 +18,7 @@ class ActiveTabObserver:
     def run(self):
         try:
             recent_active_tab_text = "START!"
-            while not global_v.is_switched_to_exit:
+            while not global_v.is_sleeping:
                 try:
                     fw = wg.GetForegroundWindow()
                     active_pid = wp.GetWindowThreadProcessId(fw)[-1]
@@ -53,7 +53,7 @@ class ActiveTabObserver:
             # If this thread stopped by rebooting from sleep, maybe...
             import traceback
             print("Thread loop exited by any problem!!!!")
-            global_v.is_switched_to_exit = True
+            global_v.is_sleeping = True
             global_v.is_threadloop_error = True
             traceback.print_exc()
         # except KeyboardInterrupt:

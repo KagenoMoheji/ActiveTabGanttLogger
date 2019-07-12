@@ -43,7 +43,7 @@ class Observer:
             self.executor.submit(self.ob_activetab.run)
             self.executor.submit(self.ob_mouse.run)
             self.executor.submit(self.ob_keyboard.run)
-            while not global_v.is_switched_to_exit:
+            while not global_v.is_sleeping:
                 time.sleep(1)
             if global_v.is_threadloop_error: # When "Thread loop exited by any problem!!!!" occured
                 self.executor.shutdown()
@@ -56,9 +56,9 @@ class Observer:
             else:
                 print(self.strfmr.get_colored_console_log("yellow",
                     "Observer restarted."))
-                global_v.is_switched_to_exit = False
+                global_v.is_sleeping = False
         self.executor.shutdown()
-        global_v.all_thread_exited = True
+        global_v.cli_exit = True
 
     def confirm_exiting(self):
         while True:

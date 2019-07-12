@@ -31,7 +31,7 @@ class MouseObserver:
             dif_x, dif_y = 0, 0
             recent_time = time.time()
             recent_x, recent_y = self.mouse_ctrl.position # pyautogui.position()
-            while not global_v.is_switched_to_exit:
+            while not global_v.is_sleeping:
                 try:
                     current_time = time.time()
                     x, y = self.mouse_ctrl.position # pyautogui.position()
@@ -53,7 +53,7 @@ class MouseObserver:
             # If this thread stopped by rebooting from sleep, maybe...
             import traceback
             print("Thread loop exited by any problem!!!!")
-            global_v.is_switched_to_exit = True
+            global_v.is_sleeping = True
             global_v.is_threadloop_error = True
             traceback.print_exc()
         # except KeyboardInterrupt:
@@ -112,7 +112,7 @@ class KeyboardObserver:
             self.current_4key.append(key)
         if (self.EXITCOMB_WIN == set(self.current_4key)) or (self.EXITCOMB_MAC == set(self.current_4key)):
             # Here, switch a flag to exit children threads
-            global_v.is_switched_to_exit = True
+            global_v.is_sleeping = True
             # Delete all text in terminal(Flush stdin buffer?)
             # ??????????????????????????????????????????
             return False
@@ -122,7 +122,7 @@ class KeyboardObserver:
     
     def get_key_second(self):
         try:
-            while not global_v.is_switched_to_exit:
+            while not global_v.is_sleeping:
                 self.data_process(datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), self.sec_sum_keyboard_cnt)
                 # print("Keyboard[{datetime}]: {cnt}".format(datetime=datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), cnt=self.sec_sum_keyboard_cnt))
                 print("""\
@@ -139,7 +139,7 @@ class KeyboardObserver:
             # If this thread stopped by rebooting from sleep, maybe...
             import traceback
             print("Thread loop exited by any problem!!!!")
-            global_v.is_switched_to_exit = True
+            global_v.is_sleeping = True
             global_v.is_threadloop_error = True
             traceback.print_exc()
     
