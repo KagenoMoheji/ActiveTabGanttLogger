@@ -332,7 +332,7 @@ class Plotter:
             # print(self.df_active_tab[k])
             ax1.broken_barh(self.df_active_tab[k], (5 + i * 10, 5), facecolor="red")
         plt.tick_params(axis="x", labelsize=7, rotation=270) # rotation=25
-        plt.subplots_adjust(top=0.85, bottom=0.15, hspace=0) # left=0.3, right=0.9
+        plt.subplots_adjust(top=0.85, bottom=0.15, right=0.95, hspace=0) # left=0.3, right=0.9
         plt.title("SwitchActiveTab(interval: {}s)".format(self.sec_interval))
         ax1.xaxis.tick_top() # 横軸をグラフの上に設置
         ax1.grid(axis="y") # 縦軸のグリッド線を引く
