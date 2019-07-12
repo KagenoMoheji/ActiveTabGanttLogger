@@ -238,6 +238,11 @@ class Plotter:
 
     def run(self): # plot(self)
         '''
+        ●We must execute four functions in the following order.
+        (1)self.get_activetab()
+        (2)self.get_mouse() or self.get_keyboard()
+        (3)self.more_reshape_activetab()
+
         References:
             http://pineplanter.moo.jp/non-it-salaryman/2018/03/23/python-2axis-graph/
             https://qiita.com/supersaiakujin/items/e2ee4019adefce08e381
@@ -247,24 +252,24 @@ class Plotter:
         self.get_activetab()
         self.get_mouse()
         self.get_keyboard()
-        print("""
-=================================================
-----------------[plot_active_tab]----------------
-{t}
-----------------[mouse]----------------
-{m}
-----------------[keyboard]----------------
-{k}
-""".format(t=self.plot_active_tab, m=self.plot_mouse, k=self.plot_keyboard))
-        # By force. It can't be hepled. Give me the better code.
+#         print("""
+# =================================================
+# ----------------[plot_active_tab]----------------
+# {t}
+# ----------------[mouse]----------------
+# {m}
+# ----------------[keyboard]----------------
+# {k}
+# """.format(t=self.plot_active_tab, m=self.plot_mouse, k=self.plot_keyboard))
+#         # By force. It can't be hepled. Give me the better code.
         self.more_reshape_activetab()
-        print("""
-----------------[plot_active_tab (after appending FinishTime)]----------------
-{t}
-----------------[df_plot_active_tab]----------------
-{df}
-=================================================
-""".format(t=self.plot_active_tab, df=self.df_active_tab))
+#         print("""
+# ----------------[plot_active_tab (after appending FinishTime)]----------------
+# {t}
+# ----------------[df_plot_active_tab]----------------
+# {df}
+# =================================================
+# """.format(t=self.plot_active_tab, df=self.df_active_tab))
 
         '''
         こっから下は横方向の棒グラフの描写をしていく．matplotlib.dates.DateFormatter()やmatplotlib.dates.date2num()とかを使う．
@@ -286,10 +291,15 @@ class Plotter:
             https://qiita.com/canard0328/items/a859bffc9c9e11368f37
             http://bicycle1885.hatenablog.com/entry/2014/02/14/023734 (sharexによるx軸の共有がax1とax2の一致に使えるのでは？)
             http://ailaby.com/subplots_adjust/#id1
+            http://nok0714.hatenablog.com/entry/2017/04/13/140525
+            http://kuroneko0208.hatenablog.com/entry/2014/07/28/161453
+            http://pineplanter.moo.jp/non-it-salaryman/2018/03/23/python-2axis-graph/
+            https://qiita.com/supersaiakujin/items/e2ee4019adefce08e381
         '''
         fig = plt.figure(figsize=(15, 9))
+
+        # Create upper graph(ganttchart)
         ax1 = fig.add_subplot(2, 1, 1)
-        
         # ログの開始時刻から終了時刻までのself.sec_interval刻み？
         # dates = []
         # t = self.plot_active_tab[0][0]
@@ -328,9 +338,22 @@ class Plotter:
         ax1.grid(axis="y") # 縦軸のグリッド線を引く
         
 
-        ax2 = fig.add_subplot(2, 1, 2, sharex=ax1)
-        plt.tick_params(axis="x", labelsize=7, rotation=270)
+        # Create lower graph(line or bar graph)
+        # ax2_1:mouse, ax2_2:keyboard
+        ax2_1 = fig.add_subplot(2, 1, 2) # , sharex=ax1
+        ax2_2 = ax2_1.twinx()
+        ax2_1.set_xlim(init, last)
+        ax2_1.plot(self.plot_mouse[:, 0], self.plot_mouse[:, 1], color="orange", label="mouse-distance")
+        ax2_2.plot(self.plot_keyboard[:, 0], self.plot_keyboard[:, 1], color="skyblue", label="keyboard-count")
+        ax2_1.legend(bbox_to_anchor=(0.6, -0.1), loc='upper left', borderaxespad=0.5, fontsize=10)
+        ax2_2.legend(bbox_to_anchor=(0.8, -0.1), loc='upper left', borderaxespad=0.5, fontsize=10)
+        plt.xlabel("t")
+        ax2_1.set_ylabel("Mouse Distance[/interval]")
+        ax2_2.set_ylabel("Keyboard Count[/interval]")
+        ax2_2.grid(axis="y")
+        # plt.tick_params(axis="x", labelsize=7, rotation=270)
 
+        # Save and Show
         plt.savefig("{dirname}/graphs/output_all_{datetime}".format(
             dirname=self.dirname,
             datetime=datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -348,12 +371,16 @@ class Plotter:
         ●self.select_dataに従って，get_activetab，get_mouse，get_keyboardのいずれかを実行して各々の独立ファイルを出力．
         ●各出力ファイル名に日時を追加する．
         
-        ●We must implement get_activetab() ahead.
+        ●We must execute four functions in the following order.
+        (1)self.get_activetab()
+        (2)self.get_mouse() or self.get_keyboard()
+        (3)self.more_reshape_activetab()
         '''
         print("Run, Plotter-Each!")
         self.get_activetab()
         self.get_mouse()
         self.get_keyboard()
+        self.more_reshape_activetab()
 
         # if active_tabの出力が選択されていたら～
         # if mouseの出力が選択されていたら～
