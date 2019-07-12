@@ -5,6 +5,10 @@ Variables work for managing a flag whether observers's threads should exit.
 '''
 # Whether pause children threads?
 is_switched_to_exit = False
+# Whether thread-loop exit because of error catch?
+is_threadloop_error = False
+# Whether threads 'Observer' and 'Logger' exited?
+all_thread_exited = False
 
 
 '''

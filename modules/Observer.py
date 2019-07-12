@@ -45,9 +45,9 @@ class Observer:
             self.executor.submit(self.ob_keyboard.run)
             while not global_v.is_switched_to_exit:
                 time.sleep(1)
-            # if global_v.is_threadloop_error: # When "Thread loop exited by any problem!!!!" occured
-            #     self.executor.shutdown()
-            #     exit()
+            if global_v.is_threadloop_error: # When "Thread loop exited by any problem!!!!" occured
+                self.executor.shutdown()
+                exit()
             is_confirmed_exiting = self.confirm_exiting()
             if is_confirmed_exiting:
                 print(self.strfmr.get_colored_console_log("yellow",
@@ -58,6 +58,7 @@ class Observer:
                     "Observer restarted."))
                 global_v.is_switched_to_exit = False
         self.executor.shutdown()
+        global_v.all_thread_exited = True
 
     def confirm_exiting(self):
         while True:
