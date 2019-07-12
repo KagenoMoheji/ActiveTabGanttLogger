@@ -6,7 +6,6 @@ import os
 import re
 import datetime
 import numpy as np
-# import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as pld
 import matplotlib.font_manager as plf
@@ -297,6 +296,9 @@ class Plotter:
             https://qiita.com/supersaiakujin/items/e2ee4019adefce08e381
         '''
         fig = plt.figure(figsize=(15, 9))
+        # Get range of x axis
+        init = self.plot_active_tab[0][0] # pld.date2num(self.plot_active_tab[0][0])
+        last = self.plot_active_tab[len(self.plot_active_tab)-1][0] # pld.date2num(self.plot_active_tab[len(self.plot_active_tab)-1][0])
 
         # Create upper graph(ganttchart)
         ax1 = fig.add_subplot(2, 1, 1)
@@ -317,9 +319,6 @@ class Plotter:
         if last_t != dates[len(dates) - 1]:
             dates.append(last_t)
         # datenums = pld.date2num(dates)
-
-        init = self.plot_active_tab[0][0] # pld.date2num(self.plot_active_tab[0][0])
-        last = self.plot_active_tab[len(self.plot_active_tab)-1][0] # pld.date2num(self.plot_active_tab[len(self.plot_active_tab)-1][0])
         ax1.set_xlim(init, last) # Important for plotting ganttchart by seconds!
         ax1.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
         ax1.set_xticks(dates) # ax1.set_xticks(datenums)
@@ -358,7 +357,7 @@ class Plotter:
             dirname=self.dirname,
             datetime=datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         ))
-        plt.show()
+        # plt.show()
 
 
 
