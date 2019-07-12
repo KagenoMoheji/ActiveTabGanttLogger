@@ -33,6 +33,8 @@ class Alone:
         if global_v.is_threadloop_error: # When "Thread loop exited by any problem!!!!" occured
             exit()
 
+        while not global_v.finish_logging:
+            time.sleep(1)
         if self.withplot:
             plotter = Plotter(self.uuid)
             plotter.run()

@@ -9,6 +9,8 @@ is_sleeping = False
 is_threadloop_error = False
 # Whether threads 'Observer' and 'Logger' exited?
 cli_exit = False
+# Whether all logging has finished?
+finish_logging = False
 
 
 '''

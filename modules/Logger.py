@@ -91,7 +91,8 @@ Target User:
                         )
                         fk.write(log)
                 if is_all_empty and global_v.cli_exit:
-                    # This is a signal that all logging finished and CLI will exit 
+                    # This is a signal that all logging finished and CLI will exit
+                    global_v.finish_logging = True
                     print(self.strfmr.get_colored_console_log("yellow",
                         "Logging all finished")) # maybe...
                     break
