@@ -37,6 +37,9 @@ Target User:
 """.format(uuid=uuid, startdate=startdate)
             f.write(text)
 
+    # def start(self):
+    #     pass
+
     def run_logger(self):
         # receive_json()とoutput()のスレッド展開
         print("Hello, Logger!")
@@ -87,12 +90,12 @@ Target User:
                             cnt=data["count"]
                         )
                         fk.write(log)
-                if is_all_empty and global_v.is_switched_to_exit:
+                if is_all_empty and global_v.cli_exit:
                     # This is a signal that all logging finished and CLI will exit 
                     print(self.strfmr.get_colored_console_log("yellow",
                         "Logging all finished")) # maybe...
                     break
-                elif is_all_empty:
+                if is_all_empty and (not global_v.is_sleeping):
                     # This is a signal that logging is finishing
                     print(self.strfmr.get_colored_console_log("yellow",
                         "All queue are empty"))
