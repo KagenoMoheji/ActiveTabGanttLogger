@@ -32,7 +32,7 @@ class InitProcess:
         mode = self.argparser.identify_mode()
         if mode == "Plotter":
             uuid = "None"
-        elif (mode == "Alone") or (mode == "Observer"):
+        elif (mode == "Alone") or (mode == "Observer") or (mode=="AloneWithPlot"):
             uuid = self.generate_uuid()
         elif mode == "Logger":
             uuid = self.argparser.uuid
@@ -109,7 +109,7 @@ class ArgsParser:
             https://stackoverflow.com/a/3853776
         '''
         self.strfmr = StrFormatter()
-        usage = "ganttlogger [--observer] [--logger] [--uuid <UUID>] [--help] [--plotter]"
+        usage = "ganttlogger [--observer] [--logger] [--uuid <UUID>] [--help] [--plotter] [--withplot]"
         self.parser = ArgumentParser(
             prog="ganttlogger",
             description="""\
@@ -142,6 +142,11 @@ and Plotting graphs (active-tab=ganttchart, mouse=line, keyboard=bar).
             action="store_true",
             help="Use this option if you want other outputs by a log in the current directory after getting one and a graph."
         )
+        self.parser.add_argument(
+            "--withplot",
+            action="store_true",
+            help="Use this option when you want to get a graph after running 'Alone'."
+        )
         self.args = self.parser.parse_args()
 
     def identify_mode(self):
@@ -171,6 +176,9 @@ and Plotting graphs (active-tab=ganttchart, mouse=line, keyboard=bar).
                 print(self.strfmr.get_colored_console_log("red",
                     "Error: You may need '--logger'."))
                 exit()
-            mode = "Alone"
+            if self.args.withplot:
+                mode = "AloneWithPlot"
+            else:
+                mode = "Alone"
         
         return mode

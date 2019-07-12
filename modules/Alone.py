@@ -1,31 +1,40 @@
 import threading
+import time
 from modules.Public import StrFormatter
+import modules.Global as global_v
 from modules.Observer import WinObserver, MacObserver
 from modules.Logger import Logger
 from modules.Plotter import Plotter
 
 class Alone:
+    uuid = ""
     observer = None
     logger = None
-    plotter = None
     strfmr = None
-    def __init__(self, os, uuid):
+    withplot = False
+    def __init__(self, os, uuid, withplot=False):
+        self.uuid = uuid
         if os == "w":
-            self.observer = WinObserver(uuid=uuid, is_alone=True)
+            self.observer = WinObserver(uuid=self.uuid, is_alone=True)
         elif os == "d":
-            self.observer = MacObserver(uuid=uuid, is_alone=True)
-        self.logger = Logger(uuid=uuid)
-        self.plotter = Plotter(uuid)
+            self.observer = MacObserver(uuid=self.uuid, is_alone=True)
+        self.logger = Logger(uuid=self.uuid)
         self.strfmr = StrFormatter()
+        self.withplot = withplot
     
     def run(self):
         th_observer = threading.Thread(target=self.observer.run)
         th_logger = threading.Thread(target=self.logger.output)
         th_observer.start()
         th_logger.start()
-        # while True:
-        #     if global_v.is_switched_to_exit: # ほんまにこれか？もう1個ログ書き出し終了後であるというフラグ作ったほうが良くないか？
-        #         self.plotter.run()
-        #     sleep(5)
+        while not global_v.is_switched_to_exit:
+            time.sleep(1)
+        if global_v.is_threadloop_error: # When "Thread loop exited by any problem!!!!" occured
+            exit()
+        while not global_v.all_thread_exited:
+            time.sleep(1)
+        if self.withplot:
+            plotter = Plotter(self.uuid)
+            plotter.run()
 
 

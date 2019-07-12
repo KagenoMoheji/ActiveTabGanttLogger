@@ -34,15 +34,20 @@ def main():
     if mode == "Alone":
         alone = Alone(os, uuid)
         alone.run()
+    elif mode == "AloneWithPlot":
+        alone = Alone(os, uuid, withplot=True)
+        alone.run()
     elif mode == "Observer":
-        if os == "w":
-            observer = WinObserver(uuid=uuid, is_alone=False)
-        elif os == "d":
-            observer = MacObserver(uuid=uuid, is_alone=False)
-        observer.start()
+        print("We can't execute Observer because it hasn't been implemented.")
+        # if os == "w":
+        #     observer = WinObserver(uuid=uuid, is_alone=False)
+        # elif os == "d":
+        #     observer = MacObserver(uuid=uuid, is_alone=False)
+        # observer.start()
     elif mode == "Logger":
-        logger = Logger(uuid)
-        plotter = Plotter(uuid)
+        print("We can't execute Logger because it hasn't been implemented.")
+        # logger = Logger(uuid)
+        # plotter = Plotter(uuid)
         # logger.run_logger()
         # plotter.run()
     elif mode == "Plotter":
