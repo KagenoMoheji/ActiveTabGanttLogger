@@ -87,6 +87,7 @@ class Plotter:
             self.uuid = uuid
             self.dirname = "ganttlogger_logs/{}".format(uuid)
         else:
+            # Get current directory
             self.dirname = os.getcwd()
         os.makedirs(os.path.dirname("{dirname}/graphs/".format(dirname=self.dirname)), exist_ok=True)
         self.sec_interval = 1
@@ -323,7 +324,7 @@ class Plotter:
             dates.append(last_t)
         # datenums = pld.date2num(dates)
         ax1.set_xticks(dates) # ax1.set_xticks(datenums)
-        fp = plf.FontProperties(fname="{}/font/ipaexg.ttf".format(os.path.dirname(__file__)), size=8)
+        fp = plf.FontProperties(fname="{}/../config/font/ipaexg.ttf".format(os.path.dirname(__file__)), size=8)
         y = [7.5 + i * 10 for i in range(len(self.df_active_tab.keys()))]
         y.append(y[len(y) - 1] + 10)
         ax1.set_yticks(y)
@@ -406,7 +407,7 @@ class Plotter:
                 dates.append(last_t)
             # datenums = pld.date2num(dates)
             ax.set_xticks(dates) # ax.set_xticks(datenums)
-            fp = plf.FontProperties(fname="{}/font/ipaexg.ttf".format(os.path.dirname(__file__)), size=8)
+            fp = plf.FontProperties(fname="{}/../config/font/ipaexg.ttf".format(os.path.dirname(__file__)), size=8)
             y = [7.5 + i * 10 for i in range(len(self.df_active_tab.keys()))]
             y.append(y[len(y) - 1] + 10)
             ax.set_yticks(y)
