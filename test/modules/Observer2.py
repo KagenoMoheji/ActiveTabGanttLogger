@@ -14,6 +14,7 @@ References:
     https://qiita.com/tag1216/items/db5adcf1ddcb67cfefc8
     https://minus9d.hatenablog.com/entry/2017/10/26/231241
 '''
+import sys
 import time
 from datetime import datetime
 # import numpy as np
@@ -42,11 +43,11 @@ class Observer:
         st_input = input().strip()
         if st_input == "n":
             print("GanttLogger closed")
-            exit()
+            sys.exit()
         if st_input != "Y":
             print(self.strfmr.get_colored_console_log("red",
                 "Error: Invalid input. Input 'Y'(=yes) or 'n'(=no)."))
-            exit()
+            sys.exit()
         self.observer.run() # self.run()
 
     def run(self):

@@ -1,3 +1,4 @@
+import sys
 import pickle
 import matplotlib.pyplot as plt
 from modules.Public import StrFormatter
@@ -35,4 +36,4 @@ class Displayer:
         except FileNotFoundError:
             print(self.strfmr.get_colored_console_log("red",
                 "Error: File not found."))
-            exit()
+            sys.exit()

@@ -1,3 +1,4 @@
+import sys
 import platform
 import time
 # import pyautogui
@@ -80,7 +81,7 @@ if __name__ == "__main__":
             th2.start()
         except KeyboardInterrupt:
             print("Exit")
-            exit()
+            sys.exit()
         finally:
             print("Finally")
             th1.stop()
@@ -94,7 +95,7 @@ if __name__ == "__main__":
             th2.start()
         except KeyboardInterrupt:
             print("Exit")
-            exit()
+            sys.exit()
         finally:
             print("Finally")
             th1.stop()

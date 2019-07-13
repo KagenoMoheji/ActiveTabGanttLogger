@@ -1,3 +1,4 @@
+import sys
 import time
 from datetime import datetime
 # import numpy as np
@@ -31,11 +32,11 @@ class Observer:
         st_input = input().strip()
         if st_input == "n":
             print("GanttLogger closed")
-            exit()
+            sys.exit()
         if st_input != "Y":
             print(self.strfmr.get_colored_console_log("red",
                 "Error: Invalid input. Input 'Y'(=yes) or 'n'(=no)."))
-            exit()
+            sys.exit()
         self.run()
 
     def run(self):
@@ -47,7 +48,7 @@ class Observer:
                 time.sleep(1)
             if global_v.is_threadloop_error: # When "Thread loop exited by any problem!!!!" occured
                 self.executor.shutdown()
-                exit()
+                sys.exit()
             is_confirmed_exiting = self.confirm_exiting()
             if is_confirmed_exiting:
                 print(self.strfmr.get_colored_console_log("yellow",

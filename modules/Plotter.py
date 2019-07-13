@@ -3,6 +3,7 @@
 ・ファイル名にタイムスタンプつけとく
 '''
 import os
+import sys
 import re
 import datetime
 import pickle
@@ -229,7 +230,7 @@ class Plotter:
                 self.run_each()
         except KeyboardInterrupt:
             print("Exit")
-            exit()
+            sys.exit()
 
     def index_safety(self, l, target):
         try:
@@ -495,7 +496,7 @@ class Plotter:
                     if len(splitted_column) != 3:
                         print(self.strfmr.get_colored_console_log("red",
                             "Error: Invalid count of separating by ',' in 'active_tab.csv'"))
-                        exit()
+                        sys.exit()
                     if not splitted_column[2]:
                         splitted_column[2] = None # If np.nan, its type will change str, so set None
                     # Here, change type of timestamp(str -> datetime.datetime)
@@ -533,7 +534,7 @@ class Plotter:
         except FileNotFoundError:
             print(self.strfmr.get_colored_console_log("red",
                 "Error: 'active_tab.csv' not found."))
-            exit()
+            sys.exit()
     
     def more_reshape_activetab(self):
         '''
@@ -641,7 +642,7 @@ class Plotter:
                     if len(splitted_column) != 2:
                         print(self.strfmr.get_colored_console_log("red",
                             "Error: Invalid count of separating by ',' in 'mouse.csv'"))
-                        exit()
+                        sys.exit()
                     # Digit check (If error, catch ValueError)
                     splitted_column[1] = float(splitted_column[1])
                     # Here, don't change type of timestamp(str)
@@ -672,7 +673,7 @@ class Plotter:
                 str_current_time = current_time.strftime("%Y/%m/%d %H:%M:%S")
                 if str_current_time in raw_data[raw_i][0]:
                     new_raw_data.append([current_time, raw_data[raw_i][1]])
-                    if str_current_time in raw_data[raw_i + 1][0]:
+                    if str_current_time in raw_data[raw_i+1][0]:
                         # Rarely, the same seconds duplicates in consecutive two timestamps
                         # print("Duplicated!!!: " + str_current_time)
                         new_raw_data[len(new_raw_data)-1][1] += raw_data[raw_i+1][1]
@@ -742,11 +743,11 @@ class Plotter:
         except FileNotFoundError:
             print(self.strfmr.get_colored_console_log("red",
                 "Error: 'mouse.csv' not found."))
-            exit()
+            sys.exit()
         except ValueError:
             print(self.strfmr.get_colored_console_log("red",
                 "Error: Invalid record in 'mouse.csv'."))
-            exit()
+            sys.exit()
 
     def get_keyboard(self):
         '''
@@ -777,7 +778,7 @@ class Plotter:
                     if len(splitted_column) != 2:
                         print(self.strfmr.get_colored_console_log("red",
                             "Error: Invalid count of separating by ',' in 'keyboard.csv'"))
-                        exit()
+                        sys.exit()
                     # Digit check (If error, catch ValueError)
                     splitted_column[1] = int(splitted_column[1])
                     # Here, don't change type of timestamp(str)
@@ -878,9 +879,9 @@ class Plotter:
         except FileNotFoundError:
             print(self.strfmr.get_colored_console_log("red",
                 "Error: 'keyboard.csv' not found."))
-            exit()
+            sys.exit()
         except ValueError:
             print(self.strfmr.get_colored_console_log("red",
                 "Error: Invalid record in 'keyboard.csv'."))
-            exit()
+            sys.exit()
     

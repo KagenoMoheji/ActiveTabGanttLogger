@@ -1,3 +1,4 @@
+import sys
 import platform
 import uuid
 from argparse import ArgumentParser, RawTextHelpFormatter
@@ -39,7 +40,7 @@ class InitProcess:
         else:
             print(self.strfmr.get_colored_console_log("red",
                 "Error: Invalid variable in mode of InitProcess.py"))
-            exit()
+            sys.exit()
 
         print("OS: {}".format(os))
         print("mode: {}".format(mode))
@@ -74,7 +75,7 @@ class InitProcess:
         else:
             print(self.strfmr.get_colored_console_log("red",
                 "Error: This can work on 'Windows' or 'MacOS'"))
-            exit()
+            sys.exit()
 
     def generate_uuid(self):
         '''
@@ -171,7 +172,7 @@ and Plotting graphs (active-tab=ganttchart, mouse=line, keyboard=bar).
             if not self.args.uuid:
                 print(self.strfmr.get_colored_console_log("red",
                     "Error: Logger missing an option '--uuid <UUID>'."))
-                exit()
+                sys.exit()
             mode = "Logger"
             self.uuid = self.args.uuid
         elif self.args.plotter:
@@ -182,7 +183,7 @@ and Plotting graphs (active-tab=ganttchart, mouse=line, keyboard=bar).
             if self.args.uuid:
                 print(self.strfmr.get_colored_console_log("red",
                     "Error: You may need '--logger'."))
-                exit()
+                sys.exit()
             if self.args.withplot:
                 mode = "AloneWithPlot"
             else:

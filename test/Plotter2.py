@@ -3,6 +3,7 @@
 ・ファイル名にタイムスタンプつけとく
 '''
 import os
+import sys
 import re
 import numpy as np
 import matplotlib.pyplot as plt
@@ -153,7 +154,7 @@ class Plotter:
                 self.run_each()
         except KeyboardInterrupt:
             print("Exit")
-            exit()
+            sys.exit()
 
     def run(self): # plot(self)
         '''

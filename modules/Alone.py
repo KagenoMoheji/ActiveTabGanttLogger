@@ -1,3 +1,4 @@
+import sys
 import threading
 import time
 from modules.Public import StrFormatter
@@ -31,7 +32,7 @@ class Alone:
         while not global_v.cli_exit:
             time.sleep(1)
         if global_v.is_threadloop_error: # When "Thread loop exited by any problem!!!!" occured
-            exit()
+            sys.exit()
 
         while not global_v.finish_logging:
             time.sleep(1)

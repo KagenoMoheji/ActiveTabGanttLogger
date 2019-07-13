@@ -1,3 +1,4 @@
+import sys
 import threading
 # import concurrent.futures as confu
 import platform
@@ -48,6 +49,6 @@ class StrFormatter:
         '''
         if not color in self.terminalColors:
             print("{0}Error: Invalid in Arg 'color'.\nYou can select from 'yellow' or 'red'.{1}".format(self.terminalColors["red"], self.terminalColors["clear"]))
-            exit()
+            sys.exit()
         return "{0}{1}{2}".format(self.terminalColors[color], message, self.terminalColors["clear"])
 
