@@ -12,7 +12,7 @@ import platform
 ●for both
 ・matplotlib
 ・numpy
-・psutill
+・psutil
 ・pynput (or pyautogui)
 (・pickle) (standard module?)
 ●for Windows10-64bit
@@ -39,11 +39,12 @@ elif "Darwin" in os:
 setup(
     name="ganttlogger",
     version="0.0",
-    # description="",
+    description="This CLI will monitor(active-tab, mouse, keyboard), log, and generate graphs.",
     install_requires=install_requires,
     entry_points={
         "console_scripts": [
             "ganttlogger = app:main"
         ]
-    }
+    },
+    author="KagenoMoheji"
 )
