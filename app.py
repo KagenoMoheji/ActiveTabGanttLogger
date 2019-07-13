@@ -10,6 +10,21 @@ Or, if you have installed this CLI, start from (4).
 `pipenv run python -m pip install -e .` or `pipenv run pip3 install -e .`
 (4)Run CLI.
 `pipenv run ganttlogger`
+
+[How to create exe]
+> pipenv run pyinstaller -y --add-data "C:/Users/reegg/git/ActiveTabGanttLogger/modules/font/ipaexg.ttf";"config/ipaexg.ttf" -n ganttlogger --hidden-import matplotlib --hidden-import numpy --hidden-import psutil --hidden-import pynput --hidden-import pypiwin32 --hidden-import colorama --hidden-import pyobjc --hidden-import pyobjc-framework-Quartz  "C:/Users/reegg/git/ActiveTabGanttLogger/app.py"
+
+上のコマンドでは合ってる気がしないので，
+> pipenv install auto-py-to-exe
+> pipenv run auto-py-to-exe
+をしてアプリケーションを起動して，
+●Script Location  : app.pyを選択
+●Onefile          : One Directoryを選択
+(●Additional Files : ipaexg.ttfを追加)
+●Advanced
+・Output Directory: distフォルダを選択
+・-n              : ganttlogger
+・--hidden-import : matplotlib,numpy,psutil,pynput,pypiwin32,colorama,pyobjc,pyobjc-framework-Quartz
 '''
 
 from modules.InitProcess import InitProcess
@@ -67,29 +82,12 @@ if __name__ == "__main__":
     ●start()は標準入力や注意書きをターミナルに表示させるとかの直前の処理をしてからrun()する関数，run()はそのままrun()する．
 
     [メモ]
-    ●アクティブタブのステータスバーのテキストの照合によってアクティブタブ遷移を検出
-    しているが、Chrome以外はそのテキストは参考のため(ログには書く)で、グラフプロット時は
-    実行ファイル名で統合してプロットする。
-    ●実際にobserverするとき，長時間稼働して配列(numpy)に格納するデータ数膨大に
-    なるから，一定時間(5-10m)経った時にそれまでの配列を別スレッド立ててファイル
-    書き出ししつつ元の配列の変数を初期化して再利用する並列処理した方がええのかな．
-
-    ●「デルタt間」のマウス移動ピクセル数・キーボード打鍵数はどう取得したものかな…
-    →アクティブタブに対して操作しているかは考えず，普通にマウス移動・キーボード打鍵
-    の検出をしていく？
-    まぁ最前面に表示するソフトを使うとかの悪者出てきそうだけど無い前提で研究すればいいか．
-    →開始時刻をあらかじめ変数に格納してデルタt経ったらマウス移動・キーボード打鍵の
-    総和を格納する変数を初期化？
-    →そもそもデルタt＝1sとか短めに設定しておいて(最低デルタtにして)データ取得して，
-    プロット時に最低デルタt以上の指定で自由な間隔調整ができるようにする？
-
     ●拡張ディスプレイ・仮想デスクトップでもアクティブタブは認識できてる？
     ・仮想デスクトップだと，デスクトップ別のアクティブタブが選択される状態になる．
     →そこまで気にすることないか？
     →短時間でタブ切り替えされたアプリケーションは，使われないものとして除去するのもアリ
     →ガントチャートプロット時に1sより短かったら切り捨てるとか？
     ・拡張ディスプレイでやってもアクティブタブの単一検出はできた。
-    ・拡張ディスプレイで，タイマー(ブラウザ)を映すことやってみるか。休憩時刻確認の時に。
     '''
     main()
 
