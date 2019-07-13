@@ -10,12 +10,11 @@ import platform
 '''
 [About 'install_requires']
 ●for both
-(・plotly) (seems better than matplotlib about ganttchart)
 ・matplotlib
 ・numpy
 ・psutill
 ・pynput (or pyautogui)
-(・pickle)
+(・pickle) (standard module?)
 ●for Windows10-64bit
 ・pypiwin32
 ・colorama
