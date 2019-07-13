@@ -61,8 +61,9 @@
     - [x] `matplotlib`か？`plotly`か？
         - `plotly.figure_factory.create_gantt`では，秒単位・サブプロットの描写ができない．
         - `matplotlib`で頑張ってみる
-- [ ] Pythonの`exit()`と`sys.exit()`と`os._exit()`
-    - 違いがわからんのでとりあえず全て`exit()`にしてる
+    - [x] Pythonの`exit()`と`sys.exit()`と`os._exit()`
+        - [Python の exit(), sys.exit(), os._exit() の違い](http://uchanote.blogspot.com/2015/01/python-exit-sysexit-osexit.html)
+        - メインスレッドを止められればいいので，`sys.exit()`にした
 - Chrome(ブラウザ)のタブ遷移の検出について
     - [ ] タブ遷移の検出にはページタイトルの相違によって行われている
         - もしページタイトルが全部同じWebサイトだったら遷移を検出できない可能性
@@ -81,3 +82,5 @@
 - [ ] 文字を消しているときのBack Space**長押し**の検出ができない．
     - これは今はやらず，そのうち実装しよう
     - pynputモジュールの`on_press`と`on_release`間の時間の取得になるだろうな．
+    - もしくは，マウスクリック期間・キーボードプレス期間というガントチャートを新たに追加するとか．
+        - ガントチャートの短形内にクリックされているキー名を表示…できるのか？できたら理想的
