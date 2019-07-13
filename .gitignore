@@ -6,3 +6,4 @@ ganttlogger.egg-info
 env.json
 ganttlogger_logs
 .DS_Store
+dist
