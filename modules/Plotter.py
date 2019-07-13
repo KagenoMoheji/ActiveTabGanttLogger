@@ -193,15 +193,16 @@ class Plotter:
                     print(self.strfmr.get_colored_console_log("red",
                             "Error: Invalid input."))
             if plot_types_flags["select_data"]:
+                select_data_labels = set(["active_tab", "mouse", "keyboard", "mouse-keyboard"])
                 print(self.strfmr.get_colored_console_log("yellow",
                     "-----------------[select_data]-----------------"))
+                print("There are a required setting.")
                 while True:
                     print(self.strfmr.get_colored_console_log("yellow",
                         "Select 'all' or list separated by ',' with some csv file names like 'active_tab'.: "), end="")
-                    print("There are a required setting.")
                     input_select_data = list(map(lambda s: s.strip(), (input().strip()).split(",")))
                     if not input_select_data[0]:
-                        # No need to update self.select_data
+                        # If empty input, no need to update self.select_data (keep "all")
                         break
                     elif "all" in input_select_data: 
                         if len(input_select_data) == 1:
@@ -212,7 +213,6 @@ class Plotter:
                                 "Error: Too many select despite 'all'."))
                             continue
                     else:
-                        select_data_labels = set(["active_tab", "mouse", "keyboard"])
                         xor_select_data = set(input_select_data) ^ select_data_labels
                         if len(xor_select_data) == 0 or \
                             all(x in select_data_labels for x in xor_select_data):
@@ -220,7 +220,7 @@ class Plotter:
                             break
                         else:
                             print(self.strfmr.get_colored_console_log("red",
-                                "Error: There are some Invalid names of csv files."))
+                                "Error: There are some invalid names of csv files."))
 
             if self.select_data[0] == "all":
                 self.run()
@@ -315,12 +315,11 @@ class Plotter:
         #     t += datetime.timedelta(seconds=self.sec_interval)
         # # print(last_t.second - dates[len(dates) - 1].second)
         # # print(dates[len(dates) - 1].second - last_t.second)
-        # if last_t.second - dates[len(dates) - 1].second > 0:
-        #     dates.append(last_t)
         # それともactivetabの開始時刻(と最終時刻)のみ？
         dates = [t for t in self.plot_active_tab[:-1, 0]]
         last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
-        if last_t != dates[len(dates) - 1]:
+        # 最後の日時を追加
+        if (last_t - dates[len(dates) - 1]).total_seconds() > 0:
             dates.append(last_t)
         # datenums = pld.date2num(dates)
         ax1.set_xticks(dates) # ax1.set_xticks(datenums)
@@ -356,13 +355,10 @@ class Plotter:
 
         # Save and Show
         filetime = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        with open("{dirname}/graphs/output_all_{datetime}.pkl".format(dirname=self.dirname, datetime=filetime), "wb") as f:
+        with open("{dirname}/graphs/output_{datetime}_all.pkl".format(dirname=self.dirname, datetime=filetime), "wb") as f:
             pickle.dump(fig, f)
-        plt.savefig("{dirname}/graphs/output_all_{datetime}".format(dirname=self.dirname, datetime=filetime))
+        plt.savefig("{dirname}/graphs/output_{datetime}_all".format(dirname=self.dirname, datetime=filetime))
         # plt.show()
-
-
-
 
 
     def run_each(self): # plot_each(self)
@@ -383,9 +379,98 @@ class Plotter:
         self.get_keyboard()
         self.more_reshape_activetab()
 
-        # if active_tabの出力が選択されていたら～
-        # if mouseの出力が選択されていたら～
-        # if keyboardの出力が選択されていたら～
+        filetime = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        init = self.plot_active_tab[0][0] # pld.date2num(self.plot_active_tab[0][0])
+        last = self.plot_active_tab[len(self.plot_active_tab)-1][0] # pld.date2num(self.plot_active_tab[len(self.plot_active_tab)-1][0])
+        
+        # if active_tabの出力が選択されていたら
+        if "active_tab" in self.select_data:
+            fig = plt.figure(figsize=(15,6))
+            ax = fig.add_subplot(1, 1, 1)
+            ax.set_xlim(init, last)
+            ax.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
+            # ログの開始時刻から終了時刻までのself.sec_interval刻み？
+            # dates = []
+            # t = self.plot_active_tab[0][0]
+            # last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
+            # while (last_t - t).total_seconds() >= 0:
+            #     dates.append(t)
+            #     t += datetime.timedelta(seconds=self.sec_interval)
+            # # print(last_t.second - dates[len(dates) - 1].second)
+            # # print(dates[len(dates) - 1].second - last_t.second)
+            # それともactivetabの開始時刻(と最終時刻)のみ？
+            dates = [t for t in self.plot_active_tab[:-1, 0]]
+            last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
+            # 最後の日時を追加
+            if (last_t - dates[len(dates) - 1]).total_seconds() > 0:
+                dates.append(last_t)
+            # datenums = pld.date2num(dates)
+            ax.set_xticks(dates) # ax.set_xticks(datenums)
+            fp = plf.FontProperties(fname="{}/font/ipaexg.ttf".format(os.path.dirname(__file__)), size=8)
+            y = [7.5 + i * 10 for i in range(len(self.df_active_tab.keys()))]
+            y.append(y[len(y) - 1] + 10)
+            ax.set_yticks(y)
+            ax.set_yticklabels(self.df_active_tab.keys(), fontproperties=fp)
+            for i, k in enumerate(self.df_active_tab.keys()): # 上のy軸方向の順(=self.df_active_tab.keys()の順)に従ってx軸方向のガントチャートを描写
+                # print(self.df_active_tab[k])
+                ax.broken_barh(self.df_active_tab[k], (5+i*10, 5), facecolor="red")
+            plt.tick_params(axis="x", labelsize=7, rotation=270) # rotation=25
+            plt.title("SwitchActiveTab(interval: {}s)".format(self.sec_interval))
+            ax.grid(axis="y") # 縦軸のグリッド線を引く
+            plt.xlabel("t")
+            plt.subplots_adjust(top=0.95, bottom=0.2, right=0.99, left=0.2)
+            with open("{dirname}/graphs/output_{datetime}_active_tab.pkl".format(dirname=self.dirname, datetime=filetime), "wb") as f:
+                pickle.dump(fig, f)
+            plt.savefig("{dirname}/graphs/output_{datetime}_active_tab".format(dirname=self.dirname, datetime=filetime))
+        
+        # if mouseの出力が選択されていたら
+        if "mouse" in self.select_data:
+            fig = plt.figure(figsize=(15,6))
+            ax = fig.add_subplot(1, 1, 1)
+            ax.set_xlim(init, last)
+            ax.plot(self.plot_mouse[:, 0], self.plot_mouse[:, 1], color="orange", label="mouse-distance")
+            plt.xlabel("t")
+            ax.set_ylabel("Mouse Distance[/interval]")
+            plt.title("Mouse Distance(interval: {}s)".format(self.sec_interval))
+            # plt.subplots_adjust(top=0.85, bottom=0.15, right=0.95, hspace=0)
+            with open("{dirname}/graphs/output_{datetime}_mouse.pkl".format(dirname=self.dirname, datetime=filetime), "wb") as f:
+                pickle.dump(fig, f)
+            plt.savefig("{dirname}/graphs/output_{datetime}_mouse".format(dirname=self.dirname, datetime=filetime))
+        
+        # if keyboardの出力が選択されていたら
+        if "keyboard" in self.select_data:
+            fig = plt.figure(figsize=(15,6))
+            ax = fig.add_subplot(1, 1, 1)
+            ax.set_xlim(init, last)
+            ax.plot(self.plot_keyboard[:, 0], self.plot_keyboard[:, 1], color="skyblue", label="keyboard-count")
+            plt.xlabel("t")
+            ax.set_ylabel("Keyboard Count[/interval]")
+            ax.grid(axis="y")
+            plt.title("Keyboard Count(interval: {}s)".format(self.sec_interval))
+            # plt.subplots_adjust(top=0.85, bottom=0.15, right=0.95, hspace=0)
+            with open("{dirname}/graphs/output_{datetime}_keyboard.pkl".format(dirname=self.dirname, datetime=filetime), "wb") as f:
+                pickle.dump(fig, f)
+            plt.savefig("{dirname}/graphs/output_{datetime}_keyboard".format(dirname=self.dirname, datetime=filetime))
+
+        if "mouse-keyboard" in self.select_data:
+            fig = plt.figure(figsize=(15,6))
+            ax = fig.add_subplot(1, 1, 1)
+            ax2 = ax.twinx()
+            ax.set_xlim(init, last)
+            ax.plot(self.plot_mouse[:, 0], self.plot_mouse[:, 1], color="orange", label="mouse-distance")
+            ax2.plot(self.plot_keyboard[:, 0], self.plot_keyboard[:, 1], color="skyblue", label="keyboard-count")
+            ax.legend(bbox_to_anchor=(0.6, -0.1), loc='upper left', borderaxespad=0.5, fontsize=10)
+            ax2.legend(bbox_to_anchor=(0.8, -0.1), loc='upper left', borderaxespad=0.5, fontsize=10)
+            plt.xlabel("t")
+            ax.set_ylabel("Mouse Distance[/interval]")
+            ax2.set_ylabel("Keyboard Count[/interval]")
+            ax2.grid(axis="y")
+            plt.title("Mouse and Keyboard(interval: {}s)".format(self.sec_interval))
+            plt.subplots_adjust(top=0.95, bottom=0.15)
+            with open("{dirname}/graphs/output_{datetime}_mouse-keyboard.pkl".format(dirname=self.dirname, datetime=filetime), "wb") as f:
+                pickle.dump(fig, f)
+            plt.savefig("{dirname}/graphs/output_{datetime}_mouse-keyboard".format(dirname=self.dirname, datetime=filetime))
+
 
     def get_activetab(self):
         '''
