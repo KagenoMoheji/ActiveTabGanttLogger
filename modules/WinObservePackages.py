@@ -26,7 +26,7 @@ class ActiveTabObserver:
                     active_tab_text = wg.GetWindowText(fw)
                 except (ValueError, psutil.NoSuchProcess):
                     # pid取得が間に合ってなかったら
-                    # print("Error: Failed in getting process information")
+                    # print("Warning: Failed in getting process information")
                     continue
                 if recent_active_tab_text != active_tab_text.upper():
                     switched_time = datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f")
@@ -53,8 +53,8 @@ class ActiveTabObserver:
             # If this thread stopped by rebooting from sleep, maybe...
             import traceback
             print("Thread loop exited by any problem!!!!")
-            global_v.is_sleeping = True
             global_v.is_threadloop_error = True
+            global_v.is_sleeping = True
             traceback.print_exc()
         # except KeyboardInterrupt:
         #     print("ActiveTabObserver.py: KeyboardInterrupt")
@@ -76,6 +76,7 @@ class ActiveTabObserver:
 
 
 '''
+# If neccesary to implement observer for each OS, implement below.
 class MouseObserver:
     pass
 class KeyboardObserver:
