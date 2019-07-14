@@ -42,9 +42,11 @@ class InitProcess:
                 "Error: Invalid variable in mode of InitProcess.py"))
             sys.exit()
 
-        print("OS: {}".format(os))
-        print("mode: {}".format(mode))
-        print("Your ID is: {}".format(uuid))
+        print(self.strfmr.get_colored_console_log("yellow", """\
+OS        : {os}
+mode      : {mode}
+Your ID is: {uuid}
+""".format(os=os, mode=mode, uuid=uuid)))
 
         # Get simpler os parameter
         if "Windows" in os:
