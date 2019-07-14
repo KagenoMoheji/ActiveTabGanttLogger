@@ -46,5 +46,8 @@ setup(
             "ganttlogger = app:main"
         ]
     },
-    author="KagenoMoheji"
+    author="KagenoMoheji",
+    author_email="shadowmoheji.pd@gmail.com",
+    url="https://github.com/KagenoMoheji/ActiveTabGanttLogger",
+    licence="MIT"
 )
