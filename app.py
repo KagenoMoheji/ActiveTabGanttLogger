@@ -29,7 +29,7 @@ Or, if you have installed this CLI, start from (4).
 
 
 (for Mac,Windows)
-> pipenv run python setup.py sdist --formats==gztar,zip
+> pipenv run python setup.py sdist --formats=gztar,zip
 
 上記コマンドではpipパッケージが作成されるが，pythonとpipがクライアント側でインストールされていないといけない．
 ちなみにインストールは
