@@ -49,13 +49,13 @@ Target User:
         pass
 
     def output(self):
-        with open("{}/active_tab.csv".format(self.dirname), "a", encoding="utf-8") as ft,\
-            open("{}/mouse.csv".format(self.dirname), "a", encoding="utf-8") as fm,\
-            open("{}/keyboard.csv".format(self.dirname), "a", encoding="utf-8") as fk:
+        with open("{}/active_tab.log".format(self.dirname), "a", encoding="utf-8") as ft,\
+            open("{}/mouse.log".format(self.dirname), "a", encoding="utf-8") as fm,\
+            open("{}/keyboard.log".format(self.dirname), "a", encoding="utf-8") as fk:
             # Write attributes
-            ft.write("StartTime,ApplicationName,TabText\n")
-            fm.write("Time,MoveDistance\n")
-            fk.write("Time,PressCount\n")
+            ft.write("StartTime]:+:[ApplicationName]:+:[TabText\n")
+            fm.write("Time]:+:[MoveDistance\n")
+            fk.write("Time]:+:[PressCount\n")
             # Add logs
             is_all_empty = True
             while True:
@@ -66,7 +66,7 @@ Target User:
                     is_all_empty = False
                     for _ in range(len_tab_queue):
                         data = global_v.tab_queue.popleft()
-                        log = "{startTime},{activeName},{tabText}\n".format(
+                        log = "{startTime}]:+:[{activeName}]:+:[{tabText}\n".format(
                             startTime=data["startTime"],
                             activeName=data["activeName"],
                             tabText=data["tabText"]
@@ -76,7 +76,7 @@ Target User:
                     is_all_empty = False
                     for _ in range(len_mouse_queue):
                         data = global_v.mouse_queue.popleft()
-                        log = "{time},{dis}\n".format(
+                        log = "{time}]:+:[{dis}\n".format(
                             time=data["time"],
                             dis=data["distance"]
                         )
@@ -85,7 +85,7 @@ Target User:
                     is_all_empty = False
                     for _ in range(len_keyboard_queue):
                         data = global_v.keyboard_queue.popleft()
-                        log = "{time},{cnt}\n".format(
+                        log = "{time}]:+:[{cnt}\n".format(
                             time=data["time"],
                             cnt=data["count"]
                         )
