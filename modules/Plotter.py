@@ -43,6 +43,8 @@ class Plotter:
     hide_filtered_tab_duration = False
     filter_tab_durations = [] # ex. [[datetime.datetime(2017/01/01 12:53:23.525), datetime.datetime(2017/01/01 12:55:03.121)], [?,?], ...]
     select_data = ["all"]
+    xaxis_type_at = "active-start"
+    xaxis_type_mk = "10"
     strfmr = None
     '''
     ●List construction of plotting data
@@ -96,9 +98,11 @@ class Plotter:
         self.hide_filtered_tab_duration = False
         self.filter_tab_durations = []
         self.select_data = ["all"]
-        self.plot_active_tab = np.array([["", "", ""]])
-        self.plot_mouse = np.array([["", None]])
-        self.plot_keyboard = np.array([["", None]])
+        self.xaxis_type_at = "active-start"
+        self.xaxis_type_mk = "10"
+        self.plot_active_tab = np.array([[None, "", ""]])
+        self.plot_mouse = np.array([[None, None]])
+        self.plot_keyboard = np.array([[None, None]])
         self.df_active_tab = {}
 
     def start(self):
@@ -109,13 +113,15 @@ class Plotter:
         ・set_interval -> デルタtの数値指定(単位は秒)
         ・fiter_tab -> 不要なタブ名(ログからコピペ)をまとめたテキストファイルの指定
         ・select_data -> 3つのデータをサブプロットでまとめて出力するか，選択したデータで独立のプロットを出力するか(例えば，"all"なら1つの出力に3つのサブプロットが入っているが，一方3つのデータを選択した入力なら3つの出力が出る)
+        ・xaxis_type -> 横軸の時刻目盛りを，アクティブタブ開始時刻にするか，等間隔(ユーザ指定[秒])にするか
         '''
         try:
-            plot_types_labels = set(["set_interval", "filter_tab", "select_data"])
+            plot_types_labels = set(["set_interval", "filter_tab", "select_data", "xaxis_type"])
             plot_types_flags = {
                 "set_interval": False,
                 "filter_tab": False,
-                "select_data": False
+                "select_data": False,
+                "xaxis_type": False
             }
 
             print(self.strfmr.get_colored_console_log("yellow",
@@ -124,7 +130,9 @@ class Plotter:
 'set_interval': Set interval by seconds(Integer). Default is 1-second.
 'filter_tab'  : Filter unnecessary tab texts in a text file before plotting.
 'select_data' : Select whether you use all data to plot to an output or some data plot to each output. 
-                Default - when you don't input in 'select_data' - is the former.''""")
+                Default - when you don't input in 'select_data' - is the former.
+'xaxis_type'  : Select x-axis scale from whether 'active-start'(the start times of active tabs) or number
+                of seconds interval.""")
             while True:
                 print(self.strfmr.get_colored_console_log("yellow",
                     "Select plot types separated by ',',  or enter without input.: "), end="")
@@ -151,10 +159,10 @@ class Plotter:
                 while True:
                     print(self.strfmr.get_colored_console_log("yellow",
                         "Set the number of interval by seconds: "), end="")
-                    self.sec_interval = input().strip()
+                    st_input = input().strip()
                     # To avoid allowing the input with full-width digit, we don't use try-except(ValueError).
-                    if re.compile(r'^[0-9]+$').match(self.sec_interval) and int(self.sec_interval) > 0:
-                        self.sec_interval = int(self.sec_interval)
+                    if re.compile(r'^[0-9]+$').match(st_input) and int(st_input) > 0:
+                        self.sec_interval = int(st_input)
                         break
                     else:
                         print(self.strfmr.get_colored_console_log("red",
@@ -201,7 +209,7 @@ class Plotter:
                 print("There are a required setting.")
                 while True:
                     print(self.strfmr.get_colored_console_log("yellow",
-                        "Select 'all' or list separated by ',' with some csv file names like 'active_tab'.: "), end="")
+                        "Select 'all' or list separated by ',' with some .log file names like 'active_tab'.: "), end="")
                     input_select_data = list(map(lambda s: s.strip(), (input().strip()).split(",")))
                     if not input_select_data[0]:
                         # If empty input, no need to update self.select_data (keep "all")
@@ -222,7 +230,45 @@ class Plotter:
                             break
                         else:
                             print(self.strfmr.get_colored_console_log("red",
-                                "Error: There are some invalid names of csv files."))
+                                "Error: There are some invalid names of .log files."))
+            if plot_types_flags["xaxis_type"]:
+                print(self.strfmr.get_colored_console_log("yellow",
+                    "-----------------[xaxis_type]-----------------"))
+                print("There are two required settings.")
+                while True:
+                    print(self.strfmr.get_colored_console_log("yellow",
+                        "Select x-axis type for ActiveTab from whether 'active-start' or number of the interval by seconds: "), end="")
+                    st_input = input().strip()
+                    if st_input == "active-start":
+                        self.xaxis_type_at = st_input
+                        break
+                    # To avoid allowing the input with full-width digit, we don't use try-except(ValueError).
+                    if re.compile(r'^[0-9]+$').match(st_input) and int(st_input) > 0:
+                        self.xaxis_type_at = st_input
+                        break
+                    else:
+                        print(self.strfmr.get_colored_console_log("red",
+                            "Error: Invalid input.\n(Example)If you want set 2 seconds for the interval of the xaxis scale, input '2'.\nOr, input 'active-start' if you want set active start time to the xaxis scale."))
+                        continue
+                    print(self.strfmr.get_colored_console_log("red",
+                            "Error: Invalid input.\n(Example)If you want set 2 seconds for the interval of the xaxis scale, input '2'.\nOr, input 'active-start' if you want set active start time to the xaxis scale."))
+                while True:
+                    print(self.strfmr.get_colored_console_log("yellow",
+                        "Select x-axis type for Mouse or Keyboard from whether 'active-start' or number of the interval by seconds: "), end="")
+                    st_input = input().strip()
+                    if st_input == "active-start":
+                        self.xaxis_type_mk = st_input
+                        break
+                    # To avoid allowing the input with full-width digit, we don't use try-except(ValueError).
+                    if re.compile(r'^[0-9]+$').match(st_input) and int(st_input) > 0:
+                        self.xaxis_type_mk = st_input
+                        break
+                    else:
+                        print(self.strfmr.get_colored_console_log("red",
+                            "Error: Invalid input.\n(Example)If you want set 2 seconds for the interval of the xaxis scale, input '2'.\nOr, input 'active-start' if you want set active start time to the xaxis scale."))
+                        continue
+                    print(self.strfmr.get_colored_console_log("red",
+                            "Error: Invalid input.\n(Example)If you want set 2 seconds for the interval of the xaxis scale, input '2'.\nOr, input 'active-start' if you want set active start time to the xaxis scale."))
 
             if self.select_data[0] == "all":
                 self.run()
@@ -307,24 +353,27 @@ class Plotter:
         # Create upper graph(ganttchart)
         ax1 = fig.add_subplot(2, 1, 1)
         ax1.set_xlim(init, last) # Important for plotting ganttchart by seconds!
-        ax1.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
-        # ログの開始時刻から終了時刻までのself.sec_interval刻み？
-        # dates = []
-        # t = self.plot_active_tab[0][0]
-        # last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
-        # while (last_t - t).total_seconds() >= 0:
-        #     dates.append(t)
-        #     t += datetime.timedelta(seconds=self.sec_interval)
-        # # print(last_t.second - dates[len(dates) - 1].second)
-        # # print(dates[len(dates) - 1].second - last_t.second)
-        # それともactivetabの開始時刻(と最終時刻)のみ？
-        dates = [t for t in self.plot_active_tab[:-1, 0]]
-        last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
+        dates = []
+        if self.xaxis_type_at == "active-start":
+            # activetabの開始時刻(と最終時刻)のみ
+            dates = [t for t in self.plot_active_tab[:-1, 0]]
+            last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
+        else:
+            # ログの開始時刻から終了時刻までの等間隔秒刻み
+            t = self.plot_active_tab[0][0]
+            last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
+            while (last_t - t).total_seconds() >= 0:
+                dates.append(t)
+                t += datetime.timedelta(seconds=int(self.xaxis_type_at))
+            # print(last_t.second - dates[len(dates) - 1].second)
+            # print(dates[len(dates) - 1].second - last_t.second)
         # 最後の日時を追加
         if (last_t - dates[len(dates) - 1]).total_seconds() > 0:
             dates.append(last_t)
         # datenums = pld.date2num(dates)
         ax1.set_xticks(dates) # ax1.set_xticks(datenums)
+        ax1.axes.tick_params(axis="x", labelsize=7, rotation=270)
+        ax1.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
         fp = plf.FontProperties(fname="{}/../config/font/ipaexg.ttf".format(os.path.dirname(__file__)), size=8)
         y = [7.5 + i * 10 for i in range(len(self.df_active_tab.keys()))]
         y.append(y[len(y) - 1] + 10)
@@ -333,7 +382,6 @@ class Plotter:
         for i, k in enumerate(self.df_active_tab.keys()): # 上のy軸方向の順(=self.df_active_tab.keys()の順)に従ってx軸方向のガントチャートを描写
             # print(self.df_active_tab[k])
             ax1.broken_barh(self.df_active_tab[k], (5+i*10, 5), facecolor="red")
-        plt.tick_params(axis="x", labelsize=7, rotation=270) # rotation=25
         plt.subplots_adjust(top=0.85, bottom=0.15, right=0.95, hspace=0) # left=0.3, right=0.9
         plt.title("SwitchActiveTab(interval: {}s)".format(self.sec_interval))
         ax1.xaxis.tick_top() # 横軸をグラフの上に設置
@@ -345,15 +393,33 @@ class Plotter:
         ax2_1 = fig.add_subplot(2, 1, 2) # , sharex=ax1
         ax2_2 = ax2_1.twinx()
         ax2_1.set_xlim(init, last)
+        dates.clear()
+        if self.xaxis_type_mk == "active-start":
+            # activetabの開始時刻(と最終時刻)のみ
+            dates = [t for t in self.plot_active_tab[:-1, 0]]
+            last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
+        else:
+            # ログの開始時刻から終了時刻までの等間隔秒刻み
+            t = self.plot_active_tab[0][0]
+            last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
+            while (last_t - t).total_seconds() >= 0:
+                dates.append(t)
+                t += datetime.timedelta(seconds=int(self.xaxis_type_mk))
+        # 最後の日時を追加
+        if (last_t - dates[len(dates) - 1]).total_seconds() > 0:
+            dates.append(last_t)
+        # datenums = pld.date2num(dates)
         ax2_1.plot(self.plot_mouse[:, 0], self.plot_mouse[:, 1], color="orange", label="mouse-distance")
         ax2_2.plot(self.plot_keyboard[:, 0], self.plot_keyboard[:, 1], color="skyblue", label="keyboard-count")
         ax2_1.legend(bbox_to_anchor=(0.6, -0.1), loc='upper left', borderaxespad=0.5, fontsize=10)
         ax2_2.legend(bbox_to_anchor=(0.8, -0.1), loc='upper left', borderaxespad=0.5, fontsize=10)
         plt.xlabel("t")
+        ax2_1.set_xticks(dates) # ax2_1.set_xticks(datenums)
+        ax2_1.axes.tick_params(axis="x", labelsize=7, rotation=270)
+        ax2_1.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S"))
         ax2_1.set_ylabel("Mouse Distance[/interval]")
         ax2_2.set_ylabel("Keyboard Count[/interval]")
         ax2_2.grid(axis="y")
-        # plt.tick_params(axis="x", labelsize=7, rotation=270)
 
         # Save and Show
         filetime = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -390,24 +456,25 @@ class Plotter:
             fig = plt.figure(figsize=(15,6))
             ax = fig.add_subplot(1, 1, 1)
             ax.set_xlim(init, last)
-            ax.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
-            # ログの開始時刻から終了時刻までのself.sec_interval刻み？
-            # dates = []
-            # t = self.plot_active_tab[0][0]
-            # last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
-            # while (last_t - t).total_seconds() >= 0:
-            #     dates.append(t)
-            #     t += datetime.timedelta(seconds=self.sec_interval)
-            # # print(last_t.second - dates[len(dates) - 1].second)
-            # # print(dates[len(dates) - 1].second - last_t.second)
-            # それともactivetabの開始時刻(と最終時刻)のみ？
-            dates = [t for t in self.plot_active_tab[:-1, 0]]
-            last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
+            if self.xaxis_type_at == "active-start":
+                # activetabの開始時刻(と最終時刻)のみ
+                dates = [t for t in self.plot_active_tab[:-1, 0]]
+                last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
+            else:
+                # ログの開始時刻から終了時刻までの等間隔秒刻み
+                t = self.plot_active_tab[0][0]
+                last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
+                while (last_t - t).total_seconds() >= 0:
+                    dates.append(t)
+                    t += datetime.timedelta(seconds=int(self.xaxis_type_at))
             # 最後の日時を追加
             if (last_t - dates[len(dates) - 1]).total_seconds() > 0:
                 dates.append(last_t)
             # datenums = pld.date2num(dates)
             ax.set_xticks(dates) # ax.set_xticks(datenums)
+            plt.xlabel("t")
+            ax.axes.tick_params(axis="x", labelsize=7, rotation=270) # rotation=25
+            ax.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
             fp = plf.FontProperties(fname="{}/../config/font/ipaexg.ttf".format(os.path.dirname(__file__)), size=8)
             y = [7.5 + i * 10 for i in range(len(self.df_active_tab.keys()))]
             y.append(y[len(y) - 1] + 10)
@@ -416,10 +483,8 @@ class Plotter:
             for i, k in enumerate(self.df_active_tab.keys()): # 上のy軸方向の順(=self.df_active_tab.keys()の順)に従ってx軸方向のガントチャートを描写
                 # print(self.df_active_tab[k])
                 ax.broken_barh(self.df_active_tab[k], (5+i*10, 5), facecolor="red")
-            plt.tick_params(axis="x", labelsize=7, rotation=270) # rotation=25
             plt.title("SwitchActiveTab(interval: {}s)".format(self.sec_interval))
             ax.grid(axis="y") # 縦軸のグリッド線を引く
-            plt.xlabel("t")
             plt.subplots_adjust(top=0.95, bottom=0.2, right=0.99, left=0.2)
             with open("{dirname}/graphs/output_{datetime}_active_tab.pkl".format(dirname=self.dirname, datetime=filetime), "wb") as f:
                 pickle.dump(fig, f)
@@ -430,11 +495,30 @@ class Plotter:
             fig = plt.figure(figsize=(15,6))
             ax = fig.add_subplot(1, 1, 1)
             ax.set_xlim(init, last)
+            dates = []
+            if self.xaxis_type_mk == "active-start":
+                # activetabの開始時刻(と最終時刻)のみ
+                dates = [t for t in self.plot_active_tab[:-1, 0]]
+                last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
+            else:
+                # ログの開始時刻から終了時刻までの等間隔秒刻み
+                t = self.plot_active_tab[0][0]
+                last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
+                while (last_t - t).total_seconds() >= 0:
+                    dates.append(t)
+                    t += datetime.timedelta(seconds=int(self.xaxis_type_mk))
+            # 最後の日時を追加
+            if (last_t - dates[len(dates) - 1]).total_seconds() > 0:
+                dates.append(last_t)
+            # datenums = pld.date2num(dates)
             ax.plot(self.plot_mouse[:, 0], self.plot_mouse[:, 1], color="orange", label="mouse-distance")
             plt.xlabel("t")
+            ax.set_xticks(dates) # ax.set_xticks(datenums)
+            ax.axes.tick_params(axis="x", labelsize=7, rotation=270)
+            ax.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
+            plt.subplots_adjust(top=0.95, bottom=0.23)
             ax.set_ylabel("Mouse Distance[/interval]")
             plt.title("Mouse Distance(interval: {}s)".format(self.sec_interval))
-            # plt.subplots_adjust(top=0.85, bottom=0.15, right=0.95, hspace=0)
             with open("{dirname}/graphs/output_{datetime}_mouse.pkl".format(dirname=self.dirname, datetime=filetime), "wb") as f:
                 pickle.dump(fig, f)
             plt.savefig("{dirname}/graphs/output_{datetime}_mouse".format(dirname=self.dirname, datetime=filetime))
@@ -444,12 +528,31 @@ class Plotter:
             fig = plt.figure(figsize=(15,6))
             ax = fig.add_subplot(1, 1, 1)
             ax.set_xlim(init, last)
+            dates = []
+            if self.xaxis_type_mk == "active-start":
+                # activetabの開始時刻(と最終時刻)のみ
+                dates = [t for t in self.plot_active_tab[:-1, 0]]
+                last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
+            else:
+                # ログの開始時刻から終了時刻までの等間隔秒刻み
+                t = self.plot_active_tab[0][0]
+                last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
+                while (last_t - t).total_seconds() >= 0:
+                    dates.append(t)
+                    t += datetime.timedelta(seconds=int(self.xaxis_type_mk))
+            # 最後の日時を追加
+            if (last_t - dates[len(dates) - 1]).total_seconds() > 0:
+                dates.append(last_t)
+            # datenums = pld.date2num(dates)
             ax.plot(self.plot_keyboard[:, 0], self.plot_keyboard[:, 1], color="skyblue", label="keyboard-count")
             plt.xlabel("t")
+            ax.set_xticks(dates) # ax.set_xticks(datenums)
+            ax.axes.tick_params(axis="x", labelsize=7, rotation=270)
+            ax.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
+            plt.subplots_adjust(top=0.95, bottom=0.23)
             ax.set_ylabel("Keyboard Count[/interval]")
             ax.grid(axis="y")
             plt.title("Keyboard Count(interval: {}s)".format(self.sec_interval))
-            # plt.subplots_adjust(top=0.85, bottom=0.15, right=0.95, hspace=0)
             with open("{dirname}/graphs/output_{datetime}_keyboard.pkl".format(dirname=self.dirname, datetime=filetime), "wb") as f:
                 pickle.dump(fig, f)
             plt.savefig("{dirname}/graphs/output_{datetime}_keyboard".format(dirname=self.dirname, datetime=filetime))
@@ -459,16 +562,35 @@ class Plotter:
             ax = fig.add_subplot(1, 1, 1)
             ax2 = ax.twinx()
             ax.set_xlim(init, last)
+            dates = []
+            if self.xaxis_type_mk == "active-start":
+                # activetabの開始時刻(と最終時刻)のみ
+                dates = [t for t in self.plot_active_tab[:-1, 0]]
+                last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
+            else:
+                # ログの開始時刻から終了時刻までの等間隔秒刻み
+                t = self.plot_active_tab[0][0]
+                last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
+                while (last_t - t).total_seconds() >= 0:
+                    dates.append(t)
+                    t += datetime.timedelta(seconds=int(self.xaxis_type_mk))
+            # 最後の日時を追加
+            if (last_t - dates[len(dates) - 1]).total_seconds() > 0:
+                dates.append(last_t)
+            # datenums = pld.date2num(dates)
             ax.plot(self.plot_mouse[:, 0], self.plot_mouse[:, 1], color="orange", label="mouse-distance")
             ax2.plot(self.plot_keyboard[:, 0], self.plot_keyboard[:, 1], color="skyblue", label="keyboard-count")
-            ax.legend(bbox_to_anchor=(0.6, -0.1), loc='upper left', borderaxespad=0.5, fontsize=10)
-            ax2.legend(bbox_to_anchor=(0.8, -0.1), loc='upper left', borderaxespad=0.5, fontsize=10)
+            ax.legend(bbox_to_anchor=(0.6, -0.2), loc='upper left', borderaxespad=0.5, fontsize=10)
+            ax2.legend(bbox_to_anchor=(0.8, -0.2), loc='upper left', borderaxespad=0.5, fontsize=10)
             plt.xlabel("t")
+            ax.set_xticks(dates) # ax.set_xticks(datenums)
+            ax.axes.tick_params(axis="x", labelsize=7, rotation=270)
+            ax.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
             ax.set_ylabel("Mouse Distance[/interval]")
             ax2.set_ylabel("Keyboard Count[/interval]")
             ax2.grid(axis="y")
             plt.title("Mouse and Keyboard(interval: {}s)".format(self.sec_interval))
-            plt.subplots_adjust(top=0.95, bottom=0.15)
+            plt.subplots_adjust(top=0.95, bottom=0.25)
             with open("{dirname}/graphs/output_{datetime}_mouse-keyboard.pkl".format(dirname=self.dirname, datetime=filetime), "wb") as f:
                 pickle.dump(fig, f)
             plt.savefig("{dirname}/graphs/output_{datetime}_mouse-keyboard".format(dirname=self.dirname, datetime=filetime))
@@ -484,18 +606,18 @@ class Plotter:
             https://note.nkmk.me/python-numpy-delete/
         '''
         try:
-            with open("{dirname}/active_tab.csv".format(dirname=self.dirname), "r", encoding="utf-8") as ft:
+            with open("{dirname}/active_tab.log".format(dirname=self.dirname), "r", encoding="utf-8") as ft:
                 raw_columns = ft.read().split("\n")
                 if "StartTime" in raw_columns[0]:
                     raw_columns.pop(0)
-                if len(raw_columns[-1].split(",")) != 3:
+                if len(raw_columns[-1].split("]:+:[")) != 3:
                     raw_columns.pop(-1)
                 raw_data = []
                 for raw_column in raw_columns:
-                    splitted_column = raw_column.split(",")
+                    splitted_column = raw_column.split("]:+:[")
                     if len(splitted_column) != 3:
                         print(self.strfmr.get_colored_console_log("red",
-                            "Error: Invalid count of separating by ',' in 'active_tab.csv'"))
+                            "Error: Invalid count of separating by ',' in 'active_tab.log'"))
                         sys.exit()
                     if not splitted_column[2]:
                         splitted_column[2] = None # If np.nan, its type will change str, so set None
@@ -533,7 +655,7 @@ class Plotter:
             self.plot_active_tab = np.array(raw_data, dtype=object)
         except FileNotFoundError:
             print(self.strfmr.get_colored_console_log("red",
-                "Error: 'active_tab.csv' not found."))
+                "Error: 'active_tab.log' not found."))
             sys.exit()
     
     def more_reshape_activetab(self):
@@ -630,18 +752,18 @@ class Plotter:
         ●plotlyを使う場合，np.nanではなくNoneでいけそう
         '''
         try:
-            with open("{dirname}/mouse.csv".format(dirname=self.dirname), "r", encoding="utf-8") as ft:
+            with open("{dirname}/mouse.log".format(dirname=self.dirname), "r", encoding="utf-8") as ft:
                 raw_columns = ft.read().split("\n")
                 if "Time" in raw_columns[0]:
                     raw_columns.pop(0)
-                if len(raw_columns[-1].split(",")) != 2:
+                if len(raw_columns[-1].split("]:+:[")) != 2:
                     raw_columns.pop(-1)
                 raw_data = []
                 for raw_column in raw_columns:
-                    splitted_column = raw_column.split(",")
+                    splitted_column = raw_column.split("]:+:[")
                     if len(splitted_column) != 2:
                         print(self.strfmr.get_colored_console_log("red",
-                            "Error: Invalid count of separating by ',' in 'mouse.csv'"))
+                            "Error: Invalid count of separating by ',' in 'mouse.log'"))
                         sys.exit()
                     # Digit check (If error, catch ValueError)
                     splitted_column[1] = float(splitted_column[1])
@@ -742,11 +864,11 @@ class Plotter:
             self.plot_mouse = np.array(raw_data, dtype=object)
         except FileNotFoundError:
             print(self.strfmr.get_colored_console_log("red",
-                "Error: 'mouse.csv' not found."))
+                "Error: 'mouse.log' not found."))
             sys.exit()
         except ValueError:
             print(self.strfmr.get_colored_console_log("red",
-                "Error: Invalid record in 'mouse.csv'."))
+                "Error: Invalid record in 'mouse.log'."))
             sys.exit()
 
     def get_keyboard(self):
@@ -766,18 +888,18 @@ class Plotter:
         ●plotlyを使う場合，np.nanではなくNoneでいけそう
         '''
         try:
-            with open("{dirname}/keyboard.csv".format(dirname=self.dirname), "r", encoding="utf-8") as ft:
+            with open("{dirname}/keyboard.log".format(dirname=self.dirname), "r", encoding="utf-8") as ft:
                 raw_columns = ft.read().split("\n")
                 if "Time" in raw_columns[0]:
                     raw_columns.pop(0)
-                if len(raw_columns[-1].split(",")) != 2:
+                if len(raw_columns[-1].split("]:+:[")) != 2:
                     raw_columns.pop(-1)
                 raw_data = []
                 for raw_column in raw_columns:
-                    splitted_column = raw_column.split(",")
+                    splitted_column = raw_column.split("]:+:[")
                     if len(splitted_column) != 2:
                         print(self.strfmr.get_colored_console_log("red",
-                            "Error: Invalid count of separating by ',' in 'keyboard.csv'"))
+                            "Error: Invalid count of separating by ',' in 'keyboard.log'"))
                         sys.exit()
                     # Digit check (If error, catch ValueError)
                     splitted_column[1] = int(splitted_column[1])
@@ -878,10 +1000,10 @@ class Plotter:
             self.plot_keyboard = np.array(raw_data, dtype=object)
         except FileNotFoundError:
             print(self.strfmr.get_colored_console_log("red",
-                "Error: 'keyboard.csv' not found."))
+                "Error: 'keyboard.log' not found."))
             sys.exit()
         except ValueError:
             print(self.strfmr.get_colored_console_log("red",
-                "Error: Invalid record in 'keyboard.csv'."))
+                "Error: Invalid record in 'keyboard.log'."))
             sys.exit()
     
