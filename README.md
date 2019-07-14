@@ -1,4 +1,4 @@
-# ActiveTabGanttLogger
+# GanttLogger
 アクティブウィンドウログをガントチャートで出力する
 
 ## 流れ
