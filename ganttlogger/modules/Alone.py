@@ -1,11 +1,11 @@
 import sys
 import threading
 import time
-from Public import StrFormatter
-import Global as global_v
-from Observer import WinObserver, MacObserver
-from Logger import Logger
-from Plotter import Plotter
+from ganttlogger.modules.Public import StrFormatter
+import ganttlogger.modules.Global as global_v
+from ganttlogger.modules.Observer import WinObserver, MacObserver
+from ganttlogger.modules.Logger import Logger
+from ganttlogger.modules.Plotter import Plotter
 
 class Alone:
     uuid = ""

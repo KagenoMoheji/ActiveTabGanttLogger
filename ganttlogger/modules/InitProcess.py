@@ -2,7 +2,7 @@ import sys
 import platform
 import uuid
 from argparse import ArgumentParser, RawTextHelpFormatter
-from Public import StrFormatter
+from ganttlogger.modules.Public import StrFormatter
 
 class InitProcess:
     argparser = None

@@ -3,7 +3,7 @@ import time
 import psutil
 import win32gui as wg
 import win32process as wp
-import Global as global_v
+import ganttlogger.modules.Global as global_v
 
 class ActiveTabObserver:
     uuid = ""

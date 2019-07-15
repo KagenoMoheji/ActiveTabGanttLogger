@@ -15,7 +15,7 @@ import matplotlib.font_manager as plf
 # import plotly.tools as pltl
 # import plotly.graph_objs as plgo
 # import plotly.figure_factory as plff
-from Public import StrFormatter
+from ganttlogger.modules.Public import StrFormatter
 
 '''
 References:

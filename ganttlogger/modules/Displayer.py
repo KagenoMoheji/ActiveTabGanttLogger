@@ -1,7 +1,7 @@
 import sys
 import pickle
 import matplotlib.pyplot as plt
-from Public import StrFormatter
+from ganttlogger.modules.Public import StrFormatter
 
 class Displayer:
     '''

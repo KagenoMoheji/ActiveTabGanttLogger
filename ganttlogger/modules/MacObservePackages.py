@@ -7,7 +7,7 @@ from Quartz import (
     kCGWindowListOptionOnScreenOnly,
     kCGNullWindowID
 )
-import Global as global_v
+import ganttlogger.modules.Global as global_v
 
 class ActiveTabObserver:
     uuid = ""

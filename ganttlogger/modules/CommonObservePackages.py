@@ -9,8 +9,8 @@ from datetime import datetime
 from collections import deque
 # import pyautogui
 from pynput import mouse, keyboard
-from Public import MyThread, StrFormatter
-import Global as global_v
+from ganttlogger.modules.Public import MyThread, StrFormatter
+import ganttlogger.modules.Global as global_v
 
 class MouseObserver:
     uuid = ""

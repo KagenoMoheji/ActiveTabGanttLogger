@@ -7,8 +7,8 @@ import os
 import time
 from datetime import datetime
 # import concurrent.futures as confu
-import Global as global_v
-from Public import StrFormatter
+import ganttlogger.modules.Global as global_v
+from ganttlogger.modules.Public import StrFormatter
 
 class Logger:
     uuid = ""
