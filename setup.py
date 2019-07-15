@@ -16,6 +16,7 @@ import platform
 ・pynput (or pyautogui)
 (・pickle) (standard module?)
 ●for Windows10-64bit
+(・pywin32)
 ・pypiwin32
 ・colorama
 ●for MacOS Mojave
