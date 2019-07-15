@@ -209,7 +209,7 @@ class Plotter:
                 print("There are a required setting.")
                 while True:
                     print(self.strfmr.get_colored_console_log("yellow",
-                        "Select 'all' or list separated by ',' with some .log file names like 'active_tab'.: "), end="")
+                        "Select 'all' or list separated by ',' from ('active_tab'|'mouse'|'keyboard'|'mouse-keyboard').: "), end="")
                     input_select_data = list(map(lambda s: s.strip(), (input().strip()).split(",")))
                     if not input_select_data[0]:
                         # If empty input, no need to update self.select_data (keep "all")
@@ -420,6 +420,8 @@ class Plotter:
         ax2_1.set_ylabel("Mouse Distance[/interval]")
         ax2_2.set_ylabel("Keyboard Count[/interval]")
         ax2_2.grid(axis="y")
+        ax2_1.set_ylim(bottom=0)
+        ax2_2.set_ylim(bottom=0)
 
         # Save and Show
         filetime = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -518,6 +520,7 @@ class Plotter:
             ax.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
             plt.subplots_adjust(top=0.95, bottom=0.23)
             ax.set_ylabel("Mouse Distance[/interval]")
+            ax.set_ylim(bottom=0)
             plt.title("Mouse Distance(interval: {}s)".format(self.sec_interval))
             with open("{dirname}/graphs/output_{datetime}_mouse.pkl".format(dirname=self.dirname, datetime=filetime), "wb") as f:
                 pickle.dump(fig, f)
@@ -551,6 +554,7 @@ class Plotter:
             ax.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
             plt.subplots_adjust(top=0.95, bottom=0.23)
             ax.set_ylabel("Keyboard Count[/interval]")
+            ax.set_ylim(bottom=0)
             ax.grid(axis="y")
             plt.title("Keyboard Count(interval: {}s)".format(self.sec_interval))
             with open("{dirname}/graphs/output_{datetime}_keyboard.pkl".format(dirname=self.dirname, datetime=filetime), "wb") as f:
@@ -588,6 +592,7 @@ class Plotter:
             ax.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
             ax.set_ylabel("Mouse Distance[/interval]")
             ax2.set_ylabel("Keyboard Count[/interval]")
+            ax.set_ylim(bottom=0)
             ax2.grid(axis="y")
             plt.title("Mouse and Keyboard(interval: {}s)".format(self.sec_interval))
             plt.subplots_adjust(top=0.95, bottom=0.25)
@@ -770,10 +775,11 @@ class Plotter:
                     # Here, don't change type of timestamp(str)
                     raw_data.append(splitted_column)
             # print("before: {}".format(raw_data))
+            # raw_data = [[str(h:m:s.ms), str]]
 
             # [1st] Reshape raw_data to 1-second interval data (and fill in the blanks with None)
             # Get initial timestamp from self.plot_active_tab
-            # Use as 1-second interval timestamp 
+            # Use as 1-second interval timestamp
             current_time = self.plot_active_tab[0][0].replace(microsecond=0)
             '''
             # This code below is fixing current_time because the timestamp of mouse is earlier than the one of active_tab.
@@ -791,21 +797,26 @@ class Plotter:
             final_time = self.plot_active_tab[len(self.plot_active_tab)-1][0].replace(microsecond=0)
             new_raw_data = []
             raw_i = 0
-            while (final_time - current_time).total_seconds() >= 0:
+            while (final_time - current_time).total_seconds() >= 0: # 秒までの時刻で比較
+                # 文字列の時刻に変換するときはマイクロ秒は含めない
                 str_current_time = current_time.strftime("%Y/%m/%d %H:%M:%S")
-                if str_current_time in raw_data[raw_i][0]:
+                if str_current_time in raw_data[raw_i][0]: # 秒までの時刻で文字列比較する方が良い
+                    # タイムスタンプでもマイクロ秒は含めない
                     new_raw_data.append([current_time, raw_data[raw_i][1]])
-                    if str_current_time in raw_data[raw_i+1][0]:
+                    if raw_i + 1 >= len(raw_data):
+                        break
+                    if str_current_time in raw_data[raw_i+1][0]: # 秒までの時刻で文字列比較する方が良い
                         # Rarely, the same seconds duplicates in consecutive two timestamps
                         # print("Duplicated!!!: " + str_current_time)
                         new_raw_data[len(new_raw_data)-1][1] += raw_data[raw_i+1][1]
                         raw_i += 1
                     raw_i += 1
                 else:
+                    # タイムスタンプでもマイクロ秒は含めない
                     new_raw_data.append([current_time, None])
                 current_time += datetime.timedelta(seconds=1)
             raw_data = new_raw_data
-            # print(np.array(raw_data))
+            # raw_data = [[datetime.datetime(h:m:s), int|None]]
             # print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
             
             # [2nd]If self.hide_filtered_tab_duration=True, replace value to None in the duration of filtered tab
@@ -830,6 +841,7 @@ class Plotter:
                     if after_filter_start and before_filter_end:
                         raw_data[i][1] = None
             # print(np.array(raw_data))
+            # raw_data = [[datetime.datetime(h:m:s), int|None]]
             # print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
             # [3rd] If user setted set_interval, reshape data following the user-setted interval
@@ -860,6 +872,7 @@ class Plotter:
                     new_raw_data.append([current_time, sum_interval])
                 raw_data = new_raw_data
             # print(np.array(raw_data))
+            # raw_data = [[datetime.datetime(h:m:s), int|None]]
 
             self.plot_mouse = np.array(raw_data, dtype=object)
         except FileNotFoundError:
@@ -906,6 +919,7 @@ class Plotter:
                     # Here, don't change type of timestamp(str)
                     raw_data.append(splitted_column)
             # print("before: {}".format(raw_data))
+            # raw_data = [[str(h:m:s.ms), str]]
 
             # [1st] Reshape raw_data to 1-second interval data (and fill in the blanks with None)
             # Get initial timestamp from self.plot_active_tab
@@ -927,21 +941,26 @@ class Plotter:
             final_time = self.plot_active_tab[len(self.plot_active_tab)-1][0].replace(microsecond=0)
             new_raw_data = []
             raw_i = 0
-            while (final_time - current_time).total_seconds() >= 0:
+            while (final_time - current_time).total_seconds() >= 0: # 秒までの時刻で比較
                 str_current_time = current_time.strftime("%Y/%m/%d %H:%M:%S")
-                if str_current_time in raw_data[raw_i][0]:
+                if str_current_time in raw_data[raw_i][0]: # 秒までの時刻で文字列比較する方が良い
+                    # タイムスタンプでもマイクロ秒は含めない
                     new_raw_data.append([current_time, raw_data[raw_i][1]])
-                    if str_current_time in raw_data[raw_i+1][0]:
+                    if raw_i + 1 >= len(raw_data):
+                        break
+                    if str_current_time in raw_data[raw_i+1][0]: # 秒までの時刻で文字列比較する方が良い
                         # Rarely, the same seconds duplicates in consecutive two timestamps
                         # print("Duplicated!!!: " + str_current_time)
                         new_raw_data[len(new_raw_data)-1][1] += raw_data[raw_i+1][1]
                         raw_i += 1
                     raw_i += 1
                 else:
+                    # タイムスタンプでもマイクロ秒は含めない
                     new_raw_data.append([current_time, None])
                 current_time += datetime.timedelta(seconds=1)
             raw_data = new_raw_data
             # print(np.array(raw_data))
+            # raw_data = [[datetime.datetime(h:m:s), int|None]]
             # print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
             
             # [2nd]If self.hide_filtered_tab_duration=True, replace value to None in the duration of filtered tab
@@ -966,6 +985,7 @@ class Plotter:
                     if after_filter_start and before_filter_end:
                         raw_data[i][1] = None
             # print(np.array(raw_data))
+            # raw_data = [[datetime.datetime(h:m:s), int|None]]
             # print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
             # [3rd] If user setted set_interval, reshape data following the user-setted interval
@@ -996,6 +1016,7 @@ class Plotter:
                     new_raw_data.append([current_time, sum_interval])
                 raw_data = new_raw_data
             # print(np.array(raw_data))
+            # raw_data = [[datetime.datetime(h:m:s), int|None]]
 
             self.plot_keyboard = np.array(raw_data, dtype=object)
         except FileNotFoundError:
