@@ -88,4 +88,29 @@
 - [ ] `set_interval`を大きくすると，mouseの冒頭でNoneが増えたり，active-tabで描写されないガントチャートが出てきたりする．
 - `xaxis_type`で`at: active-start, mk: 5(number)`とすると…
     - [x] mouse/keyboardのx軸のラベルが縦向きにならない
+        - matplotlibの描写順を変えただけでOK
     - [x] mouse/keyboardのx軸のラベルに`active-start`の時刻も追加されている
+        - 変数dateのclearをしてOK
+- [x] `pyinstaller`で`ipaexg.ttf`をどうにか吸わせられないかなぁ…
+    - Plotter.pyでの`__file__`が問題そう．
+    - `__file__`からの相対パスにして`config`フォルダを`modules`フォルダと同階層に置くことでとりま解決
+- [x] たまに出る
+    ```
+    Traceback (most recent call last):
+    File "app.py", line 77, in <module>
+    File "app.py", line 40, in main
+    File "modules\Alone.py", line 40, in run
+    File "modules\Plotter.py", line 254, in run
+    File "modules\Plotter.py", line 675, in get_mouse
+    IndexError: list index out of range
+    [11764] Failed to execute script app
+    ```
+    - アクティブタブの最終時刻がマウスよりあとにあることにより，マウスのログの最後のレコードまでwhileで回るようになってしまっていたので，while内に`raw_i+1 >= len(raw_data)`の条件分岐を`new_raw_data.append()`の直後に追加(マウスのログの最後のレコードの追加まで済ませさせるため？できてるのか？)することで解決．
+    - これはキーボードでも同様．
+- [x] exeにしたら出た．何これ？
+    ```
+    C:\Users\user_name\...\ganttlogger\modules\Plotter.py:308: UserWarning: Attempting to set identical left == right == 737254.0309270591 results in singular transformations; automatically expanding.
+    C:\Users\user_name\...\ganttlogger\modules\Plotter.py:346: UserWarning: Attempting to set identical left == right == 737254.0309270591 results in singular transformations; automatically expanding.
+    ```
+    - たぶん開始早々に終了する時に，アクティブタブの最後のタイムスタンプのあとにマウスとキーボードのログが始まっているので，(マウスとキーボードの)加工できるデータが無いとエラーになっている．
+    - この対応としてObserver.pyでアクティブタブのループを抜けた後に最後のログを挿入する．
