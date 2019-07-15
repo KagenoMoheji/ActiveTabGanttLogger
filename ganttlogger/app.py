@@ -29,21 +29,27 @@ Or, if you have installed this CLI, start from (4).
 
 
 (for Mac,Windows)
+Reference:
+    https://qiita.com/cvusk/items/00294f7f0cb38f420584
+    
 > pipenv run python setup.py sdist --formats=gztar,zip
 
 上記コマンドではpipパッケージが作成されるが，pythonとpipがクライアント側でインストールされていないといけない．
 ちなみにインストールは
 > python -m pip install -e .
 $ pip3 install -e .
+というより，下の方が3つ目のパスが表示されずそれっぽいので良い
+> python setup.py install
+$ python3 setup.py install
 '''
 
-from modules.InitProcess import InitProcess
-from modules.Public import StrFormatter
-from modules.Alone import Alone
-from modules.Observer import WinObserver, MacObserver
-from modules.Logger import Logger
-from modules.Plotter import Plotter
-from modules.Displayer import Displayer
+from ganttlogger.modules.InitProcess import InitProcess
+from ganttlogger.modules.Public import StrFormatter
+from ganttlogger.modules.Alone import Alone
+from ganttlogger.modules.Observer import WinObserver, MacObserver
+from ganttlogger.modules.Logger import Logger
+from ganttlogger.modules.Plotter import Plotter
+from ganttlogger.modules.Displayer import Displayer
 
 def main():
     '''
