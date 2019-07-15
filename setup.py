@@ -4,7 +4,7 @@ References
     https://pod.hatenablog.com/entry/2017/02/11/194834
     https://qiita.com/Alice1017/items/0464a38ab335ac3b9336
 '''
-from setuptools import setup
+from setuptools import setup, find_packages
 import platform
 
 '''
@@ -36,18 +36,42 @@ elif "Darwin" in os:
         "pyobjc-framework-Quartz"
     ]
 
+with open("README.md", encoding="utf-8") as f:
+    readme = f.read()
+
 setup(
     name="ganttlogger",
-    version="0.0",
+    version="0.1.0",
     description="This CLI will monitor(active-tab, mouse, keyboard), log, and generate graphs.",
+    long_description=readme,
+    long_description_content_type="text/markdown",
+    author="Goki Sugimura(KagenoMoheji)",
+    author_email="shadowmoheji.pd@gmail.com",
+    url="https://github.com/KagenoMoheji/GanttLogger",
+    licence="MIT",
+    packages=find_packages(),
+    include_package_data=True,
+    keywords=[
+        "gantt",
+        "log",
+        "graph",
+        "plot",
+        "keyboard",
+        "mouse",
+        "active tab"
+    ],
+    classifiers=[
+        "Development Status :: 1 - Beta",
+        "Natural Language :: English",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3.7",
+        "Operating System :: MacOS :: MacOS X",
+        "Operating System :: Microsoft :: Windows"
+    ],
     install_requires=install_requires,
     entry_points={
         "console_scripts": [
-            "ganttlogger = app:main"
+            "ganttlogger = ganttlogger.app:main"
         ]
     },
-    author="KagenoMoheji",
-    author_email="shadowmoheji.pd@gmail.com",
-    url="https://github.com/KagenoMoheji/ActiveTabGanttLogger",
-    licence="MIT"
 )
