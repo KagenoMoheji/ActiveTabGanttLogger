@@ -48,6 +48,7 @@ class ActiveTabObserver:
                     #     tab_text=active_tab_text))
                 time.sleep(0.001)
             # Output the last log
+            switched_time = datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f")
             self.data_process(switched_time, active_name, active_tab_text)
         except:
             # If this thread stopped by rebooting from sleep, maybe...

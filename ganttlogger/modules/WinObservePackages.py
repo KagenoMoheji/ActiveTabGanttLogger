@@ -44,6 +44,7 @@ class ActiveTabObserver:
                     #     tab_text=active_tab_text))
                 time.sleep(0.001)
             # Output the last log
+            switched_time = datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f")
             splitted_active_tab_text = active_tab_text.split(" - ")
             if len(splitted_active_tab_text) > 1:
                 # Remove application name from tab text
