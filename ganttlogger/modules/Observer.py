@@ -4,9 +4,9 @@ from datetime import datetime
 # import numpy as np
 import concurrent.futures as confu
 from collections import deque
-import modules.Global as global_v
-from modules.Public import StrFormatter
-from modules.CommonObservePackages import MouseObserver, KeyboardObserver
+import Global as global_v
+from Public import StrFormatter
+from CommonObservePackages import MouseObserver, KeyboardObserver
 
 '''
 References:
@@ -78,13 +78,13 @@ class Observer:
 class WinObserver(Observer):
     def __init__(self, uuid, is_alone):
         super().__init__(uuid, is_alone)
-        from modules.WinObservePackages import ActiveTabObserver
+        from ganttloger.modules.WinObservePackages import ActiveTabObserver
         self.ob_activetab = ActiveTabObserver(uuid, is_alone)
 
 
 class MacObserver(Observer):
     def __init__(self, uuid, is_alone):
         super().__init__(uuid, is_alone)
-        from modules.MacObservePackages import ActiveTabObserver
+        from ganttloger.modules.MacObservePackages import ActiveTabObserver
         self.ob_activetab = ActiveTabObserver(uuid, is_alone)
 

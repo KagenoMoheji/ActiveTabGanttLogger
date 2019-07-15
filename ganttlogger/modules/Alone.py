@@ -1,11 +1,11 @@
 import sys
 import threading
 import time
-from modules.Public import StrFormatter
-import modules.Global as global_v
-from modules.Observer import WinObserver, MacObserver
-from modules.Logger import Logger
-from modules.Plotter import Plotter
+from Public import StrFormatter
+import Global as global_v
+from Observer import WinObserver, MacObserver
+from Logger import Logger
+from Plotter import Plotter
 
 class Alone:
     uuid = ""

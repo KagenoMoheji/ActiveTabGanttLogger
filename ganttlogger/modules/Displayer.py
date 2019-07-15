@@ -1,7 +1,7 @@
 import sys
 import pickle
 import matplotlib.pyplot as plt
-from modules.Public import StrFormatter
+from Public import StrFormatter
 
 class Displayer:
     '''

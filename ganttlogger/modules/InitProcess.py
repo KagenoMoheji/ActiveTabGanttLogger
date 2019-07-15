@@ -2,7 +2,7 @@ import sys
 import platform
 import uuid
 from argparse import ArgumentParser, RawTextHelpFormatter
-from modules.Public import StrFormatter
+from Public import StrFormatter
 
 class InitProcess:
     argparser = None

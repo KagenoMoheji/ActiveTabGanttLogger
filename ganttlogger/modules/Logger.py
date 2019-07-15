@@ -7,8 +7,8 @@ import os
 import time
 from datetime import datetime
 # import concurrent.futures as confu
-import modules.Global as global_v
-from modules.Public import StrFormatter
+import Global as global_v
+from Public import StrFormatter
 
 class Logger:
     uuid = ""

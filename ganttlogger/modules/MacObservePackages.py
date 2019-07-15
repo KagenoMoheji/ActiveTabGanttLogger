@@ -7,7 +7,7 @@ from Quartz import (
     kCGWindowListOptionOnScreenOnly,
     kCGNullWindowID
 )
-import modules.Global as global_v
+import Global as global_v
 
 class ActiveTabObserver:
     uuid = ""

@@ -3,7 +3,7 @@ import time
 import psutil
 import win32gui as wg
 import win32process as wp
-import modules.Global as global_v
+import Global as global_v
 
 class ActiveTabObserver:
     uuid = ""
