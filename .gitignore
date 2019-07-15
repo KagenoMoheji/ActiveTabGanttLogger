@@ -1,0 +1,10 @@
+__pycache__
+.history
+Pipfile*
+ganttlogger.egg-info
+.vscode
+env.json
+ganttlogger_logs
+.DS_Store
+dist
+icon/*.png
