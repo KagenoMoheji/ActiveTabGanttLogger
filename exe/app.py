@@ -24,8 +24,10 @@ Or, if you have installed this CLI, start from (4).
 (●Additional Files : ipaexg.ttfを追加)
 ●Advanced
 ・Output Directory: distフォルダを選択
-・-n              : ganttlogger-exe
+・-n              : ganttlogger
 ・--hidden-import : matplotlib,numpy,psutil,pynput,pypiwin32,colorama(,pyobjc,pyobjc-framework-Quartz)
+
+●圧縮フォルダ名を「ganttlogger-exe」として公開．
 '''
 
 from modules.InitProcess import InitProcess
