@@ -78,13 +78,13 @@ class Observer:
 class WinObserver(Observer):
     def __init__(self, uuid, is_alone):
         super().__init__(uuid, is_alone)
-        from ganttloger.modules.WinObservePackages import ActiveTabObserver
+        from WinObservePackages import ActiveTabObserver
         self.ob_activetab = ActiveTabObserver(uuid, is_alone)
 
 
 class MacObserver(Observer):
     def __init__(self, uuid, is_alone):
         super().__init__(uuid, is_alone)
-        from ganttloger.modules.MacObservePackages import ActiveTabObserver
+        from MacObservePackages import ActiveTabObserver
         self.ob_activetab = ActiveTabObserver(uuid, is_alone)
 
