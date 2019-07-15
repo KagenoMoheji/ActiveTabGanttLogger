@@ -23,11 +23,8 @@ class InitProcess:
 
         Returns:
             os (str): OS and its version
-            mode (str): "Alone" or "Observer" or "Logger"
-            uuid ("" | str): UUID when mode is not "Alone" and "Plotter"
-
-        References:
-            http://ja.pymotw.com/2/platform/
+            mode (str): "Alone" or "AloneWithPlot" or "Observer" or "Logger" or "Plotter" or "Displayer"
+            uuid ("" | str): UUID when mode is not "Plotter" and "Displayer"
         '''
         os = self.get_os()
         mode = self.argparser.identify_mode()
@@ -65,9 +62,6 @@ Your ID is: {uuid}
 
         Returns:
             os (str): OS and its version
-
-        References:
-            http://ja.pymotw.com/2/platform/
         '''
         os = platform.platform(terse=True)
 
@@ -88,9 +82,6 @@ Your ID is: {uuid}
 
         Returns:
             (str): UUID
-
-        References:
-            https://www.python.ambitious-engineer.com/archives/1436
         '''
         return str(uuid.uuid4())
 
@@ -102,14 +93,6 @@ class ArgsParser:
     def __init__(self):
         '''
         Parse cli options.
-
-        References:
-            https://docs.python.org/ja/3/library/argparse.html
-            https://chroju.github.io/blog/2019/02/19/how_to_write_usage/
-            https://qiita.com/petitviolet/items/aad73a24f41315f78ee4
-            https://pod.hatenablog.com/entry/2017/02/11/194834
-            https://qiita.com/Alice1017/items/0464a38ab335ac3b9336
-            https://stackoverflow.com/a/3853776
         '''
         self.strfmr = StrFormatter()
         usage = "ganttlogger [--observer] [--logger] [--uuid <UUID>] [--help] [--plotter] [--withplot] [--displayer]"

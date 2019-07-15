@@ -1,8 +1,3 @@
-'''
-●jsonを引数に受け取る
-●jsonのid順にログ追記
-●受信の場合はenv.jsonを読み込んで環境変数にする
-'''
 import os
 import time
 from datetime import datetime
@@ -16,10 +11,7 @@ class Logger:
     dirname = ""
     def __init__(self, uuid):
         '''
-        
-        References:
-            https://stackoverflow.com/a/12517490
-            https://kokufu.blogspot.com/2018/04/python-with.html
+        Get data from observer and log them.
         '''
         self.uuid = uuid
         self.strfmr = StrFormatter()
@@ -38,14 +30,17 @@ Target User:
             f.write(text)
 
     # def start(self):
+    #     # Not implemented yet
     #     pass
 
     def run_logger(self):
-        # receive_json()とoutput()のスレッド展開
+        # Not implemented yet.
+        # Run threads of receive_json() and output().
         print("Hello, Logger!")
 
     def receive_json(self):
-        # jsonデータを受信してキューに格納する
+        # Not implemented yet.
+        # Recieve JSON and enqueue it.
         pass
 
     def output(self):
@@ -101,6 +96,6 @@ Target User:
                     print(self.strfmr.get_colored_console_log("yellow",
                         "All queue are empty"))
                 is_all_empty = True
-                time.sleep(2) # 何秒でも良さそう
+                time.sleep(2) # It's OK any seconds
 
 

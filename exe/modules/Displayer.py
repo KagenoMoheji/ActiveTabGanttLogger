@@ -4,13 +4,12 @@ import matplotlib.pyplot as plt
 from modules.Public import StrFormatter
 
 class Displayer:
-    '''
-    Reference:
-        http://kuroneko0208.hatenablog.com/entry/2014/07/28/161453
-    '''
     strfmr = None
     filename = ""
     def __init__(self):
+        '''
+        Load .pkl and display a graph with matplotlib on Python.
+        '''
         self.strfmr = StrFormatter()
         self.filename = ""
 

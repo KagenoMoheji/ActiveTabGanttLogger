@@ -16,7 +16,7 @@ class MyThread(threading.Thread):
         self.callback()
 
 class StrFormatter:
-    # At first, 'terminalColors' has escape sequences for MacOS and Unix.
+    # Standardly, 'terminalColors' has escape sequences for MacOS and Unix.
     terminalColors = {
         "red": "\u001b[31m",
         "yellow": "\u001b[33m",
@@ -25,9 +25,6 @@ class StrFormatter:
     def start(self):
         '''
         When executed in __init__, it is executed each time this class is instantiated, so it is prevented by coding in this function.
-
-        References:
-            https://githubja.com/tartley/colorama
         '''
         os = platform.platform(terse=True)
         if "Windows" in os:

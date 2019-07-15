@@ -14,6 +14,9 @@ class Alone:
     strfmr = None
     withplot = False
     def __init__(self, os, uuid, withplot=False):
+        '''
+        Work as all of 'observer', 'logger' and 'plotter'.
+        '''
         self.uuid = uuid
         if os == "w":
             self.observer = WinObserver(uuid=self.uuid, is_alone=True)

@@ -1,7 +1,7 @@
 '''
-Because we can run MouseObserver with same code regardless on Windows or Mac,
-we implemented only this class.
-But we can implement in per class when we have to implement following OS.
+Because we can run MouseObserver and KeyboardObserver with same code
+regardless on Windows or Mac, we implemented common classes here.
+But we can implement in per classes when we have to implement following OS.
 '''
 import math
 import time
@@ -74,10 +74,6 @@ class MouseObserver:
 
 
 class KeyboardObserver:
-    '''
-    References:
-        https://python.ms/sub/misc/list-comparison/
-    '''
     uuid = ""
     data_process = None
     sec_sum_keyboard_cnt = 0
@@ -113,8 +109,12 @@ class KeyboardObserver:
         if (self.EXITCOMB_WIN == set(self.current_4key)) or (self.EXITCOMB_MAC == set(self.current_4key)):
             # Here, switch a flag to exit children threads
             global_v.is_sleeping = True
-            # Delete all text in terminal(Flush stdin buffer?)
-            # ??????????????????????????????????????????
+            '''
+            ###############################################################
+            Delete all text in terminal(Flush stdin buffer?)
+            ??????????????????????????????????????????
+            ###############################################################
+            '''
             return False
         self.sec_sum_keyboard_cnt += 1
         time.sleep(0.001) # Max type speed is 256 wpm -> 0.002 is OK?

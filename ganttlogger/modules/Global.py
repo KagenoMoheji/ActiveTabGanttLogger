@@ -3,23 +3,17 @@ from collections import deque
 '''
 Variables work for managing a flag whether observers's threads should exit.
 '''
-# Whether pause children threads?
+# Whether pausing children threads? (But actually, working in the backend)
 is_sleeping = False
 # Whether thread-loop exit because of error catch?
 is_threadloop_error = False
 # Whether threads 'Observer' and 'Logger' exited?
 cli_exit = False
-# Whether all logging has finished?
+# Whether 'Logger' has finished all logging?
 finish_logging = False
 
 
-'''
-
-'''
-# コメントアウトのJSON構造は単なる配列に置き換える際の参考に．
-# 初期データはid=-1としているので，それでフィルタリングしておく
-# 送信時はJSONに変換してデータ取得時に送る
-# 受信時にリストのインデックス2のidの連番で確認するなりソートするなりしてからファイル書き出しする
+# Data structure is based on JSON.
 '''
 {
     "uuid": "",

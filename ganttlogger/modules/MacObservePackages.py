@@ -13,6 +13,9 @@ class ActiveTabObserver:
     uuid = ""
     data_process = None
     def __init__(self, uuid, is_alone):
+        '''
+        Monitor active-tab on Mac.
+        '''
         self.uuid = uuid
         if is_alone:
             self.data_process = self.enqueue_data
@@ -34,7 +37,7 @@ class ActiveTabObserver:
                             active_tab_text = cg_window["kCGWindowName"]
                             break
                 except (KeyError, ValueError, psutil.NoSuchProcess):
-                    # pid取得が間に合ってなかったら
+                    # If not in time to get pid
                     # print("Warning: Failed in getting process information")
                     continue
                 if recent_active_tab_text != active_tab_text.upper():

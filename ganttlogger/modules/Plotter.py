@@ -1,7 +1,3 @@
-'''
-●ログファイルを読み込んでガントチャート生成・出力
-・ファイル名にタイムスタンプつけとく
-'''
 import os
 import sys
 import re
@@ -11,29 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.dates as pld
 import matplotlib.font_manager as plf
-# import plotly.offline as ploff
-# import plotly.tools as pltl
-# import plotly.graph_objs as plgo
-# import plotly.figure_factory as plff
 from ganttlogger.modules.Public import StrFormatter
-
-'''
-References:
-    http://ailaby.com/matplotlib_fig/#id4_1
-    https://qiita.com/fujiy/items/f738aa9d0bb7427e07a4#%E8%A7%A3%E6%B1%BA%E7%AD%96
-    https://www.haya-programming.com/entry/2018/05/26/031355
-    https://note.nkmk.me/python-list-common/
-    https://github.com/spyder-ide/spyder/issues/5401
-    https://note.nkmk.me/python-check-int-float/
-    https://pythondatascience.plavox.info/numpy/%E6%95%B0%E5%AD%A6%E7%B3%BB%E3%81%AE%E9%96%A2%E6%95%B0
-    https://yukun.info/python-file/
-    https://qiita.com/shibainurou/items/0b0f8b0233c45fc163cd
-    https://note.nkmk.me/python-numpy-dtype-astype/
-    https://www.javadrive.jp/python/list/index10.html#section3
-    https://note.nkmk.me/python-datetime-timedelta-measure-time/
-    https://stackoverflow.com/questions/31487732/simple-way-to-drop-milliseconds-from-python-datetime-datetime-object
-    https://codeday.me/jp/qa/20181209/68124.html
-'''
 
 class Plotter:
     uuid = "" # If empty, this variable is unused
@@ -107,13 +81,13 @@ class Plotter:
 
     def start(self):
         '''
-        ●標準入力で
-        (1)出力モードの選択(filter_tab/set_interval)
-        (2)出力モードに合わせた必須項目への回答
-        ・set_interval -> デルタtの数値指定(単位は秒)
-        ・fiter_tab -> 不要なタブ名(ログからコピペ)をまとめたテキストファイルの指定
-        ・select_data -> 3つのデータをサブプロットでまとめて出力するか，選択したデータで独立のプロットを出力するか(例えば，"all"なら1つの出力に3つのサブプロットが入っているが，一方3つのデータを選択した入力なら3つの出力が出る)
-        ・xaxis_type -> 横軸の時刻目盛りを，アクティブタブ開始時刻にするか，等間隔(ユーザ指定[秒])にするか
+        ●With stdin,
+        (1)Select output mode. (set_interval/filter_tab/select_data/xaxis_type)
+        (2)In each mode, set detail information.
+        ・set_interval -> Set a number of seconds interval of data.
+        ・fiter_tab -> Set a (text) file of the list of unneccesary tab-text.
+        ・select_data -> Set "all" to plot a compiled graph, or select from ('active_tab'|'mouse'|'keyboard'|'mouse-keyboard') to plot each graphs.
+        ・xaxis_type -> For x-axis, select "active-start" to set start times of active-tabs, or set a number of seconds to set times of the interval.
         '''
         try:
             plot_types_labels = set(["set_interval", "filter_tab", "select_data", "xaxis_type"])
@@ -286,15 +260,12 @@ class Plotter:
 
     def run(self): # plot(self)
         '''
+        Plot a compiled graph from active-tab, mouse and keyboard dataframe.
+
         ●We must execute four functions in the following order.
         (1)self.get_activetab()
         (2)self.get_mouse() or self.get_keyboard()
         (3)self.more_reshape_activetab()
-
-        References:
-            http://pineplanter.moo.jp/non-it-salaryman/2018/03/23/python-2axis-graph/
-            https://qiita.com/supersaiakujin/items/e2ee4019adefce08e381
-            https://sabopy.com/py/matplotlib-26/
         '''
         print("Run, Plotter!")
         self.get_activetab()
@@ -319,32 +290,7 @@ class Plotter:
 # =================================================
 # """.format(t=self.plot_active_tab, df=self.df_active_tab))
 
-        '''
-        こっから下は横方向の棒グラフの描写をしていく．matplotlib.dates.DateFormatter()やmatplotlib.dates.date2num()とかを使う．
-        datetime.dates.date2numによるdatenumsとか無くてもいけるっぽい？？？念のためdate2numを使う場合もコメントアウトに残しとく．
 
-        References:
-            https://stackoverflow.com/questions/4090383/plotting-unix-timestamps-in-matplotlib
-            https://stackoverflow.com/questions/40395227/minute-and-second-format-for-x-label-of-matplotlib
-            https://triplepulu.blogspot.com/2013/06/pythonmatplotlib_285.html
-            https://sabopy.com/py/matplotlib-26/
-            http://www.jiajianhudong.com/question/382840.html
-            ▲https://stackoverflow.com/questions/24425908/matplotlib-how-to-use-timestamps-with-broken-barh
-            https://codeday.me/jp/qa/20190324/471800.html
-            https://note.nkmk.me/python-datetime-usage/#datetime
-            https://teratail.com/questions/74084
-            http://naga-tsuzuki.sblo.jp/article/179645369.html#tick-y-
-            https://qiita.com/Yoterph/items/e0039309a47c75dade05
-            https://datumstudio.jp/blog/matplotlib%E3%81%AE%E6%97%A5%E6%9C%AC%E8%AA%9E%E6%96%87%E5%AD%97%E5%8C%96%E3%81%91%E3%82%92%E8%A7%A3%E6%B6%88%E3%81%99%E3%82%8Bwindows%E7%B7%A8
-            https://qiita.com/canard0328/items/a859bffc9c9e11368f37
-            http://bicycle1885.hatenablog.com/entry/2014/02/14/023734 (sharexによるx軸の共有がax1とax2の一致に使えるのでは？)
-            http://ailaby.com/subplots_adjust/#id1
-            http://nok0714.hatenablog.com/entry/2017/04/13/140525
-            http://kuroneko0208.hatenablog.com/entry/2014/07/28/161453
-            http://pineplanter.moo.jp/non-it-salaryman/2018/03/23/python-2axis-graph/
-            https://qiita.com/supersaiakujin/items/e2ee4019adefce08e381
-            http://nok0714.hatenablog.com/entry/2017/04/13/140525
-        '''
         fig = plt.figure(figsize=(15, 9))
         # Get range of x axis
         init = self.plot_active_tab[0][0] # pld.date2num(self.plot_active_tab[0][0])
@@ -352,14 +298,12 @@ class Plotter:
 
         # Create upper graph(ganttchart)
         ax1 = fig.add_subplot(2, 1, 1)
-        ax1.set_xlim(init, last) # Important for plotting ganttchart by seconds!
+        ax1.set_xlim(init, last)
         dates = []
         if self.xaxis_type_at == "active-start":
-            # activetabの開始時刻(と最終時刻)のみ
             dates = [t for t in self.plot_active_tab[:-1, 0]]
             last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
         else:
-            # ログの開始時刻から終了時刻までの等間隔秒刻み
             t = self.plot_active_tab[0][0]
             last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
             while (last_t - t).total_seconds() >= 0:
@@ -367,7 +311,7 @@ class Plotter:
                 t += datetime.timedelta(seconds=int(self.xaxis_type_at))
             # print(last_t.second - dates[len(dates) - 1].second)
             # print(dates[len(dates) - 1].second - last_t.second)
-        # 最後の日時を追加
+        # Add the last time to x-axis
         if (last_t - dates[len(dates) - 1]).total_seconds() > 0:
             dates.append(last_t)
         # datenums = pld.date2num(dates)
@@ -379,33 +323,31 @@ class Plotter:
         y.append(y[len(y) - 1] + 10)
         ax1.set_yticks(y)
         ax1.set_yticklabels(self.df_active_tab.keys(), fontproperties=fp)
-        for i, k in enumerate(self.df_active_tab.keys()): # 上のy軸方向の順(=self.df_active_tab.keys()の順)に従ってx軸方向のガントチャートを描写
-            # print(self.df_active_tab[k])
+        for i, k in enumerate(self.df_active_tab.keys()):
+            # Plot ganttchart following the turn of 'self.df_active_tab.keys()'
             ax1.broken_barh(self.df_active_tab[k], (5+i*10, 5), facecolor="red")
-        plt.subplots_adjust(top=0.85, bottom=0.15, right=0.95, hspace=0) # left=0.3, right=0.9
+        plt.subplots_adjust(top=0.85, bottom=0.15, right=0.95, hspace=0)
         plt.title("SwitchActiveTab(interval: {}s)".format(self.sec_interval))
-        ax1.xaxis.tick_top() # 横軸をグラフの上に設置
-        ax1.grid(axis="y") # 縦軸のグリッド線を引く
+        ax1.xaxis.tick_top()
+        ax1.grid(axis="y")
         
 
         # Create lower graph(line or bar graph)
         # ax2_1:mouse, ax2_2:keyboard
-        ax2_1 = fig.add_subplot(2, 1, 2) # , sharex=ax1
+        ax2_1 = fig.add_subplot(2, 1, 2)
         ax2_2 = ax2_1.twinx()
         ax2_1.set_xlim(init, last)
         dates.clear()
         if self.xaxis_type_mk == "active-start":
-            # activetabの開始時刻(と最終時刻)のみ
             dates = [t for t in self.plot_active_tab[:-1, 0]]
             last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
         else:
-            # ログの開始時刻から終了時刻までの等間隔秒刻み
             t = self.plot_active_tab[0][0]
             last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
             while (last_t - t).total_seconds() >= 0:
                 dates.append(t)
                 t += datetime.timedelta(seconds=int(self.xaxis_type_mk))
-        # 最後の日時を追加
+        # Add the last time to x-axis
         if (last_t - dates[len(dates) - 1]).total_seconds() > 0:
             dates.append(last_t)
         # datenums = pld.date2num(dates)
@@ -431,12 +373,9 @@ class Plotter:
         # plt.show()
 
 
-    def run_each(self): # plot_each(self)
+    def run_each(self):
         '''
-        ●run()が3つのサブプロットで1つのファイル出力をするのに対し，run_each()は
-        1つのプロットで1つのファイル出力をする，つまり独立した出力をする関数．
-        ●self.select_dataに従って，get_activetab，get_mouse，get_keyboardのいずれかを実行して各々の独立ファイルを出力．
-        ●各出力ファイル名に日時を追加する．
+        Plot each graphs following user-select(self.select_data).
         
         ●We must execute four functions in the following order.
         (1)self.get_activetab()
@@ -453,63 +392,58 @@ class Plotter:
         init = self.plot_active_tab[0][0] # pld.date2num(self.plot_active_tab[0][0])
         last = self.plot_active_tab[len(self.plot_active_tab)-1][0] # pld.date2num(self.plot_active_tab[len(self.plot_active_tab)-1][0])
         
-        # if active_tabの出力が選択されていたら
         if "active_tab" in self.select_data:
             fig = plt.figure(figsize=(15,6))
             ax = fig.add_subplot(1, 1, 1)
             ax.set_xlim(init, last)
             if self.xaxis_type_at == "active-start":
-                # activetabの開始時刻(と最終時刻)のみ
                 dates = [t for t in self.plot_active_tab[:-1, 0]]
                 last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
             else:
-                # ログの開始時刻から終了時刻までの等間隔秒刻み
                 t = self.plot_active_tab[0][0]
                 last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
                 while (last_t - t).total_seconds() >= 0:
                     dates.append(t)
                     t += datetime.timedelta(seconds=int(self.xaxis_type_at))
-            # 最後の日時を追加
+            # Add the last time to x-axis
             if (last_t - dates[len(dates) - 1]).total_seconds() > 0:
                 dates.append(last_t)
             # datenums = pld.date2num(dates)
             ax.set_xticks(dates) # ax.set_xticks(datenums)
             plt.xlabel("t")
-            ax.axes.tick_params(axis="x", labelsize=7, rotation=270) # rotation=25
+            ax.axes.tick_params(axis="x", labelsize=7, rotation=270)
             ax.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
             fp = plf.FontProperties(fname="{}/../config/font/ipaexg.ttf".format(os.path.dirname(__file__)), size=8)
             y = [7.5 + i * 10 for i in range(len(self.df_active_tab.keys()))]
             y.append(y[len(y) - 1] + 10)
             ax.set_yticks(y)
             ax.set_yticklabels(self.df_active_tab.keys(), fontproperties=fp)
-            for i, k in enumerate(self.df_active_tab.keys()): # 上のy軸方向の順(=self.df_active_tab.keys()の順)に従ってx軸方向のガントチャートを描写
+            for i, k in enumerate(self.df_active_tab.keys()):
+                # Plot ganttchart following the turn of 'self.df_active_tab.keys()'
                 # print(self.df_active_tab[k])
                 ax.broken_barh(self.df_active_tab[k], (5+i*10, 5), facecolor="red")
             plt.title("SwitchActiveTab(interval: {}s)".format(self.sec_interval))
-            ax.grid(axis="y") # 縦軸のグリッド線を引く
+            ax.grid(axis="y")
             plt.subplots_adjust(top=0.95, bottom=0.2, right=0.99, left=0.2)
             with open("{dirname}/graphs/output_{datetime}_active_tab.pkl".format(dirname=self.dirname, datetime=filetime), "wb") as f:
                 pickle.dump(fig, f)
             plt.savefig("{dirname}/graphs/output_{datetime}_active_tab".format(dirname=self.dirname, datetime=filetime))
         
-        # if mouseの出力が選択されていたら
         if "mouse" in self.select_data:
             fig = plt.figure(figsize=(15,6))
             ax = fig.add_subplot(1, 1, 1)
             ax.set_xlim(init, last)
             dates = []
             if self.xaxis_type_mk == "active-start":
-                # activetabの開始時刻(と最終時刻)のみ
                 dates = [t for t in self.plot_active_tab[:-1, 0]]
                 last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
             else:
-                # ログの開始時刻から終了時刻までの等間隔秒刻み
                 t = self.plot_active_tab[0][0]
                 last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
                 while (last_t - t).total_seconds() >= 0:
                     dates.append(t)
                     t += datetime.timedelta(seconds=int(self.xaxis_type_mk))
-            # 最後の日時を追加
+            # Add the last time to x-axis
             if (last_t - dates[len(dates) - 1]).total_seconds() > 0:
                 dates.append(last_t)
             # datenums = pld.date2num(dates)
@@ -526,24 +460,21 @@ class Plotter:
                 pickle.dump(fig, f)
             plt.savefig("{dirname}/graphs/output_{datetime}_mouse".format(dirname=self.dirname, datetime=filetime))
         
-        # if keyboardの出力が選択されていたら
         if "keyboard" in self.select_data:
             fig = plt.figure(figsize=(15,6))
             ax = fig.add_subplot(1, 1, 1)
             ax.set_xlim(init, last)
             dates = []
             if self.xaxis_type_mk == "active-start":
-                # activetabの開始時刻(と最終時刻)のみ
                 dates = [t for t in self.plot_active_tab[:-1, 0]]
                 last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
             else:
-                # ログの開始時刻から終了時刻までの等間隔秒刻み
                 t = self.plot_active_tab[0][0]
                 last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
                 while (last_t - t).total_seconds() >= 0:
                     dates.append(t)
                     t += datetime.timedelta(seconds=int(self.xaxis_type_mk))
-            # 最後の日時を追加
+            # Add the last time to x-axis
             if (last_t - dates[len(dates) - 1]).total_seconds() > 0:
                 dates.append(last_t)
             # datenums = pld.date2num(dates)
@@ -568,17 +499,15 @@ class Plotter:
             ax.set_xlim(init, last)
             dates = []
             if self.xaxis_type_mk == "active-start":
-                # activetabの開始時刻(と最終時刻)のみ
                 dates = [t for t in self.plot_active_tab[:-1, 0]]
                 last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
             else:
-                # ログの開始時刻から終了時刻までの等間隔秒刻み
                 t = self.plot_active_tab[0][0]
                 last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
                 while (last_t - t).total_seconds() >= 0:
                     dates.append(t)
                     t += datetime.timedelta(seconds=int(self.xaxis_type_mk))
-            # 最後の日時を追加
+            # Add the last time to x-axis
             if (last_t - dates[len(dates) - 1]).total_seconds() > 0:
                 dates.append(last_t)
             # datenums = pld.date2num(dates)
@@ -593,6 +522,7 @@ class Plotter:
             ax.set_ylabel("Mouse Distance[/interval]")
             ax2.set_ylabel("Keyboard Count[/interval]")
             ax.set_ylim(bottom=0)
+            ax2.set_ylim(bottom=0)
             ax2.grid(axis="y")
             plt.title("Mouse and Keyboard(interval: {}s)".format(self.sec_interval))
             plt.subplots_adjust(top=0.95, bottom=0.25)
@@ -603,12 +533,7 @@ class Plotter:
 
     def get_activetab(self):
         '''
-        ファイル読み込み・データ加工をここで行い，縦軸と横軸のリストを返す
-        
-        References:
-            http://oimokihujin.hatenablog.com/entry/2015/10/01/112450
-            https://deepage.net/features/numpy-empty.html
-            https://note.nkmk.me/python-numpy-delete/
+        Process data from "active_tab.log", output "self.plot_active_tab".
         '''
         try:
             with open("{dirname}/active_tab.log".format(dirname=self.dirname), "r", encoding="utf-8") as ft:
@@ -629,7 +554,6 @@ class Plotter:
                     # Here, change type of timestamp(str -> datetime.datetime)
                     raw_data.append([datetime.datetime.strptime(splitted_column[0], "%Y/%m/%d %H:%M:%S.%f"), splitted_column[1], splitted_column[2]])
             # print("before: {}".format(raw_data))
-            # print(np.array(raw_data)[:,2])
 
             if len(self.filter_tab_list) > 0:
                 del_indexs = []
@@ -665,20 +589,15 @@ class Plotter:
     
     def more_reshape_activetab(self):
         '''
-        マウス・キーボードのデータを取得した後でのアクティブタブのデータの加工．
-        こんなコード構成は不本意だがゴリゴリやる．
-
-        ここでスリープ期間の(マウス・キーボードの両方がNoneという前提での)削ぎ落としと，self.df_active_tabを得る
+        Process "self.plot_mouse" and "self.plot_keyboard" using "self.plot_active_tab",
+        and output updated ones and "self.df_active_tab".
         '''
         new_data = self.plot_active_tab.tolist()
         m_i, k_i = 0, 0
         for i in range(len(self.plot_active_tab) - 1):
             '''
-            ●各レコードにFinishTimeを第3インデックスとして追加していく．
-            ●もしマウス・キーボードが両方Noneでなければ，次のレコードのStartTimeをFinishTimeに格納する
-            ●もし両方NoneならそのレコードのFinishTimeにマウス・キーボードのいずれかの値がある方のタイムスタンプを格納する
-
-            ●(self.plot_active_tab[0][0]を初期タイムスタンプとして，)そのレコードのStartTime～その次のレコードのStartTimeの間をself.sec_interval(良くなかったら1秒間隔)で調べた時に，マウス・キーボードの両方がNoneになったら，その直前の時刻をそのレコードのFinishTimeにする．
+            Get "FinishTime" by finding "Empty term" by judging whether both data of mouse and keyboard are None.
+            If they are None, set the start time of "Empty term"(the later? None of mouse or keyboard) as "FinishTime", others, set the start time of next active-tab as "FinishTime".
             '''
             current_time = self.plot_active_tab[i][0].replace(microsecond=0)
             next_tab_start = self.plot_active_tab[i+1][0]
@@ -742,19 +661,8 @@ class Plotter:
     
     def get_mouse(self):
         '''
-        ●(完)activetabで最後に終了タイムスタンプをしているけど，それより後の分もkeyboardとmouseはログが残っているので，除去すべきかも？
-        したがって，開始時刻・終了時刻はactivetabのself.plot_active_tabの0番目と最後の時刻に基づく．
-        ●(完)self.hide_filtered_tab_duration=Trueの場合に，self.filter_tab_durationsに従ってNaN・None埋めする．Falseならmouse・keyboardはactive_tabでフィルタリングされた期間もグラフ描写する．
-        ●None埋めとかにして，グラフプロット前にデータをNone期間で分割していってそれぞれでグラフプロットして後から重ねていくとか？
-        http://natsutan.hatenablog.com/entry/20110713/1310513258
-        というか普通に同じとこに，同じ色でプロットしていけばよくね？でも空白期間の表現できるのかな？
-        ●np.nan埋めでいけるっぽい？
-        https://matplotlib.org/3.1.0/gallery/lines_bars_and_markers/nan_test.html
-        ●それともget_activetab()で除去した部分のマークをしないようにNone埋めする？
-        https://stackoverflow.com/questions/14399689/matplotlib-drawing-lines-between-points-ignoring-missing-data
-        ●その他よくわからんけど参考になりそうな…
-        https://codeday.me/jp/qa/20190318/374532.html
-        ●plotlyを使う場合，np.nanではなくNoneでいけそう
+        Process data from "mouse.log", output "self.plot_mouse".
+        Process following "set_interval" and "filter_tab" are also here.
         '''
         try:
             with open("{dirname}/mouse.log".format(dirname=self.dirname), "r", encoding="utf-8") as ft:
@@ -797,22 +705,22 @@ class Plotter:
             final_time = self.plot_active_tab[len(self.plot_active_tab)-1][0].replace(microsecond=0)
             new_raw_data = []
             raw_i = 0
-            while (final_time - current_time).total_seconds() >= 0: # 秒までの時刻で比較
-                # 文字列の時刻に変換するときはマイクロ秒は含めない
+            while (final_time - current_time).total_seconds() >= 0: # Compare times(h:m:s)
+                # Not include micro seconds when comparing string times
                 str_current_time = current_time.strftime("%Y/%m/%d %H:%M:%S")
-                if str_current_time in raw_data[raw_i][0]: # 秒までの時刻で文字列比較する方が良い
-                    # タイムスタンプでもマイクロ秒は含めない
+                if str_current_time in raw_data[raw_i][0]: # Better to compare strings(h:m:s)
+                    # Not include micro seconds to timestamp
                     new_raw_data.append([current_time, raw_data[raw_i][1]])
                     if raw_i + 1 >= len(raw_data):
                         break
-                    if str_current_time in raw_data[raw_i+1][0]: # 秒までの時刻で文字列比較する方が良い
+                    if str_current_time in raw_data[raw_i+1][0]: # Better to compare strings(h:m:s)
                         # Rarely, the same seconds duplicates in consecutive two timestamps
                         # print("Duplicated!!!: " + str_current_time)
                         new_raw_data[len(new_raw_data)-1][1] += raw_data[raw_i+1][1]
                         raw_i += 1
                     raw_i += 1
                 else:
-                    # タイムスタンプでもマイクロ秒は含めない
+                    # Not include micro seconds to timestamp
                     new_raw_data.append([current_time, None])
                 current_time += datetime.timedelta(seconds=1)
             raw_data = new_raw_data
@@ -886,19 +794,8 @@ class Plotter:
 
     def get_keyboard(self):
         '''
-        ●(完)activetabで最後に終了タイムスタンプをしているけど，それより後の分もkeyboardとmouseはログが残っているので，除去すべきかも？
-        したがって，開始時刻・終了時刻はactivetabのself.plot_active_tabの0番目と最後の時刻に基づく．
-        ●(完)self.hide_filtered_tab_duration=Trueの場合に，self.filter_tab_durationsに従ってNaN・None埋めする．Falseならmouse・keyboardはactive_tabでフィルタリングされた期間もグラフ描写する．
-        ●None埋めとかにして，グラフプロット前にデータをNone期間で分割していってそれぞれでグラフプロットして後から重ねていくとか？
-        http://natsutan.hatenablog.com/entry/20110713/1310513258
-        というか普通に同じとこに，同じ色でプロットしていけばよくね？でも空白期間の表現できるのかな？
-        ●np.nan埋めでいけるっぽい？
-        https://matplotlib.org/3.1.0/gallery/lines_bars_and_markers/nan_test.html
-        ●それともget_activetab()で除去した部分のマークをしないようにNone埋めする？
-        https://stackoverflow.com/questions/14399689/matplotlib-drawing-lines-between-points-ignoring-missing-data
-        ●その他よくわからんけど参考になりそうな…
-        https://codeday.me/jp/qa/20190318/374532.html
-        ●plotlyを使う場合，np.nanではなくNoneでいけそう
+        Process data from "keyboard.log", output "self.plot_keyboard".
+        Process following "set_interval" and "filter_tab" are also here.
         '''
         try:
             with open("{dirname}/keyboard.log".format(dirname=self.dirname), "r", encoding="utf-8") as ft:
@@ -941,21 +838,22 @@ class Plotter:
             final_time = self.plot_active_tab[len(self.plot_active_tab)-1][0].replace(microsecond=0)
             new_raw_data = []
             raw_i = 0
-            while (final_time - current_time).total_seconds() >= 0: # 秒までの時刻で比較
+            while (final_time - current_time).total_seconds() >= 0: # Compare times(h:m:s)
+                # Not include micro seconds when comparing string times
                 str_current_time = current_time.strftime("%Y/%m/%d %H:%M:%S")
-                if str_current_time in raw_data[raw_i][0]: # 秒までの時刻で文字列比較する方が良い
-                    # タイムスタンプでもマイクロ秒は含めない
+                if str_current_time in raw_data[raw_i][0]: # Better to compare strings(h:m:s)
+                    # Not include micro seconds to timestamp
                     new_raw_data.append([current_time, raw_data[raw_i][1]])
                     if raw_i + 1 >= len(raw_data):
                         break
-                    if str_current_time in raw_data[raw_i+1][0]: # 秒までの時刻で文字列比較する方が良い
+                    if str_current_time in raw_data[raw_i+1][0]: # Better to compare strings(h:m:s)
                         # Rarely, the same seconds duplicates in consecutive two timestamps
                         # print("Duplicated!!!: " + str_current_time)
                         new_raw_data[len(new_raw_data)-1][1] += raw_data[raw_i+1][1]
                         raw_i += 1
                     raw_i += 1
                 else:
-                    # タイムスタンプでもマイクロ秒は含めない
+                    # Not include micro seconds to timestamp
                     new_raw_data.append([current_time, None])
                 current_time += datetime.timedelta(seconds=1)
             raw_data = new_raw_data

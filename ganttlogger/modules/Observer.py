@@ -8,12 +8,6 @@ import ganttlogger.modules.Global as global_v
 from ganttlogger.modules.Public import StrFormatter
 from ganttlogger.modules.CommonObservePackages import MouseObserver, KeyboardObserver
 
-'''
-References:
-    https://blog.codecamp.jp/python-class-2
-    https://www.lifewithpython.com/2014/01/python-super-function.html
-'''
-
 class Observer:
     strfmr = None
     ob_activetab = None
@@ -21,6 +15,10 @@ class Observer:
     ob_keyboard = None
     executor = None
     def __init__(self, uuid, is_alone):
+        '''
+        Monitor starting time of active-tab, count of keyboard, distance of mouse(cursor)-moving,
+        and enqueue these data.
+        '''
         self.ob_mouse = MouseObserver(uuid, is_alone)
         self.ob_keyboard = KeyboardObserver(uuid, is_alone)
         self.strfmr = StrFormatter()
