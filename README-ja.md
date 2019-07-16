@@ -19,8 +19,6 @@
 ***
 
 ## <span id="1">使用環境(テスト済み)</span> [▲](#0)
-- PC
-    - 左右に`shift + ctrl(command)`があるPCが必要です．
 - OS
     - Windows10(64bit)
     - MacOS Mojave
@@ -53,7 +51,7 @@
     ```
     $ ganttlogger
     ```
-2. (モード"Alone"または"Observer"で実行されている)CLIを中断させるには，左右の`shift + ctrl(command)`の同時押し(というより連打)します．
+2. (モード"Alone"または"Observer"で実行されている)CLIを中断させるには，`1, /, z, ^`のキーを同時押し(というより連打)します．
 3. カレントディレクトリに生成されたフォルダ`ganttlogger_logs`を確認してください．  
 そのフォルダ構成を知りたい場合は，[フォルダ"ganttlogger_logs"の構成](#2-3)を参照ください．
 - もし下記の問題に遭遇したら…

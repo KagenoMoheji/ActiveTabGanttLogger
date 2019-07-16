@@ -20,8 +20,6 @@ CLI that Monitors active-tab, mouse-distance and keyboard-count, Logs and Plots 
 ***
 
 ## <span id="1">Requirements(Test Completing)</span> [▲](#0)
-- PC
-    - Required both of left and right `shift + ctrl(command)`.
 - OS
     - Windows10(64bit)
     - MacOS Mojave
@@ -53,7 +51,7 @@ There are two ways to install.
     ```
     $ ganttlogger
     ```
-2. Exit CLI(running as "Alone" or "Observer") by typing both of left and right `shift + ctrl(command)` simultaneously.
+2. Exit CLI(running as "Alone" or "Observer") by typing keys `1, /, z, ^` simultaneously.
 3. Check a created folder `ganttlogger_logs` in current directory.  
 When you want a guide about the outputed folder, refer [Structure of outputed folder "ganttlogger_logs"](#2-3).
 - If you get the following problems
