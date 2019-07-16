@@ -78,7 +78,7 @@ class Observer:
                 else:
                     print(self.strfmr.get_colored_console_log("red",
                         "Error: Invalid input. Input 'Y'(=yes) or 'n'(=no)."))
-            except KeyboardInterrupt:
+            except (KeyboardInterrupt, EOFError):
                 continue
     
 
