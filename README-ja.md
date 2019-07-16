@@ -161,6 +161,7 @@ optional arguments:
     Traceback (most recent call last):
     ...
     ```
+- 標準入力のバッファクリアの実装を試みるが，難題です．助言やプルリクを求めます．
 - 2台以上運用・リモート形式の`--observer`と`--logger`の実装．
 
 ## <span id="5">ライセンス</span> [▲](#0)

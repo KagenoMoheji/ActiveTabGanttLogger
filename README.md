@@ -156,12 +156,13 @@ optional arguments:
 - Optimize code like `Plotter.py` by commonizing to functions.
 - Like No.2 in [Graph Examples](#graphs), a part of ganttchart disappear from graph when setting `set_interval` more than 2.  
 I'm investigating the causes...
-- In `Observer.py`, sometimes thread error like below occurs. I'm investigating the causes...
+- In `Observer.py`, sometimes thread error like below occurs on Windows. I'm investigating the causes...
     ```
     Exception in thread Thread-1:
     Traceback (most recent call last):
     ...
     ```
+- Try implementing flushing stdin buffering. But it's difficury, so I want advices or pull-requests.
 - Implement mode remote '--observer' and '--logger'.
 
 ## <span id="5">License</span> [▲](#0)
