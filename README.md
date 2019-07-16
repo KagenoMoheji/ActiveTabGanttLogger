@@ -42,7 +42,6 @@ There are two ways to install.
         - Read README for `.exe`.
             - [In English](https://github.com/KagenoMoheji/GanttLogger/blob/master/exe/README.md)
             - [日本語版](https://github.com/KagenoMoheji/GanttLogger/blob/master/exe/README-ja.md)
-
 - <span id="2-1-2">**MacOS**</span>
     1. Install python3 and pip3.
     2. Installl with `pip3` like below.
@@ -54,7 +53,7 @@ There are two ways to install.
     ```
     $ ganttlogger
     ```
-2. Exit CLI by typing both of left and right `shift + ctrl(command)` simultaneously.
+2. Exit CLI(running as "Alone" or "Observer") by typing both of left and right `shift + ctrl(command)` simultaneously.
 3. Check a created folder `ganttlogger_logs` in current directory.  
 When you want a guide about the outputed folder, refer [Structure of outputed folder "ganttlogger_logs"](#2-3).
 - If you get the following problems
@@ -71,6 +70,7 @@ When you want a guide about the outputed folder, refer [Structure of outputed fo
         font.set_text(s, 0, flags=flags)
         ```
         - No problem. You can ignore that.
+
 ### <span id="2-3">Structure of outputed folder "ganttlogger_logs"</span> [▲](#0)
 ```
 ganttlogger_logs
@@ -113,20 +113,19 @@ optional arguments:
 - **`--observer` and `--logger` don't work because they're not implemented yet.**
 - Run `ganttlogger` without any options if you run CLI as `alone` - both of `observer` and `logger/plotter` -.
     - Add an option `--withplot`, if you want graphs along with logs.  
-    Then, CLI will output a graph like No.1 of [Example-Graphs](#graphs)
-
+    Then, CLI will output a graph like No.1 of [Graph Examples](#graphs)
 - Change to current directory of logs and add an option `--plotter`, if you want to get other graphs from logs.
     - Then, you'll be required some settings to decide formats to plot graphs.
     - First,  
         ```
         Select plot types separated by ',',  or enter without input.:
         ```
-        Select keywords(collabration is OK) from (set_interval | filter_tab | select_data | xaxis_type).
+        Select keywords(you can combine) from (set_interval | filter_tab | select_data | xaxis_type).
     - When select `set_interval`, you'll be required a setting.
         ```
         Set the number of interval by seconds:
         ```
-        Example graph when set "5" is No.2 of [Example-Graphs](#graphs).
+        Example graph when set "5" is No.2 of [Graph Examples](#graphs).
     - When select `filter_tab`, you'll be required two settings.
         ```
         (1)Input a file name written a list of tab text you want to filter.:
@@ -137,28 +136,29 @@ optional arguments:
         ```
         Select 'all' or list separated by ',' from ('active_tab'|'mouse'|'keyboard'|'mouse-keyboard').:
         ```
-        Example graphs when set "active_tab" and "keyboard" are No.5 and No.6 of [Example-Graphs](#graphs)
+        Example graphs when set "active_tab" and "keyboard" are No.5 and No.6 of [Graph Examples](#graphs).
     - When select `xaxis_type`, you'll be required two settings.
         ```
         (1)Select x-axis type for ActiveTab from whether 'active-start' or number of the interval by seconds:
 
         (2)Select x-axis type for Mouse or Keyboard from whether 'active-start' or number of the interval by seconds:
         ```
-        Example graphs when set "(1)active-start(2)active-start" and "(1)15(2)15" are No.3 and No.4 of [Example-Graphs](#graphs)
+        Example graphs when set "(1)active-start(2)active-start" and "(1)15(2)15" are No.3 and No.4 of [Graph Examples](#graphs).
 - Add an option `--displayer` if you want watch dynamic graph with generated `~.pkl`.
     - Then, you'll be required a setting.
         ```
         Input file name of '.pkl':
         ```
 
-### <span id="graphs">Example-Graphs</span>
+### <span id="graphs">Graph Examples</span>
 - All graphs were plotted **from same logs**.
-![Example-Graphs](promo/graphs.PNG)
+![Graph Examples](promo/graphs.PNG)
 
 ## <span id="4">In the future...</span> [▲](#0)
 - Optimize code like `Plotter.py` by commonizing to functions.
-- Like No.2 in [Example-Graphs](#graphs), a part of ganttchart disappear from graph when setting `set_interval` more than 2.  
+- Like No.2 in [Graph Examples](#graphs), a part of ganttchart disappear from graph when setting `set_interval` more than 2.  
 We are investigating the causes...
-- Implement mode remote 'observer' and 'logger/plotter'.
+- Implement mode remote '--observer' and '--logger'.
 
 ## <span id="5">License</span> [▲](#0)
+MIT LICENSE.
