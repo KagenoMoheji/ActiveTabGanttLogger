@@ -24,25 +24,27 @@ class ActiveTabObserver:
                     active_pid = wp.GetWindowThreadProcessId(fw)[-1]
                     active_name = psutil.Process(active_pid).name()
                     active_tab_text = wg.GetWindowText(fw)
+                    if recent_active_tab_text != active_tab_text.upper():
+                        switched_time = datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f")
+                        recent_active_tab_text = active_tab_text.upper()
+                        splitted_active_tab_text = active_tab_text.split(" - ")
+                        if len(splitted_active_tab_text) > 1:
+                            # Remove application name from tab text
+                            active_tab_text = " - ".join(splitted_active_tab_text[:-1])
+
+                        self.data_process(switched_time, active_name, active_tab_text)
+                        # print("ActiveTab[{time}]: {pid}: {active_name}({tab_text})".format(
+                        #     time=switched_time,
+                        #     pid=active_pid,
+                        #     active_name=active_name,
+                        #     tab_text=active_tab_text))
+                    time.sleep(0.001)
                 except (ValueError, psutil.NoSuchProcess):
                     # If not in time to get pid
                     # print("Warning: Failed in getting process information")
                     continue
-                if recent_active_tab_text != active_tab_text.upper():
-                    switched_time = datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f")
-                    recent_active_tab_text = active_tab_text.upper()
-                    splitted_active_tab_text = active_tab_text.split(" - ")
-                    if len(splitted_active_tab_text) > 1:
-                        # Remove application name from tab text
-                        active_tab_text = " - ".join(splitted_active_tab_text[:-1])
-
-                    self.data_process(switched_time, active_name, active_tab_text)
-                    # print("ActiveTab[{time}]: {pid}: {active_name}({tab_text})".format(
-                    #     time=switched_time,
-                    #     pid=active_pid,
-                    #     active_name=active_name,
-                    #     tab_text=active_tab_text))
-                time.sleep(0.001)
+                except KeyboardInterrupt:
+                    continue
             # Output the last log
             switched_time = datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f")
             splitted_active_tab_text = active_tab_text.split(" - ")
@@ -57,8 +59,6 @@ class ActiveTabObserver:
             global_v.is_threadloop_error = True
             global_v.is_sleeping = True
             traceback.print_exc()
-        # except KeyboardInterrupt:
-        #     print("ActiveTabObserver.py: KeyboardInterrupt")
 
     def send_json(self, t, active_name, tab_text):
         pass
