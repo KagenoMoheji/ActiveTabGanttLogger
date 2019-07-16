@@ -125,13 +125,13 @@ class KeyboardObserver:
                     self.data_process(datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), self.sec_sum_keyboard_cnt)
                     # print("Keyboard[{datetime}]: {cnt}".format(datetime=datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), cnt=self.sec_sum_keyboard_cnt))
                     print("""\
-    ============[tab]==============\n
-    {t}
-    -----------[mouse]-----------\n
-    {m}
-    -----------[keyboard]-----------\n
-    {k}
-    """.format(t=global_v.tab_queue, m=global_v.mouse_queue, k=global_v.keyboard_queue))
+============[tab]==============\n
+{t}
+-----------[mouse]-----------\n
+{m}
+-----------[keyboard]-----------\n
+{k}
+""".format(t=global_v.tab_queue, m=global_v.mouse_queue, k=global_v.keyboard_queue))
                     self.sec_sum_keyboard_cnt = 0
                     time.sleep(1)
                 except KeyboardInterrupt:
