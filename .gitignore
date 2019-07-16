@@ -9,3 +9,4 @@ ganttlogger_logs
 dist
 icon/*.png
 build
+.venv
