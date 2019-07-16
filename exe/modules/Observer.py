@@ -80,7 +80,6 @@ class Observer:
                         "Error: Invalid input. Input 'Y'(=yes) or 'n'(=no)."))
             except (KeyboardInterrupt, EOFError):
                 continue
-    
 
 class WinObserver(Observer):
     def __init__(self, uuid, is_alone):
