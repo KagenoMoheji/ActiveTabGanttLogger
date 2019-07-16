@@ -1,5 +1,5 @@
 # GanttLogger(exe)
-Windows向けのganttloggerの実行ファイル．
+Pythonのインストール不要でWindows向けのganttloggerの実行ファイル．
 - [README.md - in English](https://github.com/KagenoMoheji/GanttLogger/blob/master/exe/README.md)
 
 ## 導入
