@@ -47,7 +47,7 @@ class Observer:
                     try:
                         time.sleep(1)
                     except KeyboardInterrupt:
-                        continue()
+                        continue
                 if global_v.is_threadloop_error: # When "Thread loop exited by any problem!!!!" occured
                     self.executor.shutdown()
                     sys.exit()
