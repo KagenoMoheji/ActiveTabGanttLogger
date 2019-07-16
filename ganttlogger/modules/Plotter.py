@@ -211,7 +211,7 @@ class Plotter:
                 print("There are two required settings.")
                 while True:
                     print(self.strfmr.get_colored_console_log("yellow",
-                        "Select x-axis type for ActiveTab from whether 'active-start' or number of the interval by seconds: "), end="")
+                        "(1)Select x-axis type for ActiveTab from whether 'active-start' or number of the interval by seconds: "), end="")
                     st_input = input().strip()
                     if st_input == "active-start":
                         self.xaxis_type_at = st_input
@@ -228,7 +228,7 @@ class Plotter:
                             "Error: Invalid input.\n(Example)If you want set 2 seconds for the interval of the xaxis scale, input '2'.\nOr, input 'active-start' if you want set active start time to the xaxis scale."))
                 while True:
                     print(self.strfmr.get_colored_console_log("yellow",
-                        "Select x-axis type for Mouse or Keyboard from whether 'active-start' or number of the interval by seconds: "), end="")
+                        "(2)Select x-axis type for Mouse or Keyboard from whether 'active-start' or number of the interval by seconds: "), end="")
                     st_input = input().strip()
                     if st_input == "active-start":
                         self.xaxis_type_mk = st_input
