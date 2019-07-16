@@ -49,6 +49,8 @@ class MouseObserver:
                 except TypeError:
                     # Avoid to exit thread loop (by rebooting from pc sleep)
                     continue
+                except KeyboardInterrupt:
+                    continue
         except:
             # If this thread stopped by rebooting from sleep, maybe...
             import traceback
@@ -56,8 +58,6 @@ class MouseObserver:
             global_v.is_threadloop_error = True
             global_v.is_sleeping = True
             traceback.print_exc()
-        # except KeyboardInterrupt:
-        #     print("MouseObserver.py: KeyboardInterrupt")
     
     def send_json(self, t, dis_sec):
         pass
@@ -83,18 +83,16 @@ class KeyboardObserver:
     sec_sum_keyboard_cnt = 0
     current_4key = deque([], maxlen=4)
     EXITCOMB_WIN = set([
-        keyboard.Key.ctrl_l,
-        keyboard.Key.shift_l,
-        keyboard.Key.ctrl_r,
-        keyboard.Key.shift_r
-        # keyboard.KeyCode(char = ''),
-        # keyboard.KeyCode(char = 'q')
+        keyboard.KeyCode(char = '1'),
+        keyboard.KeyCode(char = '/'),
+        keyboard.KeyCode(char = 'z'),
+        keyboard.KeyCode(char = '^')
     ])
     EXITCOMB_MAC = set([
-        keyboard.Key.cmd_l,
-        keyboard.Key.shift_l,
-        keyboard.Key.cmd_r,
-        keyboard.Key.shift_r
+        keyboard.KeyCode(char = '1'),
+        keyboard.KeyCode(char = '/'),
+        keyboard.KeyCode(char = 'z'),
+        keyboard.KeyCode(char = '^')
     ])
     def __init__(self, uuid, is_alone):
         self.uuid = uuid
@@ -123,18 +121,21 @@ class KeyboardObserver:
     def get_key_second(self):
         try:
             while not global_v.is_sleeping:
-                self.data_process(datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), self.sec_sum_keyboard_cnt)
-                # print("Keyboard[{datetime}]: {cnt}".format(datetime=datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), cnt=self.sec_sum_keyboard_cnt))
-                print("""\
-============[tab]==============\n
-{t}
------------[mouse]-----------\n
-{m}
------------[keyboard]-----------\n
-{k}
-""".format(t=global_v.tab_queue, m=global_v.mouse_queue, k=global_v.keyboard_queue))
-                self.sec_sum_keyboard_cnt = 0
-                time.sleep(1)
+                try:
+                    self.data_process(datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), self.sec_sum_keyboard_cnt)
+                    # print("Keyboard[{datetime}]: {cnt}".format(datetime=datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f"), cnt=self.sec_sum_keyboard_cnt))
+                    print("""\
+    ============[tab]==============\n
+    {t}
+    -----------[mouse]-----------\n
+    {m}
+    -----------[keyboard]-----------\n
+    {k}
+    """.format(t=global_v.tab_queue, m=global_v.mouse_queue, k=global_v.keyboard_queue))
+                    self.sec_sum_keyboard_cnt = 0
+                    time.sleep(1)
+                except KeyboardInterrupt:
+                    continue
         except:
             # If this thread stopped by rebooting from sleep, maybe...
             import traceback
