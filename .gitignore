@@ -8,3 +8,5 @@ ganttlogger_logs
 .DS_Store
 dist
 icon/*.png
+build
+.venv
