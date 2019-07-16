@@ -155,6 +155,12 @@ optional arguments:
 ## <span id="4">これからの予定</span> [▲](#0)
 - 関数への共通化による`Plotter.py`のコード最適化
 - [Graph Examples](promo/graphs.PNG)の2番のように，`set_interval`で2秒以上を設定した場合に一部のガントチャートが消滅する原因究明・修正．
+- `Observer.py`においてWindows向けで起きる下記のスレッドエラーの原因究明・修正．
+    ```
+    Exception in thread Thread-1:
+    Traceback (most recent call last):
+    ...
+    ```
 - 2台以上運用・リモート形式の`--observer`と`--logger`の実装．
 
 ## <span id="5">ライセンス</span> [▲](#0)

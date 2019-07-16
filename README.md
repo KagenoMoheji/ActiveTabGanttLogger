@@ -155,7 +155,13 @@ optional arguments:
 ## <span id="4">In the future...</span> [▲](#0)
 - Optimize code like `Plotter.py` by commonizing to functions.
 - Like No.2 in [Graph Examples](#graphs), a part of ganttchart disappear from graph when setting `set_interval` more than 2.  
-We are investigating the causes...
+I'm investigating the causes...
+- In `Observer.py`, sometimes thread error like below occurs. I'm investigating the causes...
+    ```
+    Exception in thread Thread-1:
+    Traceback (most recent call last):
+    ...
+    ```
 - Implement mode remote '--observer' and '--logger'.
 
 ## <span id="5">License</span> [▲](#0)
