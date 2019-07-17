@@ -40,20 +40,26 @@
             ```
             > python -m pip install ganttlogger
             ```
-    - `.exe`(実行ファイル)をダウンロードすることで導入する場合
+    - `ganttlogger-exe-x86_64-<version>.zip`(実行ファイル)をダウンロードすることで導入する場合
         - 専用のREADMEがあるのでそちらを読んでください．
-            - [In English](https://github.com/KagenoMoheji/GanttLogger/blob/master/exe/README.md)
-            - [日本語版](https://github.com/KagenoMoheji/GanttLogger/blob/master/exe/README-ja.md)
+            - [In English](https://github.com/KagenoMoheji/GanttLogger/blob/master/exe/README.md#w)
+            - [日本語版](https://github.com/KagenoMoheji/GanttLogger/blob/master/exe/README-ja.md#w)
 - <span id="2-1-2">**MacOS**</span>
-    1. python3とpip3をインストールしてください．
-    2. 下記のようにして`pip3`でインストールします．
-        ```
-        $ pip3 install ganttlogger
-        ```
-    3. `pip3`でインストールできない場合は，[Releases](https://github.com/KagenoMoheji/GanttLogger/releases)または[PyPI](https://pypi.org/project/ganttlogger/)から`ganttlogger-<version>.tar.gz`をダウンロードして解凍し，下記のコマンドを実行してインストールしてください．
-        ```
-        $ python3 setup.py install
-        ```
+2つの導入方法があります．
+    - `pip`でインストールする場合
+        1. python3とpip3をインストールしてください．
+        2. 下記のようにして`pip3`でインストールします．
+            ```
+            $ pip3 install ganttlogger
+            ```
+        3. `pip3`でインストールできない場合は，[Releases](https://github.com/KagenoMoheji/GanttLogger/releases)または[PyPI](https://pypi.org/project/ganttlogger/)から`ganttlogger-<version>.tar.gz`をダウンロードして解凍し，下記のコマンドを実行してインストールしてください．
+            ```
+            $ python3 setup.py install
+            ```
+    - `ganttlogger-exe-macos-<version>.zip`(実行ファイル)をダウンロードすることで導入する場合
+        - 専用のREADMEがあるのでそちらを読んでください．
+            - [In English](https://github.com/KagenoMoheji/GanttLogger/blob/master/exe/README.md#m)
+            - [日本語版](https://github.com/KagenoMoheji/GanttLogger/blob/master/exe/README-ja.md#m)
 
 ### <span id="2-2">クイックスタート</span> [▲](#0)
 1. "Alone"モード(PC単体でモニタリングとログ出力の両方をする)を実行してみます．
@@ -69,7 +75,7 @@
             ```
             > python -m pip uninstall pywin32 & python -m pip install pywin32
             ```
-    - MacOSで下記のエラー文が出た．
+    - グラフプロット時に下記のエラー文が出た．
         ```
         /usr/local/lib/python3.7/site-packages/matplotlib/backends/backend_agg.py:211: RuntimeWarning: Glyph 128266 missing from current font.
         font.set_text(s, 0.0, flags=flags)

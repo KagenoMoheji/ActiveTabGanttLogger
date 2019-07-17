@@ -41,20 +41,26 @@ There are two ways to install.
             ```
             > python -m pip install ganttlogger
             ```
-    - Install by downloading `.exe`.
-        - Read README for `.exe`.
-            - [In English](https://github.com/KagenoMoheji/GanttLogger/blob/master/exe/README.md)
-            - [日本語版](https://github.com/KagenoMoheji/GanttLogger/blob/master/exe/README-ja.md)
+    - Install by downloading `ganttlogger-exe-x86_64-<version>.zip`.
+        - Read README for executable file.
+            - [In English](https://github.com/KagenoMoheji/GanttLogger/blob/master/exe/README.md#w)
+            - [日本語版](https://github.com/KagenoMoheji/GanttLogger/blob/master/exe/README-ja.md#w)
 - <span id="2-1-2">**MacOS**</span>
-    1. Install python3 and pip3.
-    2. Installl with `pip3` like below.
-        ```
-        $ pip3 install ganttlogger
-        ```
-    3. If you can't install with `pip3`, download `ganttlogger-<version>.tar.gz` from [Releases](https://github.com/KagenoMoheji/GanttLogger/releases) or [PyPI](https://pypi.org/project/ganttlogger/), extract it, and run install command below.
-        ```
-        $ python3 setup.py install
-        ```
+There are two ways to install.
+    - Install with `pip`.
+        1. Install python3 and pip3.
+        2. Installl with `pip3` like below.
+            ```
+            $ pip3 install ganttlogger
+            ```
+        3. If you can't install with `pip3`, download `ganttlogger-<version>.tar.gz` from [Releases](https://github.com/KagenoMoheji/GanttLogger/releases) or [PyPI](https://pypi.org/project/ganttlogger/), extract it, and run install command below.
+            ```
+            $ python3 setup.py install
+            ```
+    - Install by downloading `ganttlogger-exe-macos-<version>.zip`.
+        - Read README for executable file.
+            - [In English](https://github.com/KagenoMoheji/GanttLogger/blob/master/exe/README.md#m)
+            - [日本語版](https://github.com/KagenoMoheji/GanttLogger/blob/master/exe/README-ja.md#m)
 
 ### <span id="2-2">Quick Start</span> [▲](#0)
 1. Run as "Alone"(Run both monitoring and logging in a PC).
@@ -70,7 +76,7 @@ When you want a guide about the outputed folder, refer [Structure of outputed fo
             ```
             > python -m pip uninstall pywin32 & python -m pip install pywin32
             ```
-    - Appear warning below on MacOS.
+    - Appear warning below when plotting graphs.
         ```
         /usr/local/lib/python3.7/site-packages/matplotlib/backends/backend_agg.py:211: RuntimeWarning: Glyph 128266 missing from current font.
         font.set_text(s, 0.0, flags=flags)
