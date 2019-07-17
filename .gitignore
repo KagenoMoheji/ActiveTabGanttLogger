@@ -10,3 +10,4 @@ dist
 icon/*.png
 build
 .venv
+ganttlogger.spec
