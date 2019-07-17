@@ -41,38 +41,47 @@ class Observer:
 
     def run(self):
         while True:
-            self.executor.submit(self.ob_activetab.run)
-            self.executor.submit(self.ob_mouse.run)
-            self.executor.submit(self.ob_keyboard.run)
-            while not global_v.is_sleeping:
-                time.sleep(1)
-            if global_v.is_threadloop_error: # When "Thread loop exited by any problem!!!!" occured
-                self.executor.shutdown()
-                sys.exit()
-            is_confirmed_exiting = self.confirm_exiting()
-            if is_confirmed_exiting:
-                print(self.strfmr.get_colored_console_log("yellow",
-                    "Observer exited."))
-                break
-            else:
-                print(self.strfmr.get_colored_console_log("yellow",
-                    "Observer restarted."))
-                global_v.is_sleeping = False
+            try:
+                self.executor.submit(self.ob_activetab.run)
+                self.executor.submit(self.ob_mouse.run)
+                self.executor.submit(self.ob_keyboard.run)
+                while not global_v.is_sleeping:
+                    try:
+                        time.sleep(1)
+                    except KeyboardInterrupt:
+                        continue
+                if global_v.is_threadloop_error: # When "Thread loop exited by any problem!!!!" occured
+                    self.executor.shutdown()
+                    sys.exit()
+                is_confirmed_exiting = self.confirm_exiting()
+                if is_confirmed_exiting:
+                    print(self.strfmr.get_colored_console_log("yellow",
+                        "Observer exited."))
+                    break
+                else:
+                    print(self.strfmr.get_colored_console_log("yellow",
+                        "Observer restarted."))
+                    global_v.is_sleeping = False
+            except KeyboardInterrupt:
+                continue
         self.executor.shutdown()
         global_v.cli_exit = True
 
     def confirm_exiting(self):
         while True:
-            print(self.strfmr.get_colored_console_log("yellow",
-                "Logging is sleeping. Will you exit?(Y/n) : "), end="")
-            str_input = input().strip()
-            if str_input == "Y":
-                return True
-            elif str_input == "n":
-                return False
-            else:
-                print(self.strfmr.get_colored_console_log("red",
-                    "Error: Invalid input. Input 'Y'(=yes) or 'n'(=no)."))
+            try:
+                print(self.strfmr.get_colored_console_log("yellow",
+                    "Logging is sleeping. Will you exit?(Y/n) : "), end="")
+                str_input = input().strip()
+                if str_input == "Y":
+                    return True
+                elif str_input == "n":
+                    return False
+                else:
+                    print(self.strfmr.get_colored_console_log("red",
+                        "Error: Invalid input. Input 'Y'(=yes) or 'n'(=no)."))
+            except (KeyboardInterrupt, EOFError):
+                continue
     
 
 class WinObserver(Observer):

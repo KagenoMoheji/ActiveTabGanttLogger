@@ -30,7 +30,10 @@ class Alone:
         th_logger.start()
 
         while not global_v.cli_exit:
-            time.sleep(1)
+            try:
+                time.sleep(1)
+            except KeyboardInterrupt:
+                continue
         if global_v.is_threadloop_error: # When "Thread loop exited by any problem!!!!" occured
             sys.exit()
 
