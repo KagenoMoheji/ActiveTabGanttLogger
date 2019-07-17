@@ -113,7 +113,7 @@ GanttLogger
     ```
     - たぶん開始早々に終了する時に，アクティブタブの最後のタイムスタンプのあとにマウスとキーボードのログが始まっているので，(マウスとキーボードの)加工できるデータが無いとエラーになっている．
     - この対応としてObserver.pyでアクティブタブのループを抜けた後に最後のログを挿入する．
-- [ ] Macでたまに出る
+- [x] Macでたまに出る
     ```
     /usr/local/lib/python3.7/site-packages/matplotlib/backends/backend_agg.py:211: RuntimeWarning: Glyph 128266 missing from current font.
     font.set_text(s, 0.0, flags=flags)
@@ -129,3 +129,5 @@ GanttLogger
         ```
         > python -m pip uninstall pywin32 & python -m pip install pywin32
         ```
+- [ ] `Ctrl+Z`(`Commant+D?`)や`Ctrl(Command)+C`をした後のplotterが実行されているのかされていないのか確認できていない．
+- [ ] Macで`Command+Z`のプロセス中断をキャッチできない．continueできない．
