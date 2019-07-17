@@ -23,7 +23,8 @@ install_requires = ["matplotlib", "numpy", "psutil", "pynput"] # "pyautogui"
 if "Windows" in os:
     install_requires += [
         "pypiwin32",
-        "colorama"
+        "colorama",
+        "pywin32>=223"
     ]
 elif "Darwin" in os:
     install_requires += [
@@ -36,7 +37,7 @@ with open("README.md", encoding="utf-8") as f:
 
 setup(
     name="ganttlogger",
-    version="0.1.6",
+    version="0.1.7",
     description="This CLI will monitor(active-tab, mouse, keyboard), log, and plot graphs.",
     long_description=readme,
     long_description_content_type="text/markdown",
