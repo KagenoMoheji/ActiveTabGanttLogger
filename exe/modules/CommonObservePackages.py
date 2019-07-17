@@ -58,7 +58,6 @@ class MouseObserver:
             global_v.is_threadloop_error = True
             global_v.is_sleeping = True
             traceback.print_exc()
-        # except KeyboardInterrupt:
     
     def send_json(self, t, dis_sec):
         pass

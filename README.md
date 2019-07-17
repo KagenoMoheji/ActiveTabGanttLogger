@@ -129,5 +129,12 @@ GanttLogger
         ```
         > python -m pip uninstall pywin32 & python -m pip install pywin32
         ```
-- [ ] `Ctrl+Z`(`Commant+D?`)や`Ctrl(Command)+C`をした後のplotterが実行されているのかされていないのか確認できていない．
+- Plotterについて
+    - [ ] `Ctrl+Z`(`Commant+D?`)や`Ctrl(Command)+C`をした後のplotterが実行されているのかされていないのか確認できていない．
+    - [ ] `Alone`モードの直後のプロットでたまに以下のエラーが出る．再現できない…
+        ```
+        ganttlogger\modules\Plotter.py", line 691, in get_mouse
+            current_time = self.plot_active_tab[0][0].replace(microsecond=0)
+        IndexError: index 0 is out of bounds for axis 0 with size 0
+        ```
 - [ ] Macで`Command+Z`のプロセス中断をキャッチできない．continueできない．

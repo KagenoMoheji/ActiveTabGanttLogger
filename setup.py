@@ -28,8 +28,8 @@ os = platform.platform(terse=True)
 install_requires = ["matplotlib", "numpy", "psutil", "pynput"] # "pyautogui"
 if "Windows" in os:
     install_requires += [
-        "pypiwin32",
-        "colorama"
+        'pypiwin32;platform_system=="Windows"',
+        'colorama;platform_system=="Windows"'
     ]
 elif "Darwin" in os:
     install_requires += [
@@ -42,8 +42,8 @@ with open("README.md", encoding="utf-8") as f:
 
 setup(
     name="ganttlogger",
-    version="0.1.0",
-    description="This CLI will monitor(active-tab, mouse, keyboard), log, and generate graphs.",
+    version="0.1.9",
+    description="This CLI will monitor(active-tab, mouse, keyboard), log, and plot graphs.",
     long_description=readme,
     long_description_content_type="text/markdown",
     author="Goki Sugimura(KagenoMoheji)",
@@ -59,10 +59,12 @@ setup(
         "plot",
         "keyboard",
         "mouse",
-        "active tab"
+        "active tab",
+        "monitor",
+        "ganttlogger"
     ],
     classifiers=[
-        "Development Status :: 1 - Beta",
+        "Development Status :: 4 - Beta",
         "Natural Language :: English",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3.7",

@@ -11,10 +11,19 @@ Or, if you have installed this CLI, start from (4).
 (4)Run CLI.
 `pipenv run ganttlogger`
 
-[How to create packages (for Windows, Mac)]
+[How to create packages]
 Reference:
     https://qiita.com/cvusk/items/00294f7f0cb38f420584
     https://momijiame.tumblr.com/post/90829820326/python-wheel-%E3%81%A7%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8%E3%82%92%E9%85%8D%E5%B8%83%E3%81%99%E3%82%8B
+
+●Windows側で、
+```
+install_requires += [
+    'pypiwin32;platform_system=="Widnwos"',
+    ...
+]
+```
+という風に`platform_system`を追加したらWindows向けのモジュールがMacでインストールされず，安全なインストールを実現できた．
 
 ●gz.tarとzipのパッケージ生成
 > pipenv run python setup.py sdist --formats=gztar,zip
