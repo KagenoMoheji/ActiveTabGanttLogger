@@ -2,7 +2,7 @@
 Windowsのexe向け．Pythonインストール不要で動く？？？(まだ確認していない)
 
 ### ビルド方法個人メモ
-- pyinstallerによるビルドは，Python実行ファイルへのパスが見えてしまうので，仮想マシン上のC直下にある(フォルダ`exe`下のファイル群をコピーした)プロジェクト`GanttLogger`配下にpipenvの仮想環境`.venv`を作成し，ビルドするようにする！！
+- pyinstallerによるビルドは，Python実行ファイルへのパスが見えてしまうので，C直下にある(フォルダ`exe`下のファイル群をコピーした)プロジェクト`GanttLogger`配下にpipenvの仮想環境`.venv`を作成し，ビルドするようにする！！
 - 必要なWindows向けモジュールをインストール下pipenvを構築し，更に`pyinstaller`・`auto-py-to-exe`をインストール．
     - `pyinstaller`のみを使用
         ```
