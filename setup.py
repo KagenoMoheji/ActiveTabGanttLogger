@@ -24,7 +24,7 @@ if "Windows" in os:
     install_requires += [
         "pypiwin32",
         "colorama",
-        "pywin32>=223"
+        # "pywin32>=223"
     ]
 elif "Darwin" in os:
     install_requires += [
