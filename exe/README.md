@@ -9,7 +9,7 @@ Executable ganttlogger without installing Python.
     3. Register the path to the folder `ganttlogger` has `ganttlogger.exe` in system environment variables.
     4. Then, you can use command `ganttlogger`.
     5. About quick start, refer [Quick Start - README in English](https://github.com/KagenoMoheji/GanttLogger/blob/master/README.md#2-2).
-<span id="m">**MacOS**</span>
+- <span id="m">**MacOS**</span>
     1. Download the latest `ganttlogger-exe-macos-<version>.zip` from [Releases](https://github.com/KagenoMoheji/GanttLogger/releases).
     2. Extract `ganttlogger-exe-macos-<version>.zip`.
     3. Register the path to the folder `ganttlogger` has `ganttlogger` with commands below.
