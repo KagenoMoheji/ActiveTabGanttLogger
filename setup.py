@@ -36,7 +36,7 @@ with open("README.md", encoding="utf-8") as f:
 
 setup(
     name="ganttlogger",
-    version="0.1.8",
+    version="0.1.9",
     description="This CLI will monitor(active-tab, mouse, keyboard), log, and plot graphs.",
     long_description=readme,
     long_description_content_type="text/markdown",
