@@ -46,6 +46,11 @@ There are two ways to install.
         ```
         $ pip3 install ganttlogger
         ```
+    3. If you can't install with `pip3`, download `ganttlogger-<version>.tar.gz` from [Releases](https://github.com/KagenoMoheji/GanttLogger/releases) or [PyPI](https://pypi.org/project/ganttlogger/), extract it, and run install command below.
+        ```
+        $ python3 setup.py install
+        ```
+
 ### <span id="2-2">Quick Start</span> [▲](#0)
 1. Run as "Alone"(Run both monitoring and logging in a PC).
     ```
@@ -154,6 +159,7 @@ optional arguments:
 
 ## <span id="4">In the future...</span> [▲](#0)
 - Optimize code like `Plotter.py` by commonizing to functions.
+- Fix pip installing error on MacOS because of installing `pywin32`...
 - Like No.2 in [Graph Examples](#graphs), a part of ganttchart disappear from graph when setting `set_interval` more than 2.  
 I'm investigating the causes...
 - In `Observer.py`, sometimes thread error like below occurs on Windows. I'm investigating the causes...

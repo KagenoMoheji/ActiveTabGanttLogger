@@ -45,6 +45,10 @@
         ```
         $ pip3 install ganttlogger
         ```
+    3. `pip3`でインストールできない場合は，[Releases](https://github.com/KagenoMoheji/GanttLogger/releases)または[PyPI](https://pypi.org/project/ganttlogger/)から`ganttlogger-<version>.tar.gz`をダウンロードして解凍し，下記のコマンドを実行してインストールしてください．
+        ```
+        $ python3 setup.py install
+        ```
 
 ### <span id="2-2">クイックスタート</span> [▲](#0)
 1. "Alone"モード(PC単体でモニタリングとログ出力の両方をする)を実行してみます．
@@ -154,6 +158,7 @@ optional arguments:
 
 ## <span id="4">これからの予定</span> [▲](#0)
 - 関数への共通化による`Plotter.py`のコード最適化
+- Windows向けのはずの`pywin32`のインストールが始まることによる，Macでのpipを用いたインストールができないことの修正
 - [Graph Examples](promo/graphs.PNG)の2番のように，`set_interval`で2秒以上を設定した場合に一部のガントチャートが消滅する原因究明・修正．
 - `Observer.py`においてWindows向けで起きる下記のスレッドエラーの原因究明・修正．
     ```
