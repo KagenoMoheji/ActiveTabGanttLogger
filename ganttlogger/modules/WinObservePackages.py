@@ -39,7 +39,7 @@ class ActiveTabObserver:
                         #     active_name=active_name,
                         #     tab_text=active_tab_text))
                     time.sleep(0.001)
-                except (ValueError, psutil.NoSuchProcess):
+                except (KeyError, ValueError, psutil.NoSuchProcess):
                     # If not in time to get pid
                     # print("Warning: Failed in getting process information")
                     continue
