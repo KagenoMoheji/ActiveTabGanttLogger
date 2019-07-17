@@ -14,9 +14,10 @@ Or, if you have installed this CLI, start from (4).
 [How to create packages (for Windows, Mac)]
 Reference:
     https://qiita.com/cvusk/items/00294f7f0cb38f420584
-    
-> pipenv run python setup.py sdist --formats=gztar,zip
+    https://momijiame.tumblr.com/post/90829820326/python-wheel-%E3%81%A7%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8%E3%82%92%E9%85%8D%E5%B8%83%E3%81%99%E3%82%8B
 
+●gz.tarとzipのパッケージ生成
+> pipenv run python setup.py sdist --formats=gztar,zip
 上記コマンドではpipパッケージが作成されるが，pythonとpipがクライアント側でインストールされていないといけない．
 ちなみにインストールは
 > python -m pip install -e .
@@ -24,6 +25,14 @@ $ pip3 install -e .
 というより，下の方が3つ目のパスが表示されずそれっぽいので良い
 > python setup.py install
 $ python3 setup.py install
+
+●wheelのパッケージ生成
+> pipenv run python setup.py bdist_wheel
+たぶんこっちでbuildフォルダが自動生成されている．
+
+●PyPIへのアップロード
+> pipenv run twine upload .\public\ganttlogger-0.1.6.tar.gz .\public\ganttlogger-0.1.6-py3-none-any.whl
+
 '''
 
 from ganttlogger.modules.InitProcess import InitProcess
