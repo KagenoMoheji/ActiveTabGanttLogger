@@ -22,8 +22,8 @@ os = platform.platform(terse=True)
 install_requires = ["matplotlib", "numpy", "psutil", "pynput"] # "pyautogui"
 if "Windows" in os:
     install_requires += [
-        "pypiwin32",
-        "colorama"
+        'pypiwin32;platform_system=="Windows"',
+        'colorama;platform_system=="Windows"'
     ]
 elif "Darwin" in os:
     install_requires += [
