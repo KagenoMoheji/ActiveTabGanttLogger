@@ -13,6 +13,11 @@
     - [クイックスタート](#2-2)
     - [フォルダ"ganttlogger_logs"の構成](#2-3)
 - [コマンドオプション](#3)
+    - [alone](#a)
+    - [observer](#o)
+    - [logger](#l)
+    - [plotter](#p)
+    - [displayer](#d)
 - [これから](#4)
 - [License](#5)
 
@@ -112,11 +117,11 @@ optional arguments:
   --withplot            Use this option when you want to get a graph after running 'Alone'.
   -d, --displayer       Use this option when you want to look a graph from a '.pkl' file.
 ```
-- **`--observer`と`--logger`は実装していないのでまだ機能しません．**
-- `observer`と`logger`をPC単体で行う`alone`を実行したい場合は，オプション無しの`ganttlogger`のみを実行してください．
+- <span id="observer"></span><span id="logger"></span>**`--observer`と`--logger`は実装していないのでまだ機能しません．**
+- <span id="alone"></span>`observer`と`logger`をPC単体で行う`alone`を実行したい場合は，オプション無しの`ganttlogger`のみを実行してください．
     - なお，ログとともにグラフも出力させたい場合はオプション`--withplot`を追加してください．  
     それによって出力されるグラフの例は，[Graph Examples](#graphs)の1番です．
-- ほかのグラフを得たい場合は，ログファイルのあるディレクトリに移動して，オプション`--plotter`を追加して実行してください．
+- <span id="plotter"></span>ほかのグラフを得たい場合は，ログファイルのあるディレクトリに移動して，オプション`--plotter`を追加して実行してください．
     - グラフを得るために，いくつか設定する必要があります．
     - まず，  
         ```
@@ -146,7 +151,7 @@ optional arguments:
         (2)Select x-axis type for Mouse or Keyboard from whether 'active-start' or number of the interval by seconds:
         ```
         "(1)active-start(2)active-start" と "(1)15(2)15"とそれぞれ入力した場合のグラフの例が[Graph Examples](#graphs)の3番と4番です．
-- `~.pkl`ファイルを用いて動的グラフを見たい場合は，オプション`--displayer`を追加して実行してください．
+- <span id="displayer"></span>`~.pkl`ファイルを用いて動的グラフを見たい場合は，オプション`--displayer`を追加して実行してください．
     - 1点の設定入力を行う必要があります．
         ```
         Input file name of '.pkl':

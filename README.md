@@ -13,6 +13,11 @@ CLI that Monitors active-tab, mouse-distance and keyboard-count, Logs and Plots 
     - [Quick Start](#2-2)
     - [Structure of outputed folder "ganttlogger_logs"](#2-3)
 - [Command Options](#3)
+    - [alone](#a)
+    - [observer](#o)
+    - [logger](#l)
+    - [plotter](#p)
+    - [displayer](#d)
 - [In the future...](#4)
 - [License](#5)
 
@@ -113,11 +118,11 @@ optional arguments:
   --withplot            Use this option when you want to get a graph after running 'Alone'.
   -d, --displayer       Use this option when you want to look a graph from a '.pkl' file.
 ```
-- **`--observer` and `--logger` don't work because they're not implemented yet.**
-- Run `ganttlogger` without any options if you run CLI as `alone` - both of `observer` and `logger/plotter` -.
+- <span id="observer"></span><span id="logger"></span>**`--observer` and `--logger` don't work because they're not implemented yet.**
+- <span id="alone"></span>Run `ganttlogger` without any options if you run CLI as `alone` - both of `observer` and `logger/plotter` -.
     - Add an option `--withplot`, if you want graphs along with logs.  
     Then, CLI will output a graph like No.1 of [Graph Examples](#graphs)
-- Change to current directory of logs and add an option `--plotter`, if you want to get other graphs from logs.
+- <span id="plotter"></span>Change to current directory of logs and add an option `--plotter`, if you want to get other graphs from logs.
     - Then, you'll be required some settings to decide formats to plot graphs.
     - First,  
         ```
@@ -147,7 +152,7 @@ optional arguments:
         (2)Select x-axis type for Mouse or Keyboard from whether 'active-start' or number of the interval by seconds:
         ```
         Example graphs when set "(1)active-start(2)active-start" and "(1)15(2)15" are No.3 and No.4 of [Graph Examples](#graphs).
-- Add an option `--displayer` if you want watch dynamic graph with generated `~.pkl`.
+- <span id="displayer"></span>Add an option `--displayer` if you want watch dynamic graph with generated `~.pkl`.
     - Then, you'll be required a setting.
         ```
         Input file name of '.pkl':
