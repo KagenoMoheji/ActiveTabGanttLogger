@@ -13,7 +13,7 @@
     - [クイックスタート](#2-2)
     - [フォルダ"ganttlogger_logs"の構成](#2-3)
 - [コマンドオプション](#3)
-- [今後について](#4)
+- [これから](#4)
 - [License](#5)
 
 ***
@@ -94,7 +94,7 @@ ganttlogger_logs
 - `~.pkl`: 動的グラフのバイナリファイルです．
 - `~.png`: 静的グラフの画像ファイルです．
 
-## <span id="3">Command Options</span> [▲](#0)
+## <span id="3">コマンドオプション</span> [▲](#0)
 ```
 usage: ganttlogger [--observer] [--logger] [--uuid <UUID>] [--help] [--plotter] [--withplot] [--displayer]
 
@@ -156,7 +156,7 @@ optional arguments:
 - All graphs were plotted **from same logs**.
 ![Graph Examples](promo/graphs.PNG)
 
-## <span id="4">これからの予定</span> [▲](#0)
+## <span id="4">これから</span> [▲](#0)
 - 関数への共通化による`Plotter.py`のコード最適化
 - Windows向けのはずの`pywin32`のインストールが始まることによる，Macでのpipを用いたインストールができないことの修正
 - [Graph Examples](promo/graphs.PNG)の2番のように，`set_interval`で2秒以上を設定した場合に一部のガントチャートが消滅する原因究明・修正．
@@ -169,5 +169,5 @@ optional arguments:
 - 標準入力のバッファクリアの実装を試みるが，難題です．助言やプルリクを求めます．
 - 2台以上運用・リモート形式の`--observer`と`--logger`の実装．
 
-## <span id="5">ライセンス</span> [▲](#0)
+## <span id="5">LICENSE</span> [▲](#0)
 MIT LICENSE.
