@@ -80,15 +80,15 @@ class KeyboardObserver:
     current_4key = deque([], maxlen=4)
     EXITCOMB_WIN = set([
         keyboard.KeyCode(char = '1'),
-        keyboard.KeyCode(char = '/'),
+        keyboard.KeyCode(char = 'm'),
         keyboard.KeyCode(char = 'z'),
-        keyboard.KeyCode(char = '^')
+        keyboard.KeyCode(char = '0')
     ])
     EXITCOMB_MAC = set([
         keyboard.KeyCode(char = '1'),
-        keyboard.KeyCode(char = '/'),
+        keyboard.KeyCode(char = 'm'),
         keyboard.KeyCode(char = 'z'),
-        keyboard.KeyCode(char = '^')
+        keyboard.KeyCode(char = '0')
     ])
     def __init__(self, uuid, is_alone):
         self.uuid = uuid
