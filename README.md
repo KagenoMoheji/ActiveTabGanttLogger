@@ -18,8 +18,9 @@ CLI that Monitors active-tab, mouse-distance and keyboard-count, Logs and Plots 
     - [logger](#l)
     - [plotter](#p)
     - [displayer](#d)
-- [In the future...](#4)
-- [License](#5)
+- [Issues](#4)
+- [In the future...](#5)
+- [License](#6)
 
 
 ***
@@ -168,9 +169,8 @@ optional arguments:
 - All graphs were plotted **from same logs**.
 ![Graph Examples](promo/graphs.PNG)
 
-## <span id="4">In the future...</span> [▲](#0)
+## <span id="4">Issues.</span> [▲](#0)
 - Optimize code like `Plotter.py` by commonizing to functions.
-- Fix pip installing error on MacOS because of installing `pywin32`...
 - Like No.2 in [Graph Examples](#graphs), a part of ganttchart disappear from graph when setting `set_interval` more than 2.  
 I'm investigating the causes...
 - In `Observer.py`, sometimes thread error like below occurs on Windows. I'm investigating the causes...
@@ -180,7 +180,9 @@ I'm investigating the causes...
     ...
     ```
 - Try implementing flushing stdin buffering. But it's difficury, so I want advices or pull-requests.
+
+## <span id="5">In the future...</span> [▲](#0)
 - Implement mode remote '--observer' and '--logger'.
 
-## <span id="5">License</span> [▲](#0)
+## <span id="6">License</span> [▲](#0)
 MIT LICENSE.

@@ -18,8 +18,9 @@
     - [logger](#l)
     - [plotter](#p)
     - [displayer](#d)
-- [これから](#4)
-- [License](#5)
+- [課題](#4)
+- [これから](#5)
+- [License](#6)
 
 ***
 
@@ -167,9 +168,8 @@ optional arguments:
 - All graphs were plotted **from same logs**.
 ![Graph Examples](promo/graphs.PNG)
 
-## <span id="4">これから</span> [▲](#0)
+## <span id="4">課題</span> [▲](#0)
 - 関数への共通化による`Plotter.py`のコード最適化
-- Windows向けのはずの`pywin32`のインストールが始まることによる，Macでのpipを用いたインストールができないことの修正
 - [Graph Examples](promo/graphs.PNG)の2番のように，`set_interval`で2秒以上を設定した場合に一部のガントチャートが消滅する原因究明・修正．
 - `Observer.py`においてWindows向けで起きる下記のスレッドエラーの原因究明・修正．
     ```
@@ -178,7 +178,9 @@ optional arguments:
     ...
     ```
 - 標準入力のバッファクリアの実装を試みるが，難題です．助言やプルリクを求めます．
+
+## <span id="5">これから</span> [▲](#0)
 - 2台以上運用・リモート形式の`--observer`と`--logger`の実装．
 
-## <span id="5">LICENSE</span> [▲](#0)
+## <span id="6">LICENSE</span> [▲](#0)
 MIT LICENSE.
