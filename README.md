@@ -1,7 +1,7 @@
 # GanttLogger
 CLI that Monitors active-tab, mouse-distance and keyboard-count, Logs and Plots various graphs.  
 (PyPI)[https://pypi.org/project/ganttlogger/](https://pypi.org/project/ganttlogger/)
-- [README - 日本語バージョン](https://github.com/KagenoMoheji/GanttLogger/blob/master/README-ja.md)
+- [README - 日本語版](https://github.com/KagenoMoheji/GanttLogger/blob/master/README-ja.md)
 
 ***
 ## <span id="0">AGENDA</span>
