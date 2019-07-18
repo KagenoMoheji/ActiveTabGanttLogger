@@ -170,7 +170,7 @@ optional arguments:
 ![Graph Examples](promo/graphs.PNG)
 
 ## <span id="4">Issues.</span> [▲](#0)
-- Optimize code like `Plotter.py` by commonizing to functions.
+- Can not build a executable file for Mac with `/config/font/ipaexg.ttf` by using `pyinstaller` or `auto-py-to-exe`.
 - Like No.2 in [Graph Examples](#graphs), a part of ganttchart disappear from graph when setting `set_interval` more than 2.  
 I'm investigating the causes...
 - In `Observer.py`, sometimes thread error like below occurs on Windows. I'm investigating the causes...
@@ -179,9 +179,25 @@ I'm investigating the causes...
     Traceback (most recent call last):
     ...
     ```
+- Sometimes an error below occurs when plotting from a short term logs.
+    ```
+    Traceback (most recent call last):
+        File "/usr/local/bin/ganttlogger", line 10, in <module>
+            sys.exit(main())
+        File "/usr/local/lib/python3.7/site-packages/ganttlogger/app.py", line 42, in main
+            plotter.start()
+        File "/usr/local/lib/python3.7/site-packages/ganttlogger/modules/Plotter.py", line 248, in start
+            self.run()
+        File "/usr/local/lib/python3.7/site-packages/ganttlogger/modules/Plotter.py", line 272, in run
+            self.get_mouse()
+        File "/usr/local/lib/python3.7/site-packages/ganttlogger/modules/Plotter.py", line 691, in get_mouse
+            current_time = self.plot_active_tab[0][0].replace(microsecond=0)
+    IndexError: index 0 is out of bounds for axis 0 with size 0
+    ```
 - Try implementing flushing stdin buffering. But it's difficury, so I want advices or pull-requests.
 
 ## <span id="5">In the future...</span> [▲](#0)
+- Optimize code like `Plotter.py` by commonizing to functions.
 - Implement mode remote '--observer' and '--logger'.
 
 ## <span id="6">License</span> [▲](#0)

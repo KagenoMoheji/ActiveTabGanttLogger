@@ -169,7 +169,7 @@ optional arguments:
 ![Graph Examples](promo/graphs.PNG)
 
 ## <span id="4">課題</span> [▲](#0)
-- 関数への共通化による`Plotter.py`のコード最適化
+- Macで`pyinstaller`や`auto-py-to-exe`を使って実行ファイルを作成しようとするが，`--add-data`による`/config/font/ipaexg.ttf`の追加ができず，FileNotFoundErrorになる．
 - [Graph Examples](promo/graphs.PNG)の2番のように，`set_interval`で2秒以上を設定した場合に一部のガントチャートが消滅する原因究明・修正．
 - `Observer.py`においてWindows向けで起きる下記のスレッドエラーの原因究明・修正．
     ```
@@ -177,9 +177,25 @@ optional arguments:
     Traceback (most recent call last):
     ...
     ```
+- 期間が短いログに対しPlotterを実行するとたまに以下のエラーが発生する．
+    ```
+    Traceback (most recent call last):
+        File "/usr/local/bin/ganttlogger", line 10, in <module>
+            sys.exit(main())
+        File "/usr/local/lib/python3.7/site-packages/ganttlogger/app.py", line 42, in main
+            plotter.start()
+        File "/usr/local/lib/python3.7/site-packages/ganttlogger/modules/Plotter.py", line 248, in start
+            self.run()
+        File "/usr/local/lib/python3.7/site-packages/ganttlogger/modules/Plotter.py", line 272, in run
+            self.get_mouse()
+        File "/usr/local/lib/python3.7/site-packages/ganttlogger/modules/Plotter.py", line 691, in get_mouse
+            current_time = self.plot_active_tab[0][0].replace(microsecond=0)
+    IndexError: index 0 is out of bounds for axis 0 with size 0
+    ```
 - 標準入力のバッファクリアの実装を試みるが，難題です．助言やプルリクを求めます．
 
 ## <span id="5">これから</span> [▲](#0)
+- 関数への共通化による`Plotter.py`のコード最適化
 - 2台以上運用・リモート形式の`--observer`と`--logger`の実装．
 
 ## <span id="6">LICENSE</span> [▲](#0)
