@@ -396,6 +396,7 @@ class Plotter:
             fig = plt.figure(figsize=(15,6))
             ax = fig.add_subplot(1, 1, 1)
             ax.set_xlim(init, last)
+            dates = []
             if self.xaxis_type_at == "active-start":
                 dates = [t for t in self.plot_active_tab[:-1, 0]]
                 last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
