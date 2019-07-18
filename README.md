@@ -68,7 +68,11 @@ There are two ways to install.
     ```
     $ ganttlogger
     ```
-2. Exit CLI(running as "Alone" or "Observer") by typing keys `1`+`0`+`z`+`m` simultaneously.
+    **If your PC's OS is Mac, you need run with root authority below to allow `ganttloger` getting keyboard input.**
+    ```
+    $ sudo ganttlogger
+    ```
+2. Exit CLI(running as "Alone" or "Observer") **by hitting keys `1`+`0`+`z`+`m` continuously (mashing keys, not long pressing simultaneously)**.
 3. Check a created folder `ganttlogger_logs` in current directory.  
 When you want a guide about the outputed folder, refer [Structure of outputed folder "ganttlogger_logs"](#2-3).
 - If you get the following problems
