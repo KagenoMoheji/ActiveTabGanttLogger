@@ -170,6 +170,7 @@ optional arguments:
 ![Graph Examples](promo/graphs.PNG)
 
 ## <span id="4">課題</span> [▲](#0)
+- 長時間このCLIを実行すると，メモリを食いすぎてメモリ不足に陥ってしまう．
 - Macで`pyinstaller`や`auto-py-to-exe`を使って実行ファイルを作成しようとするが，`--add-data`による`/config/font/ipaexg.ttf`の追加ができず，FileNotFoundErrorになる．
 - [Graph Examples](promo/graphs.PNG)の2番のように，`set_interval`で2秒以上を設定した場合に一部のガントチャートが消滅する原因究明・修正．
 - `Observer.py`においてWindows向けで起きる下記のスレッドエラーの原因究明・修正．

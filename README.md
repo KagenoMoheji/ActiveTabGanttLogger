@@ -171,6 +171,7 @@ optional arguments:
 ![Graph Examples](promo/graphs.PNG)
 
 ## <span id="4">Issues.</span> [▲](#0)
+- When long running, this cli makes PC out of memory.
 - Can not build a executable file for Mac with `/config/font/ipaexg.ttf` by using `pyinstaller` or `auto-py-to-exe`.
 - Like No.2 in [Graph Examples](#graphs), a part of ganttchart disappear from graph when setting `set_interval` more than 2.  
 I'm investigating the causes...
