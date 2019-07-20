@@ -96,6 +96,7 @@ Target User:
                     print(self.strfmr.get_colored_console_log("yellow",
                         "All queue are empty"))
                 is_all_empty = True
+                # Not to be out of memory, flush file writer's cache.
                 ft.flush()
                 fm.flush()
                 fk.flush()
