@@ -57,6 +57,7 @@
             ```
             $ python3 setup.py install
             ```
+        4. キーボード入力の取得を許可するために，システム環境設定の「セキュリティとプライバシー」の「アクセシビリティ」に，「Terminal.app」を追加してください．
     - `ganttlogger-exe-macos-<version>.zip`(実行ファイル)をダウンロードすることで導入する場合
         - 専用のREADMEがあるのでそちらを読んでください．
             - [In English](https://github.com/KagenoMoheji/GanttLogger/blob/master/exe/README.md#m)
@@ -66,10 +67,6 @@
 1. "Alone"モード(PC単体でモニタリングとログ出力の両方をする)を実行してみます．
     ```
     $ ganttlogger
-    ```
-    ただし，**Macの場合は，キーボード入力の取得を許可するため下記コマンドでroot権限で実行する必要があります．**
-    ```
-    $ sudo ganttlogger
     ```
 2. (モード"Alone"または"Observer"で実行されている)CLIを中断させるには，`1`+`0`+`z`+`m`のキーを**連打(同時長押しではありません)** します．
 3. カレントディレクトリに生成されたフォルダ`ganttlogger_logs`を確認してください．  

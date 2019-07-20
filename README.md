@@ -58,7 +58,8 @@ There are two ways to install.
             ```
             $ python3 setup.py install
             ```
-    - Install by downloading `ganttlogger-exe-macos-<version>.zip`.
+        4. Add "Terminal.app" to "Accessibility" in "Security & Privacy" in system environment settings.
+    - Install by downloading `ganttlogger-exe-macos-<version>.zip` to allow Terminal.app to get inputs from keyboard.
         - Read README for executable file.
             - [In English](https://github.com/KagenoMoheji/GanttLogger/blob/master/exe/README.md#m)
             - [日本語版](https://github.com/KagenoMoheji/GanttLogger/blob/master/exe/README-ja.md#m)
@@ -67,10 +68,6 @@ There are two ways to install.
 1. Run as "Alone"(Run both monitoring and logging in a PC).
     ```
     $ ganttlogger
-    ```
-    **If your PC's OS is Mac, you need run with root authority below to allow `ganttloger` getting keyboard input.**
-    ```
-    $ sudo ganttlogger
     ```
 2. Exit CLI(running as "Alone" or "Observer") **by hitting keys `1`+`0`+`z`+`m` continuously (mashing keys, not long pressing simultaneously)**.
 3. Check a created folder `ganttlogger_logs` in current directory.  
