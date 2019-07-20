@@ -96,6 +96,9 @@ Target User:
                     print(self.strfmr.get_colored_console_log("yellow",
                         "All queue are empty"))
                 is_all_empty = True
+                ft.flush()
+                fm.flush()
+                fk.flush()
                 time.sleep(2) # It's OK any seconds
 
 
