@@ -1,6 +1,7 @@
 import os
 import sys
 import re
+import platform
 import datetime
 import pickle
 import numpy as np
@@ -68,7 +69,11 @@ class Plotter:
             # Get current directory
             self.dirname = os.getcwd()
         os.makedirs(os.path.dirname("{dirname}/graphs/".format(dirname=self.dirname)), exist_ok=True)
-        self.exedir = "\\".join(sys.executable.split("\\")[:-1])
+        is_win = "Windows" in platform.platform(terse=True)
+        if  is_win:
+            self.exedir = "\\".join(sys.executable.split("\\")[:-1])
+        else:
+            self.exedir = "/".join(sys.executable.split("/")[:-1])
         self.sec_interval = 1
         self.filter_tab_list = []
         self.hide_filtered_tab_duration = False
