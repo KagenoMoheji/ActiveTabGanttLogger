@@ -11,6 +11,7 @@ from modules.Public import StrFormatter
 
 class Plotter:
     uuid = "" # If empty, this variable is unused
+    exedir = ""
     dirname = ""
     sec_interval = 1 # The minimum interval is value is 1 second
     filter_tab_list = []
@@ -67,6 +68,7 @@ class Plotter:
             # Get current directory
             self.dirname = os.getcwd()
         os.makedirs(os.path.dirname("{dirname}/graphs/".format(dirname=self.dirname)), exist_ok=True)
+        self.exedir = "\\".join(sys.executable.split("\\")[:-1])
         self.sec_interval = 1
         self.filter_tab_list = []
         self.hide_filtered_tab_duration = False
@@ -318,7 +320,9 @@ class Plotter:
         ax1.set_xticks(dates) # ax1.set_xticks(datenums)
         ax1.axes.tick_params(axis="x", labelsize=7, rotation=270)
         ax1.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
-        fp = plf.FontProperties(fname="{}/../config/font/ipaexg.ttf".format(os.path.dirname(__file__)), size=8)
+        fp = plf.FontProperties(fname="{}/config/font/ipaexg.ttf".format(self.exedir), size=8)
+        # If run python to test, change script the above to the below.
+        # fp = plf.FontProperties(fname="{}/../config/font/ipaexg.ttf".format(os.path.dirname(__file__)), size=8)
         y = [7.5 + i * 10 for i in range(len(self.df_active_tab.keys()))]
         y.append(y[len(y) - 1] + 10)
         ax1.set_yticks(y)
@@ -414,7 +418,9 @@ class Plotter:
             plt.xlabel("t")
             ax.axes.tick_params(axis="x", labelsize=7, rotation=270)
             ax.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
-            fp = plf.FontProperties(fname="{}/../config/font/ipaexg.ttf".format(os.path.dirname(__file__)), size=8)
+            fp = plf.FontProperties(fname="{}/config/font/ipaexg.ttf".format(self.exedir), size=8)
+            # If run python to test, change script the above to the below.
+            # fp = plf.FontProperties(fname="{}/../config/font/ipaexg.ttf".format(os.path.dirname(__file__)), size=8)
             y = [7.5 + i * 10 for i in range(len(self.df_active_tab.keys()))]
             y.append(y[len(y) - 1] + 10)
             ax.set_yticks(y)
