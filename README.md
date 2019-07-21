@@ -58,8 +58,8 @@ There are two ways to install.
             ```
             $ python3 setup.py install
             ```
-        4. Add "Terminal.app" to "Accessibility" in "Security & Privacy" in system environment settings.
-    - Install by downloading `ganttlogger-exe-macos-<version>.zip` to allow Terminal.app to get inputs from keyboard.
+        4. Add "Terminal.app" to "Accessibility" in "Security & Privacy" in system environment settings to allow Terminal.app to get inputs from keyboard.
+    - Install by downloading `ganttlogger-exe-macos-<version>.zip`.
         - Read README for executable file.
             - [In English](https://github.com/KagenoMoheji/GanttLogger/blob/master/exe/README.md#m)
             - [日本語版](https://github.com/KagenoMoheji/GanttLogger/blob/master/exe/README-ja.md#m)
@@ -174,7 +174,6 @@ optional arguments:
 - When long running on Mac, this cli makes PC out of memory.  
 The reason may be in a dependent module `pyobjc`, but I don't know how to release memory.  
 [Memory leak pyobjc - stack overflow](https://stackoverflow.com/questions/40720149/memory-leak-pyobjc)
-- Can not build a executable file for Mac with `/config/font/ipaexg.ttf` by using `pyinstaller` or `auto-py-to-exe`.
 - Like No.2 in [Graph Examples](#graphs), a part of ganttchart disappear from graph when setting `set_interval` more than 2.  
 I'm investigating the causes...
 - In `Observer.py`, sometimes thread error like below occurs on Windows. I'm investigating the causes...
