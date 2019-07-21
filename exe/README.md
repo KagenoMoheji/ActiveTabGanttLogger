@@ -1,12 +1,21 @@
 # GanttLogger(exe)
-Windowsのexe向け．Pythonインストール不要で動く？？？(まだ確認していない)
 
 ### ビルド方法個人メモ
 - pyinstallerによるビルドは，Python実行ファイルへのパスが見えてしまうので，C直下にある(フォルダ`exe`下のファイル群をコピーした)プロジェクト`GanttLogger`配下にpipenvの仮想環境`.venv`を作成し，ビルドするようにする！！
+- `config/fonts/ipaexg.ttf`は追加ファイルにせず実行可能ファイルと同階層にして一緒に圧縮することにする．  
+つまり生成されて以下の出力構成になるようにする．
+    ```
+    dist
+    ├ ganttlogger.exe
+    ├ config
+        └ fonts
+            └ ipaexg.ttf
+    └ ganttlogger-exe-<os>-<version>.zip
+    ```
 - 必要なWindows向けモジュールをインストール下pipenvを構築し，更に`pyinstaller`・`auto-py-to-exe`をインストール．
     - `pyinstaller`のみを使用
         ```
-        > pipenv run pyinstaller -y -F -i "C:/BuildProjects/GanttLogger/icon/favicon.ico" --add-data "C:/BuildProjects/GanttLogger/config";"config/" -n ganttlogger --hidden-import matplotlib --hidden-import numpy --hidden-import psutil --hidden-import pynput --hidden-import pypiwin32 --hidden-import colorama  "C:/BuildProjects/GanttLogger/app.py"
+        > pipenv run pyinstaller -y -F -i "C:/BuildProjects/GanttLogger/icon/favicon.ico" -n ganttlogger --hidden-import matplotlib --hidden-import numpy --hidden-import psutil --hidden-import pynput --hidden-import pypiwin32 --hidden-import colorama  "C:/BuildProjects/GanttLogger/app.py"
         ```
     - 出力先を指定してやる場合は`auto-py-to-exe`を使う(上のコマンドもauto-py-to-exeから得ている)．  
     なお，インストールできるモジュールにOS依存があるので，WindowsのモジュールはWindowsで，MacのモジュールはMacで，という感じにそれぞれのマシンで`auto-py-to-exe`を実行する．
@@ -17,9 +26,8 @@ Windowsのexe向け．Pythonインストール不要で動く？？？(まだ確
         をしてアプリケーションを起動して，
         - Script Location  : app.pyを選択
         - Onefile          : One Directoryを選択
-        - Additional Files : config/
         - Advanced
-            - Output Directory: distフォルダを選択
+            - Output Directory: `config/fonts/ipaexg.ttf`があるdistフォルダを選択
             - -n              : ganttlogger
             - --hidden-import : 
                 - (Windows)matplotlib,numpy,psutil,pynput,pypiwin32,colorama
@@ -28,16 +36,16 @@ Windowsのexe向け．Pythonインストール不要で動く？？？(まだ確
             - (Windows)※Python実行ファイルのパスにユーザ名が入らないようにディスクC直下にビルド用フォルダを配置し，プロジェクト配下にpipenvの仮想環境フォルダ`.venv`が生成されるようにする．  
             (参考:[Windowsでのpipenv](https://qiita.com/youkidkk/items/b6a6e39ee3a109001c75#-%E7%92%B0%E5%A2%83%E5%A4%89%E6%95%B0%E3%81%AE%E8%BF%BD%E5%8A%A0))
                 ```
-                pyinstaller -y -F -i "C:/BuildProjects/GanttLogger/icon/favicon.ico" --add-data "C:/BuildProjects/GanttLogger/config";"config/" -n ganttlogger --hidden-import matplotlib --hidden-import numpy --hidden-import psutil --hidden-import pynput --hidden-import pypiwin32 --hidden-import colorama  "C:/BuildProjects/GanttLogger/app.py"
+                pyinstaller -y -F -i "C:/BuildProjects/GanttLogger/icon/favicon.ico" -n ganttlogger --hidden-import matplotlib --hidden-import numpy --hidden-import psutil --hidden-import pynput --hidden-import pypiwin32 --hidden-import colorama  "C:/BuildProjects/GanttLogger/app.py"
                 ```
             - (Mac)※ユーザ名がusrになるのでどこでもよい？ただし，pipenvなど仮想環境には標準モジュールのはずのdistutilsが入っていないようで、仮想環境ではないローカルでpyinstallerを実行すべき．  
             また，過去版の`ganttlogger.spec`・`build`・`ganttlogger.exec`を削除してから実行するほうが，最新になることは確実なので堅実に．
                 ```
-                pyinstaller -y -F -i "/Users/<usrname>/Desktop/VSCodeProjects/python/GanttLogger/exe/icon/favicon.ico" --add-data "/Users/<usrname>/Desktop/VSCodeProjects/python/GanttLogger/exe/config":"config/" -n ganttlogger --hidden-import matplotlib --hidden-import numpy --hidden-import psutil --hidden-import pynput --hidden-import pyobjc --hidden-import pyobjc-framework-Quartz  "/Users/<usrname>/Desktop/VSCodeProjects/python/GanttLogger/exe/app.py"
+                pyinstaller -y -F -i "/Users/<usrname>/Desktop/VSCodeProjects/python/GanttLogger/exe/icon/favicon.ico" -n ganttlogger --hidden-import matplotlib --hidden-import numpy --hidden-import psutil --hidden-import pynput --hidden-import pyobjc --hidden-import pyobjc-framework-Quartz  "/Users/<usrname>/Desktop/VSCodeProjects/python/GanttLogger/exe/app.py"
                 ```
                 または，(pipenv runは，distを出力するディレクトリに移動してから実行すること．)
                 ```
-                ($ pipenv run )pyinstaller -y --onefile -i "/Users/<usrname>/Desktop/VSCodeProjects/python/GanttLogger/exe/icon/favicon.ico" --add-data "/Users/<usrname>/Desktop/VSCodeProjects/python/GanttLogger/exe/config":"config/" -n ganttlogger --hidden-import matplotlib --hidden-import numpy --hidden-import psutil --hidden-import pynput --hidden-import pyobjc --hidden-import pyobjc-framework-Quartz  "/Users/<usrname>/Desktop/VSCodeProjects/python/GanttLogger/exe/app.py"
+                ($ pipenv run )pyinstaller -y --onefile -i "/Users/<usrname>/Desktop/VSCodeProjects/python/GanttLogger/exe/icon/favicon.ico" -n ganttlogger --hidden-import matplotlib --hidden-import numpy --hidden-import psutil --hidden-import pynput --hidden-import pyobjc --hidden-import pyobjc-framework-Quartz  "/Users/<usrname>/Desktop/VSCodeProjects/python/GanttLogger/exe/app.py"
                 ```
 
 
@@ -46,4 +54,4 @@ Windowsのexe向け．Pythonインストール不要で動く？？？(まだ確
     - Macは`$ ./ganttlogger`で実行できる．
     - いずれにしても，システム環境変数に登録すれば`ganttlogger`で動かせる．
 
-- 圧縮フォルダ名を`ganttlogger-exe-<macos|win_x86_64>-<Version>`として公開．
+- `config/fonts/ipaexg.ttf`とganttlogger.exeを一緒に圧縮し，圧縮フォルダ名を`ganttlogger-exe-<macos|win_x86_64>-<Version>`として公開．
