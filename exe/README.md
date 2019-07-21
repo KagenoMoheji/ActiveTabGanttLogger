@@ -54,4 +54,4 @@
     - Macは`$ ./ganttlogger`で実行できる．
     - いずれにしても，システム環境変数に登録すれば`ganttlogger`で動かせる．
 
-- `config/font/ipaexg.ttf`とganttlogger.exeを一緒に圧縮し，圧縮フォルダ名を`ganttlogger-exe-<macos|win_x86_64>-<Version>`として公開．
+- **`config/font/ipaexg.ttf`と実行可能ganttloggerをフォルダ`ganttlogger`に入れてから圧縮**し，圧縮フォルダ名を`ganttlogger-exe-<macos|win_x86_64>-<Version>`として公開．
