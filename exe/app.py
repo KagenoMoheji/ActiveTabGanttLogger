@@ -13,13 +13,13 @@ Or, if you have installed this CLI, start from (4).
 
 [How to create exe]
 - pyinstallerによるビルドは，Python実行ファイルへのパスが見えてしまうので，C直下にある(フォルダ`exe`下のファイル群をコピーした)プロジェクト`GanttLogger`配下にpipenvの仮想環境`.venv`を作成し，ビルドするようにする！！
-- `config/fonts/ipaexg.ttf`は追加ファイルにせず実行可能ファイルと同階層にして一緒に圧縮することにする．  
+- `config/font/ipaexg.ttf`は追加ファイルにせず実行可能ファイルと同階層にして一緒に圧縮することにする．  
 つまり生成されて以下の出力構成になるようにする．
     ```
     dist
     ├ ganttlogger.exe
     ├ config
-        └ fonts
+        └ font
             └ ipaexg.ttf
     └ ganttlogger-exe-<os>-<version>.zip
     ```
@@ -38,7 +38,7 @@ Or, if you have installed this CLI, start from (4).
         - Script Location  : app.pyを選択
         - Onefile          : One Directoryを選択
         - Advanced
-            - Output Directory: `config/fonts/ipaexg.ttf`があるdistフォルダを選択
+            - Output Directory: `config/font/ipaexg.ttf`があるdistフォルダを選択
             - -n              : ganttlogger
             - --hidden-import : 
                 - (Windows)matplotlib,numpy,psutil,pynput,pypiwin32,colorama
@@ -65,7 +65,7 @@ Or, if you have installed this CLI, start from (4).
     - Macは`$ ./ganttlogger`で実行できる．
     - いずれにしても，システム環境変数に登録すれば`ganttlogger`で動かせる．
 
-- `config/fonts/ipaexg.ttf`とganttlogger.exeを一緒に圧縮し，圧縮フォルダ名を`ganttlogger-exe-<macos|win_x86_64>-<Version>`として公開．
+- `config/font/ipaexg.ttf`とganttlogger.exeを一緒に圧縮し，圧縮フォルダ名を`ganttlogger-exe-<macos|win_x86_64>-<Version>`として公開．
 '''
 
 from modules.InitProcess import InitProcess
