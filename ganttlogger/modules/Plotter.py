@@ -19,6 +19,10 @@ class Plotter:
     select_data = ["all"]
     xaxis_type_at = "active-start"
     xaxis_type_mk = "10"
+    xlim_range = { # type(datetime.datetime())
+        "start": None,
+        "end": None
+    }
     strfmr = None
     '''
     ●List construction of plotting data
@@ -60,13 +64,12 @@ class Plotter:
         -> Specify the output directory.
         '''
         self.strfmr = StrFormatter()
-        if uuid:
+        if uuid: # When mode is "AloneWithPlot" or "Logger"
             self.uuid = uuid
             self.dirname = "ganttlogger_logs/{}".format(uuid)
         else:
             # Get current directory
             self.dirname = os.getcwd()
-        os.makedirs(os.path.dirname("{dirname}/graphs/".format(dirname=self.dirname)), exist_ok=True)
         self.sec_interval = 1
         self.filter_tab_list = []
         self.hide_filtered_tab_duration = False
@@ -78,24 +81,27 @@ class Plotter:
         self.plot_mouse = np.array([[None, None]])
         self.plot_keyboard = np.array([[None, None]])
         self.df_active_tab = {}
+        self.xlim_range = {"start": None, "end": None}
 
     def start(self):
         '''
         ●With stdin,
-        (1)Select output mode. (set_interval/filter_tab/select_data/xaxis_type)
+        (1)Select output mode. (set_interval|filter_tab|select_data|xaxis_type|xlim_range)
         (2)In each mode, set detail information.
         ・set_interval -> Set a number of seconds interval of data.
         ・fiter_tab -> Set a (text) file of the list of unneccesary tab-text.
         ・select_data -> Set "all" to plot a compiled graph, or select from ('active_tab'|'mouse'|'keyboard'|'mouse-keyboard') to plot each graphs.
         ・xaxis_type -> For x-axis, select "active-start" to set start times of active-tabs, or set a number of seconds to set times of the interval.
+        ・xlim_range -> Set start time or end time in the format "%Y/%m/%d %H:%M:%S", or "None"/no input when use from raw data.
         '''
         try:
-            plot_types_labels = set(["set_interval", "filter_tab", "select_data", "xaxis_type"])
+            plot_types_labels = set(["set_interval", "filter_tab", "select_data", "xaxis_type", "xlim_range"])
             plot_types_flags = {
                 "set_interval": False,
                 "filter_tab": False,
                 "select_data": False,
-                "xaxis_type": False
+                "xaxis_type": False,
+                "xlim_range": False
             }
 
             print(self.strfmr.get_colored_console_log("yellow",
@@ -106,7 +112,9 @@ class Plotter:
 'select_data' : Select whether you use all data to plot to an output or some data plot to each output. 
                 Default - when you don't input in 'select_data' - is the former.
 'xaxis_type'  : Select x-axis scale from whether 'active-start'(the start times of active tabs) or number
-                of seconds interval.""")
+                of seconds interval.
+'xlim_range'  : Set start time or end time. Defaults of both of them are using from raw-data(= inputing 'None'
+                or not input).""")
             while True:
                 print(self.strfmr.get_colored_console_log("yellow",
                     "Select plot types separated by ',',  or enter without input.: "), end="")
@@ -183,7 +191,7 @@ class Plotter:
                 print("There are a required setting.")
                 while True:
                     print(self.strfmr.get_colored_console_log("yellow",
-                        "Select 'all' or list separated by ',' from ('active_tab'|'mouse'|'keyboard'|'mouse-keyboard').: "), end="")
+                        "Select 'all' or names separated by ',' from ('active_tab'|'mouse'|'keyboard'|'mouse-keyboard').: "), end="")
                     input_select_data = list(map(lambda s: s.strip(), (input().strip()).split(",")))
                     if not input_select_data[0]:
                         # If empty input, no need to update self.select_data (keep "all")
@@ -205,13 +213,14 @@ class Plotter:
                         else:
                             print(self.strfmr.get_colored_console_log("red",
                                 "Error: There are some invalid names of .log files."))
+                            continue
             if plot_types_flags["xaxis_type"]:
                 print(self.strfmr.get_colored_console_log("yellow",
                     "-----------------[xaxis_type]-----------------"))
                 print("There are two required settings.")
                 while True:
                     print(self.strfmr.get_colored_console_log("yellow",
-                        "(1)Select x-axis type for ActiveTab from whether 'active-start' or number of the interval by seconds: "), end="")
+                        "(1)Select x-axis type for ActiveTab from whether 'active-start' or number of the interval by seconds.: "), end="")
                     st_input = input().strip()
                     if st_input == "active-start":
                         self.xaxis_type_at = st_input
@@ -228,7 +237,7 @@ class Plotter:
                             "Error: Invalid input.\n(Example)If you want set 2 seconds for the interval of the xaxis scale, input '2'.\nOr, input 'active-start' if you want set active start time to the xaxis scale."))
                 while True:
                     print(self.strfmr.get_colored_console_log("yellow",
-                        "(2)Select x-axis type for Mouse or Keyboard from whether 'active-start' or number of the interval by seconds: "), end="")
+                        "(2)Select x-axis type for Mouse or Keyboard from whether 'active-start' or number of the interval by seconds.: "), end="")
                     st_input = input().strip()
                     if st_input == "active-start":
                         self.xaxis_type_mk = st_input
@@ -243,7 +252,41 @@ class Plotter:
                         continue
                     print(self.strfmr.get_colored_console_log("red",
                             "Error: Invalid input.\n(Example)If you want set 2 seconds for the interval of the xaxis scale, input '2'.\nOr, input 'active-start' if you want set active start time to the xaxis scale."))
+            if plot_types_flags["xlim_range"]:
+                print(self.strfmr.get_colored_console_log("yellow",
+                    "-----------------[xlim_range]-----------------"))
+                print("There are two required settings.")
+                while True:
+                    print(self.strfmr.get_colored_console_log("yellow",
+                        "(1)Input start time of graph xlim in the format 'YY/mm/dd HH:MM:SS'.: "), end="")
+                    st_input = input().strip()
+                    if not st_input or st_input == "None":
+                        break
+                    try:
+                        self.xlim_range["start"] = datetime.datetime.strptime(st_input, "%Y/%m/%d %H:%M:%S")
+                    except ValueError:
+                        print(self.strfmr.get_colored_console_log("red",
+                            "Error: Invalid time format.\nInput in the format 'YY/mm/dd HH:MM:SS'."))
+                        continue
+                    print(self.strfmr.get_colored_console_log("red",
+                            "Error: Invalid input."))
+                while True:
+                    print(self.strfmr.get_colored_console_log("yellow",
+                        "(2)Input end time of graph xlim in the format 'YY/mm/dd HH:MM:SS'.: "), end="")
+                    st_input = input().strip()
+                    if not st_input or st_input == "None":
+                        break
+                    try:
+                        self.xlim_range["end"] = datetime.datetime.strptime(st_input, "%Y/%m/%d %H:%M:%S")
+                    except ValueError:
+                        print(self.strfmr.get_colored_console_log("red",
+                            "Error: Invalid time format.\nInput in the format 'YY/mm/dd HH:MM:SS'."))
+                        continue
+                    print(self.strfmr.get_colored_console_log("red",
+                            "Error: Invalid input."))
 
+            # Create an output folder
+            os.makedirs(os.path.dirname("{dirname}/graphs/".format(dirname=self.dirname)), exist_ok=True)
             if self.select_data[0] == "all":
                 self.run()
             else:
@@ -296,6 +339,8 @@ class Plotter:
         init = self.plot_active_tab[0][0] # pld.date2num(self.plot_active_tab[0][0])
         last = self.plot_active_tab[len(self.plot_active_tab)-1][0] # pld.date2num(self.plot_active_tab[len(self.plot_active_tab)-1][0])
 
+        # initとlastとdatesへの格納を変更すればいいかも．
+        # datesに関してはinitまたはlastがあればループ開始と終了を更新してその間をループする感じ．
         # Create upper graph(ganttchart)
         ax1 = fig.add_subplot(2, 1, 1)
         ax1.set_xlim(init, last)
