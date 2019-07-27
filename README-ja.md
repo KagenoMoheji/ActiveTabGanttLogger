@@ -27,9 +27,10 @@
 ## <span id="1">使用環境(テスト済み)</span> [▲](#0)
 - OS
     - Windows10(64bit)
-    - MacOS Mojave
+    - MacOS Sierra ~
 - Python
-    - 3.7
+    - 3.6.x
+    - 3.7.x
 
 ## <span id="2">はじめよう</span> [▲](#0)
 ### <span id="2-1">導入</span> [▲](#0)

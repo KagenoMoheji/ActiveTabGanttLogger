@@ -28,9 +28,10 @@ CLI that Monitors active-tab, mouse-distance and keyboard-count, Logs and Plots 
 ## <span id="1">Requirements(Test Completing)</span> [▲](#0)
 - OS
     - Windows10(64bit)
-    - MacOS Mojave
+    - MacOS Sierra ~
 - Python
-    - 3.7
+    - 3.6.x
+    - 3.7.x
 
 ## <span id="2">Get Started</span> [▲](#0)
 ### <span id="2-1">Install</span> [▲](#0)
