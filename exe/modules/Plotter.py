@@ -62,13 +62,12 @@ class Plotter:
         -> Specify the output directory.
         '''
         self.strfmr = StrFormatter()
-        if uuid:
+        if uuid: # When mode is "AloneWithPlot" or "Logger"
             self.uuid = uuid
             self.dirname = "ganttlogger_logs/{}".format(uuid)
         else:
             # Get current directory
             self.dirname = os.getcwd()
-        os.makedirs(os.path.dirname("{dirname}/graphs/".format(dirname=self.dirname)), exist_ok=True)
         is_win = "Windows" in platform.platform(terse=True)
         if  is_win:
             self.exedir = "\\".join(sys.executable.split("\\")[:-1])
@@ -190,7 +189,7 @@ class Plotter:
                 print("There are a required setting.")
                 while True:
                     print(self.strfmr.get_colored_console_log("yellow",
-                        "Select 'all' or list separated by ',' from ('active_tab'|'mouse'|'keyboard'|'mouse-keyboard').: "), end="")
+                        "Select 'all' or names separated by ',' from ('active_tab'|'mouse'|'keyboard'|'mouse-keyboard').: "), end="")
                     input_select_data = list(map(lambda s: s.strip(), (input().strip()).split(",")))
                     if not input_select_data[0]:
                         # If empty input, no need to update self.select_data (keep "all")
@@ -212,6 +211,7 @@ class Plotter:
                         else:
                             print(self.strfmr.get_colored_console_log("red",
                                 "Error: There are some invalid names of .log files."))
+                            continue
             if plot_types_flags["xaxis_type"]:
                 print(self.strfmr.get_colored_console_log("yellow",
                     "-----------------[xaxis_type]-----------------"))
@@ -251,6 +251,8 @@ class Plotter:
                     print(self.strfmr.get_colored_console_log("red",
                             "Error: Invalid input.\n(Example)If you want set 2 seconds for the interval of the xaxis scale, input '2'.\nOr, input 'active-start' if you want set active start time to the xaxis scale."))
 
+            # Create an output folder
+            os.makedirs(os.path.dirname("{dirname}/graphs/".format(dirname=self.dirname)), exist_ok=True)
             if self.select_data[0] == "all":
                 self.run()
             else:
