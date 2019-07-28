@@ -5,6 +5,7 @@ from ganttlogger.modules.Observer import WinObserver, MacObserver
 from ganttlogger.modules.Logger import Logger
 from ganttlogger.modules.Plotter import Plotter
 from ganttlogger.modules.Displayer import Displayer
+from ganttlogger.modules.Merger import Merger
 
 def main():
     '''
@@ -43,6 +44,9 @@ def main():
     elif mode == "Displayer":
         displayer = Displayer()
         displayer.start()
+    elif mode == "Merger":
+        merger = Merger()
+        merger.start()
 
 
 if __name__ == "__main__":

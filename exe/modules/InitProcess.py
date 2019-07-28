@@ -23,12 +23,12 @@ class InitProcess:
 
         Returns:
             os (str): OS and its version
-            mode (str): "Alone" or "AloneWithPlot" or "Observer" or "Logger" or "Plotter" or "Displayer"
-            uuid ("" | str): UUID when mode is not "Plotter" and "Displayer"
+            mode (str): "Alone" or "AloneWithPlot" or "Observer" or "Logger" or ...
+            uuid ("" | str): UUID when mode is not "Plotter" and "Displayer" and "Merger"
         '''
         os = self.get_os()
         mode = self.argparser.identify_mode()
-        if (mode == "Plotter") or (mode == "Displayer"):
+        if (mode == "Plotter") or (mode == "Displayer") or (mode=="Merger"):
             uuid = "None"
         elif (mode == "Alone") or (mode == "Observer") or (mode=="AloneWithPlot"):
             uuid = self.generate_uuid()
@@ -95,7 +95,7 @@ class ArgsParser:
         Parse cli options.
         '''
         self.strfmr = StrFormatter()
-        usage = "ganttlogger [--observer] [--logger] [--uuid <UUID>] [--help] [--plotter] [--withplot] [--displayer]"
+        usage = "ganttlogger [--observer] [--logger] [--uuid <UUID>] [--help] [--plotter] [--withplot] [--displayer] [--merger]"
         self.parser = ArgumentParser(
             prog="ganttlogger",
             description="""\
@@ -138,6 +138,11 @@ and Plotting graphs (active-tab=ganttchart, mouse=line, keyboard=bar).
             action="store_true",
             help="Use this option when you want to look a graph from a '.pkl' file."
         )
+        self.parser.add_argument(
+            "-m", "--merger",
+            action="store_true",
+            help="Use this option when you want to merge all logs in folders in 'ganttlogger_logs'."
+        )
         self.args = self.parser.parse_args()
 
     def identify_mode(self):
@@ -148,7 +153,7 @@ and Plotting graphs (active-tab=ganttchart, mouse=line, keyboard=bar).
             None
 
         Returns:
-            mode (str): "Alone" or "Observer" or "Logger"
+            mode (str): "Alone" or "Observer" or "Logger" or ...
         '''
         mode = ""
         if self.args.observer:
@@ -164,6 +169,8 @@ and Plotting graphs (active-tab=ganttchart, mouse=line, keyboard=bar).
             mode = "Plotter"
         elif self.args.displayer:
             mode = "Displayer"
+        elif self.args.merger:
+            mode = "Merger"
         else:
             if self.args.uuid:
                 print(self.strfmr.get_colored_console_log("red",

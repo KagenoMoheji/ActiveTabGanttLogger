@@ -18,6 +18,7 @@ CLI that Monitors active-tab, mouse-distance and keyboard-count, Logs and Plots 
     - [logger](#l)
     - [plotter](#p)
     - [displayer](#d)
+    - [merger](#m)
 - [Issues](#4)
 - [In the future...](#5)
 - [License](#6)
@@ -28,9 +29,10 @@ CLI that Monitors active-tab, mouse-distance and keyboard-count, Logs and Plots 
 ## <span id="1">Requirements(Test Completing)</span> [▲](#0)
 - OS
     - Windows10(64bit)
-    - MacOS Mojave
+    - MacOS Sierra ~
 - Python
-    - 3.7
+    - 3.6.x
+    - 3.7.x
 
 ## <span id="2">Get Started</span> [▲](#0)
 ### <span id="2-1">Install</span> [▲](#0)
@@ -110,7 +112,7 @@ ganttlogger_logs
 
 ## <span id="3">Command Options</span> [▲](#0)
 ```
-usage: ganttlogger [--observer] [--logger] [--uuid <UUID>] [--help] [--plotter] [--withplot] [--displayer]
+usage: ganttlogger [--observer] [--logger] [--uuid <UUID>] [--help] [--plotter] [--withplot] [--displayer] [--merger]
 
 This CLI will do Observing active-tab, mouse, keyboard,
 and Logging them,
@@ -125,6 +127,7 @@ optional arguments:
   -p, --plotter         Use this option if you want other outputs by a log in the current directory after getting one and a graph.
   --withplot            Use this option when you want to get a graph after running 'Alone'.
   -d, --displayer       Use this option when you want to look a graph from a '.pkl' file.
+  -m, --merger          Use this option when you want to merge all logs in folders in 'ganttlogger_logs'.
 ```
 - <span id="o"></span><span id="l"></span>**`--observer` and `--logger` don't work because they're not implemented yet.**
 - <span id="a"></span>Run `ganttlogger` without any options if you run CLI as `alone` - both of `observer` and `logger/plotter` -.
@@ -136,7 +139,7 @@ optional arguments:
         ```
         Select plot types separated by ',',  or enter without input.:
         ```
-        Select keywords(you can combine) from (set_interval | filter_tab | select_data | xaxis_type).
+        Select keywords(you can combine) from (set_interval | filter_tab | select_data | xaxis_type | xlim_range).
     - When select `set_interval`, you'll be required a setting.
         ```
         Set the number of interval by seconds:
@@ -150,7 +153,7 @@ optional arguments:
         ```
     - When select `select_data`, you'll be required a setting.
         ```
-        Select 'all' or list separated by ',' from ('active_tab'|'mouse'|'keyboard'|'mouse-keyboard').:
+        Select 'all' or names separated by ',' from ('active_tab'|'mouse'|'keyboard'|'mouse-keyboard').:
         ```
         Example graphs when set "active_tab" and "keyboard" are No.5 and No.6 of [Graph Examples](#graphs).
     - When select `xaxis_type`, you'll be required two settings.
@@ -160,11 +163,24 @@ optional arguments:
         (2)Select x-axis type for Mouse or Keyboard from whether 'active-start' or number of the interval by seconds:
         ```
         Example graphs when set "(1)active-start(2)active-start" and "(1)15(2)15" are No.3 and No.4 of [Graph Examples](#graphs).
+    - When select `xlim_range`, you'll be required two settings.
+        ```
+        (1)Input start time of graph xlim in the format 'YYYY/mm/dd HH:MM:SS'.:
+        
+        (2)Input end time of graph xlim in the format 'YYYY/mm/dd HH:MM:SS'.:
+        ```
+        Then, you can get a graph during the specified time zone.
 - <span id="d"></span>Add an option `--displayer` if you want watch dynamic graph with generated `~.pkl`.
     - Then, you'll be required a setting.
         ```
         Input file name of '.pkl':
         ```
+- <span id="m"></span>Add an option `--merger` if you want to merge all logs in folders(these names is ID) in "ganttlogger_logs".
+    - Then, you'll be required a setting.
+        ```
+        Select 'all' or names separated by ',' from ('active_tab'|'mouse'|'keyboard').:
+        ```
+    - After running, you'll get an outputted folder "merged_\<datetime>".
 
 ### <span id="graphs">Graph Examples</span>
 - All graphs were plotted **from same logs**.
@@ -200,7 +216,6 @@ I'm investigating the causes...
 - Try implementing flushing stdin buffering. But it's difficury, so I want advices or pull-requests.
 
 ## <span id="5">In the future...</span> [▲](#0)
-- Optimize code like `Plotter.py` by commonizing to functions.
 - Implement mode remote '--observer' and '--logger'.
 
 ## <span id="6">License</span> [▲](#0)

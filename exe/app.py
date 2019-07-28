@@ -5,6 +5,7 @@ from modules.Observer import WinObserver, MacObserver
 from modules.Logger import Logger
 from modules.Plotter import Plotter
 from modules.Displayer import Displayer
+from modules.Merger import Merger
 
 def main():
     '''
@@ -43,6 +44,9 @@ def main():
     elif mode == "Displayer":
         displayer = Displayer()
         displayer.start()
+    elif mode == "Merger":
+        merger = Merger()
+        merger.start()
 
 
 if __name__ == "__main__":

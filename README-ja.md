@@ -18,6 +18,7 @@
     - [logger](#l)
     - [plotter](#p)
     - [displayer](#d)
+    - [merger](#m)
 - [課題](#4)
 - [これから](#5)
 - [License](#6)
@@ -27,9 +28,10 @@
 ## <span id="1">使用環境(テスト済み)</span> [▲](#0)
 - OS
     - Windows10(64bit)
-    - MacOS Mojave
+    - MacOS Sierra ~
 - Python
-    - 3.7
+    - 3.6.x
+    - 3.7.x
 
 ## <span id="2">はじめよう</span> [▲](#0)
 ### <span id="2-1">導入</span> [▲](#0)
@@ -109,7 +111,7 @@ ganttlogger_logs
 
 ## <span id="3">コマンドオプション</span> [▲](#0)
 ```
-usage: ganttlogger [--observer] [--logger] [--uuid <UUID>] [--help] [--plotter] [--withplot] [--displayer]
+usage: ganttlogger [--observer] [--logger] [--uuid <UUID>] [--help] [--plotter] [--withplot] [--displayer] [--merger]
 
 This CLI will do Observing active-tab, mouse, keyboard,
 and Logging them,
@@ -124,6 +126,7 @@ optional arguments:
   -p, --plotter         Use this option if you want other outputs by a log in the current directory after getting one and a graph.
   --withplot            Use this option when you want to get a graph after running 'Alone'.
   -d, --displayer       Use this option when you want to look a graph from a '.pkl' file.
+  -m, --merger          Use this option when you want to merge all logs in folders in 'ganttlogger_logs'.
 ```
 - <span id="o"></span><span id="l"></span>**`--observer`と`--logger`は実装していないのでまだ機能しません．**
 - <span id="a"></span>`observer`と`logger`をPC単体で行う`alone`を実行したい場合は，オプション無しの`ganttlogger`のみを実行してください．
@@ -149,7 +152,7 @@ optional arguments:
         ```
     - `select_data`を選択した場合は，1点の設定をします．
         ```
-        Select 'all' or list separated by ',' from ('active_tab'|'mouse'|'keyboard'|'mouse-keyboard').:
+        Select 'all' or names separated by ',' from ('active_tab'|'mouse'|'keyboard'|'mouse-keyboard').:
         ```
         "active_tab" と "keyboard"とそれぞれ入力した場合のグラフの例が[Graph Examples](#graphs)の5番と6番です．
     - `xaxis_type`を選択した場合は，2点の設定をします．
@@ -159,11 +162,24 @@ optional arguments:
         (2)Select x-axis type for Mouse or Keyboard from whether 'active-start' or number of the interval by seconds:
         ```
         "(1)active-start(2)active-start" と "(1)15(2)15"とそれぞれ入力した場合のグラフの例が[Graph Examples](#graphs)の3番と4番です．
+    - `xlim_range`を選択した場合は，2点の設定をします．
+        ```
+        (1)Input start time of graph xlim in the format 'YYYY/mm/dd HH:MM:SS'.:
+        
+        (2)Input end time of graph xlim in the format 'YYYY/mm/dd HH:MM:SS'.:
+        ```
+        これにより，指定した時間帯のグラフを得られます．
 - <span id="d"></span>`~.pkl`ファイルを用いて動的グラフを見たい場合は，オプション`--displayer`を追加して実行してください．
     - 1点の設定入力を行う必要があります．
         ```
         Input file name of '.pkl':
         ```
+- <span id="m"></span>フォルダ"ganttlogger_logs"内の(IDがフォルダ名になっている)フォルダに含まれる全てのログを併合したい場合は，オプション`--merger`を追加して実行してください．
+    - 1点の設定入力を行う必要があります．
+        ```
+        Select 'all' or names separated by ',' from ('active_tab'|'mouse'|'keyboard').:
+        ```
+    - 実行後にフォルダ"merged_\<datetime>"が出力され，そこで併合されたログを確認できます．
 
 ### <span id="graphs">Graph Examples</span>
 - All graphs were plotted **from same logs**.
@@ -198,7 +214,6 @@ optional arguments:
 - 標準入力のバッファクリアの実装を試みるが，難題です．助言やプルリクを求めます．
 
 ## <span id="5">これから</span> [▲](#0)
-- 関数への共通化による`Plotter.py`のコード最適化
 - 2台以上運用・リモート形式の`--observer`と`--logger`の実装．
 
 ## <span id="6">LICENSE</span> [▲](#0)

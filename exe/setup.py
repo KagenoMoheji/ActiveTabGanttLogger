@@ -32,7 +32,7 @@ elif "Darwin" in os:
 
 setup(
     name="ganttlogger",
-    version="0.1.13",
+    version="0.2.1",
     description="This CLI will monitor(active-tab, mouse, keyboard), log, and generate graphs.",
     install_requires=install_requires,
     entry_points={
@@ -40,8 +40,8 @@ setup(
             "ganttlogger = app:main"
         ]
     },
-    author="KagenoMoheji",
+    author="Goki Sugimura(KagenoMoheji)",
     author_email="shadowmoheji.pd@gmail.com",
-    url="https://github.com/KagenoMoheji/ActiveTabGanttLogger",
+    url="https://github.com/KagenoMoheji/GanttLogger",
     licence="MIT"
 )
