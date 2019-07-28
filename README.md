@@ -172,7 +172,7 @@ optional arguments:
         ```
         Select 'all' or names separated by ',' from ('active_tab'|'mouse'|'keyboard').:
         ```
-    - After running, you'll get an outputted folder "merged_<datetime>".
+    - After running, you'll get an outputted folder "merged_\<datetime>".
 
 ### <span id="graphs">Graph Examples</span>
 - All graphs were plotted **from same logs**.

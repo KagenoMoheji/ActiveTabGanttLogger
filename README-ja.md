@@ -171,7 +171,7 @@ optional arguments:
         ```
         Select 'all' or names separated by ',' from ('active_tab'|'mouse'|'keyboard').:
         ```
-    - 実行後にフォルダ"merged_<datetime>"が出力され，そこで併合されたログを確認できます．
+    - 実行後にフォルダ"merged_\<datetime>"が出力され，そこで併合されたログを確認できます．
 
 ### <span id="graphs">Graph Examples</span>
 - All graphs were plotted **from same logs**.
