@@ -21,6 +21,10 @@ class Plotter:
     select_data = ["all"]
     xaxis_type_at = "active-start"
     xaxis_type_mk = "10"
+    xlim_range = { # type(datetime.datetime())
+        "start": None,
+        "end": None
+    }
     strfmr = None
     '''
     ●List construction of plotting data
@@ -84,24 +88,27 @@ class Plotter:
         self.plot_mouse = np.array([[None, None]])
         self.plot_keyboard = np.array([[None, None]])
         self.df_active_tab = {}
+        self.xlim_range = {"start": None, "end": None}
 
     def start(self):
         '''
         ●With stdin,
-        (1)Select output mode. (set_interval/filter_tab/select_data/xaxis_type)
+        (1)Select output mode. (set_interval|filter_tab|select_data|xaxis_type|xlim_range)
         (2)In each mode, set detail information.
         ・set_interval -> Set a number of seconds interval of data.
         ・fiter_tab -> Set a (text) file of the list of unneccesary tab-text.
         ・select_data -> Set "all" to plot a compiled graph, or select from ('active_tab'|'mouse'|'keyboard'|'mouse-keyboard') to plot each graphs.
         ・xaxis_type -> For x-axis, select "active-start" to set start times of active-tabs, or set a number of seconds to set times of the interval.
+        ・xlim_range -> Set start time or end time in the format "%Y/%m/%d %H:%M:%S", or "None"/no input when use from raw data.
         '''
         try:
-            plot_types_labels = set(["set_interval", "filter_tab", "select_data", "xaxis_type"])
+            plot_types_labels = set(["set_interval", "filter_tab", "select_data", "xaxis_type", "xlim_range"])
             plot_types_flags = {
                 "set_interval": False,
                 "filter_tab": False,
                 "select_data": False,
-                "xaxis_type": False
+                "xaxis_type": False,
+                "xlim_range": False
             }
 
             print(self.strfmr.get_colored_console_log("yellow",
@@ -112,7 +119,9 @@ class Plotter:
 'select_data' : Select whether you use all data to plot to an output or some data plot to each output. 
                 Default - when you don't input in 'select_data' - is the former.
 'xaxis_type'  : Select x-axis scale from whether 'active-start'(the start times of active tabs) or number
-                of seconds interval.""")
+                of seconds interval.
+'xlim_range'  : Set start time or end time. Defaults of both of them are using from raw-data(= inputing 'None'
+                or not input).""")
             while True:
                 print(self.strfmr.get_colored_console_log("yellow",
                     "Select plot types separated by ',',  or enter without input.: "), end="")
@@ -218,7 +227,7 @@ class Plotter:
                 print("There are two required settings.")
                 while True:
                     print(self.strfmr.get_colored_console_log("yellow",
-                        "(1)Select x-axis type for ActiveTab from whether 'active-start' or number of the interval by seconds: "), end="")
+                        "(1)Select x-axis type for ActiveTab from whether 'active-start' or number of the interval by seconds.: "), end="")
                     st_input = input().strip()
                     if st_input == "active-start":
                         self.xaxis_type_at = st_input
@@ -235,7 +244,7 @@ class Plotter:
                             "Error: Invalid input.\n(Example)If you want set 2 seconds for the interval of the xaxis scale, input '2'.\nOr, input 'active-start' if you want set active start time to the xaxis scale."))
                 while True:
                     print(self.strfmr.get_colored_console_log("yellow",
-                        "(2)Select x-axis type for Mouse or Keyboard from whether 'active-start' or number of the interval by seconds: "), end="")
+                        "(2)Select x-axis type for Mouse or Keyboard from whether 'active-start' or number of the interval by seconds.: "), end="")
                     st_input = input().strip()
                     if st_input == "active-start":
                         self.xaxis_type_mk = st_input
@@ -250,6 +259,38 @@ class Plotter:
                         continue
                     print(self.strfmr.get_colored_console_log("red",
                             "Error: Invalid input.\n(Example)If you want set 2 seconds for the interval of the xaxis scale, input '2'.\nOr, input 'active-start' if you want set active start time to the xaxis scale."))
+                if plot_types_flags["xlim_range"]:
+                    print(self.strfmr.get_colored_console_log("yellow",
+                        "-----------------[xlim_range]-----------------"))
+                    print("There are two required settings.")
+                    while True:
+                        print(self.strfmr.get_colored_console_log("yellow",
+                            "(1)Input start time of graph xlim in the format 'YY/mm/dd HH:MM:SS'.: "), end="")
+                        st_input = input().strip()
+                        if not st_input or st_input == "None":
+                            break
+                        try:
+                            self.xlim_range["start"] = datetime.datetime.strptime(st_input, "%Y/%m/%d %H:%M:%S")
+                        except ValueError:
+                            print(self.strfmr.get_colored_console_log("red",
+                                "Error: Invalid time format.\nInput in the format 'YY/mm/dd HH:MM:SS'."))
+                            continue
+                        print(self.strfmr.get_colored_console_log("red",
+                                "Error: Invalid input."))
+                    while True:
+                        print(self.strfmr.get_colored_console_log("yellow",
+                            "(2)Input end time of graph xlim in the format 'YY/mm/dd HH:MM:SS'.: "), end="")
+                        st_input = input().strip()
+                        if not st_input or st_input == "None":
+                            break
+                        try:
+                            self.xlim_range["end"] = datetime.datetime.strptime(st_input, "%Y/%m/%d %H:%M:%S")
+                        except ValueError:
+                            print(self.strfmr.get_colored_console_log("red",
+                                "Error: Invalid time format.\nInput in the format 'YY/mm/dd HH:MM:SS'."))
+                            continue
+                        print(self.strfmr.get_colored_console_log("red",
+                                "Error: Invalid input."))
 
             # Create an output folder
             os.makedirs(os.path.dirname("{dirname}/graphs/".format(dirname=self.dirname)), exist_ok=True)
@@ -301,30 +342,50 @@ class Plotter:
 
 
         fig = plt.figure(figsize=(15, 9))
-        # Get range of x axis
-        init = self.plot_active_tab[0][0] # pld.date2num(self.plot_active_tab[0][0])
-        last = self.plot_active_tab[len(self.plot_active_tab)-1][0] # pld.date2num(self.plot_active_tab[len(self.plot_active_tab)-1][0])
+        # Get range(limit) of x axis
+        if self.xlim_range["start"] is None:
+            init = self.plot_active_tab[0][0]
+        else:
+            init = self.xlim_range["start"]
+        if self.xlim_range["end"] is None:
+            last = self.plot_active_tab[len(self.plot_active_tab)-1][0]
+        else:
+            last = self.xlim_range["end"]
 
         # Create upper graph(ganttchart)
         ax1 = fig.add_subplot(2, 1, 1)
         ax1.set_xlim(init, last)
         dates = []
         if self.xaxis_type_at == "active-start":
-            dates = [t for t in self.plot_active_tab[:-1, 0]]
-            last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
+            start_index = 0
+            end_index = -1
+            if self.xlim_range["start"] is not None:
+                dates[0] = init
+                while (init - self.plot_active_tab[start_index]).total_seconds() > 0:
+                    start_index += 1
+                    if start_index >= len(self.plot_active_tab):
+                        print(self.strfmr.get_colored_console_log("red",
+                            "Error: Start-time exceeds the last time in 'active_tab.log'."))
+                        sys.exit()
+            if self.xlim_range["end"] is not None:
+                end_index = 0
+                while (last - self.plot_active_tab[end_index]).total_seconds() > 0:
+                    end_index += 1
+                    if end_index >= len(self.plot_active_tab):
+                        print(self.strfmr.get_colored_console_log("red",
+                            "Error: End-time exceeds the last time in 'active_tab.log'."))
+                        sys.exit()
+                end_index -= 1
+            dates += [t for t in self.plot_active_tab[start_index:end_index, 0]]
         else:
-            t = self.plot_active_tab[0][0]
-            last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
-            while (last_t - t).total_seconds() >= 0:
+            t = init
+            while (last - t).total_seconds() >= 0:
                 dates.append(t)
                 t += datetime.timedelta(seconds=int(self.xaxis_type_at))
-            # print(last_t.second - dates[len(dates) - 1].second)
-            # print(dates[len(dates) - 1].second - last_t.second)
         # Add the last time to x-axis
-        if (last_t - dates[len(dates) - 1]).total_seconds() > 0:
-            dates.append(last_t)
-        # datenums = pld.date2num(dates)
-        ax1.set_xticks(dates) # ax1.set_xticks(datenums)
+        if (last - dates[len(dates) - 1]).total_seconds() > 0:
+            dates.append(last)
+        ax1.set_xticks(dates)
         ax1.axes.tick_params(axis="x", labelsize=7, rotation=270)
         ax1.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
         fp = plf.FontProperties(fname="{}/config/font/ipaexg.ttf".format(self.exedir), size=8)
@@ -351,23 +412,20 @@ class Plotter:
         dates.clear()
         if self.xaxis_type_mk == "active-start":
             dates = [t for t in self.plot_active_tab[:-1, 0]]
-            last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
         else:
-            t = self.plot_active_tab[0][0]
-            last_t = self.plot_active_tab[len(self.plot_active_tab)-1][0]
-            while (last_t - t).total_seconds() >= 0:
+            t = init
+            while (last - t).total_seconds() >= 0:
                 dates.append(t)
                 t += datetime.timedelta(seconds=int(self.xaxis_type_mk))
         # Add the last time to x-axis
-        if (last_t - dates[len(dates) - 1]).total_seconds() > 0:
-            dates.append(last_t)
-        # datenums = pld.date2num(dates)
+        if (last - dates[len(dates) - 1]).total_seconds() > 0:
+            dates.append(last)
         ax2_1.plot(self.plot_mouse[:, 0], self.plot_mouse[:, 1], color="orange", label="mouse-distance")
         ax2_2.plot(self.plot_keyboard[:, 0], self.plot_keyboard[:, 1], color="skyblue", label="keyboard-count")
         ax2_1.legend(bbox_to_anchor=(0.6, -0.1), loc='upper left', borderaxespad=0.5, fontsize=10)
         ax2_2.legend(bbox_to_anchor=(0.8, -0.1), loc='upper left', borderaxespad=0.5, fontsize=10)
         plt.xlabel("t")
-        ax2_1.set_xticks(dates) # ax2_1.set_xticks(datenums)
+        ax2_1.set_xticks(dates)
         ax2_1.axes.tick_params(axis="x", labelsize=7, rotation=270)
         ax2_1.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S"))
         ax2_1.set_ylabel("Mouse Distance[/interval]")
@@ -400,8 +458,8 @@ class Plotter:
         self.more_reshape_activetab()
 
         filetime = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        init = self.plot_active_tab[0][0] # pld.date2num(self.plot_active_tab[0][0])
-        last = self.plot_active_tab[len(self.plot_active_tab)-1][0] # pld.date2num(self.plot_active_tab[len(self.plot_active_tab)-1][0])
+        init = self.plot_active_tab[0][0]
+        last = self.plot_active_tab[len(self.plot_active_tab)-1][0]
         
         if "active_tab" in self.select_data:
             fig = plt.figure(figsize=(15,6))
@@ -420,8 +478,7 @@ class Plotter:
             # Add the last time to x-axis
             if (last_t - dates[len(dates) - 1]).total_seconds() > 0:
                 dates.append(last_t)
-            # datenums = pld.date2num(dates)
-            ax.set_xticks(dates) # ax.set_xticks(datenums)
+            ax.set_xticks(dates)
             plt.xlabel("t")
             ax.axes.tick_params(axis="x", labelsize=7, rotation=270)
             ax.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
@@ -460,15 +517,13 @@ class Plotter:
             # Add the last time to x-axis
             if (last_t - dates[len(dates) - 1]).total_seconds() > 0:
                 dates.append(last_t)
-            # datenums = pld.date2num(dates)
             ax.plot(self.plot_mouse[:, 0], self.plot_mouse[:, 1], color="orange", label="mouse-distance")
             plt.xlabel("t")
-            ax.set_xticks(dates) # ax.set_xticks(datenums)
+            ax.set_xticks(dates)
             ax.axes.tick_params(axis="x", labelsize=7, rotation=270)
             ax.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
             plt.subplots_adjust(top=0.95, bottom=0.23)
             ax.set_ylabel("Mouse Distance[/interval]")
-            ax.set_ylim(bottom=0)
             ax.set_ylim(bottom=0)
             plt.title("Mouse Distance(interval: {}s)".format(self.sec_interval))
             with open("{dirname}/graphs/output_{datetime}_mouse.pkl".format(dirname=self.dirname, datetime=filetime), "wb") as f:
@@ -492,15 +547,13 @@ class Plotter:
             # Add the last time to x-axis
             if (last_t - dates[len(dates) - 1]).total_seconds() > 0:
                 dates.append(last_t)
-            # datenums = pld.date2num(dates)
             ax.plot(self.plot_keyboard[:, 0], self.plot_keyboard[:, 1], color="skyblue", label="keyboard-count")
             plt.xlabel("t")
-            ax.set_xticks(dates) # ax.set_xticks(datenums)
+            ax.set_xticks(dates)
             ax.axes.tick_params(axis="x", labelsize=7, rotation=270)
             ax.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
             plt.subplots_adjust(top=0.95, bottom=0.23)
             ax.set_ylabel("Keyboard Count[/interval]")
-            ax.set_ylim(bottom=0)
             ax.set_ylim(bottom=0)
             ax.grid(axis="y")
             plt.title("Keyboard Count(interval: {}s)".format(self.sec_interval))
@@ -526,13 +579,12 @@ class Plotter:
             # Add the last time to x-axis
             if (last_t - dates[len(dates) - 1]).total_seconds() > 0:
                 dates.append(last_t)
-            # datenums = pld.date2num(dates)
             ax.plot(self.plot_mouse[:, 0], self.plot_mouse[:, 1], color="orange", label="mouse-distance")
             ax2.plot(self.plot_keyboard[:, 0], self.plot_keyboard[:, 1], color="skyblue", label="keyboard-count")
             ax.legend(bbox_to_anchor=(0.6, -0.2), loc='upper left', borderaxespad=0.5, fontsize=10)
             ax2.legend(bbox_to_anchor=(0.8, -0.2), loc='upper left', borderaxespad=0.5, fontsize=10)
             plt.xlabel("t")
-            ax.set_xticks(dates) # ax.set_xticks(datenums)
+            ax.set_xticks(dates)
             ax.axes.tick_params(axis="x", labelsize=7, rotation=270)
             ax.xaxis.set_major_formatter(pld.DateFormatter("%Y/%m/%d %H:%M:%S")) # .%f
             ax.set_ylabel("Mouse Distance[/interval]")
