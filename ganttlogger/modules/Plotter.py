@@ -82,6 +82,8 @@ class Plotter:
         self.plot_keyboard = np.array([[None, None]])
         self.df_active_tab = {}
         self.xlim_range = {"start": None, "end": None}
+        # Create an output folder
+        os.makedirs(os.path.dirname("{dirname}/graphs/".format(dirname=self.dirname)), exist_ok=True)
 
     def start(self):
         '''
@@ -287,8 +289,6 @@ class Plotter:
                     print(self.strfmr.get_colored_console_log("red",
                             "Error: Invalid input."))
 
-            # Create an output folder
-            os.makedirs(os.path.dirname("{dirname}/graphs/".format(dirname=self.dirname)), exist_ok=True)
             if self.select_data[0] == "all":
                 self.run()
             else:
