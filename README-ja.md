@@ -18,6 +18,7 @@
     - [logger](#l)
     - [plotter](#p)
     - [displayer](#d)
+    - [merger](#m)
 - [課題](#4)
 - [これから](#5)
 - [License](#6)
@@ -165,6 +166,12 @@ optional arguments:
         ```
         Input file name of '.pkl':
         ```
+- <span id="m"></span>フォルダ"ganttlogger_logs"内の(IDがフォルダ名になっている)フォルダに含まれる全てのログを併合したい場合は，オプション`--merger`を追加して実行してください．
+    - 1点の設定入力を行う必要があります．
+        ```
+        Select 'all' or names separated by ',' from ('active_tab'|'mouse'|'keyboard').:
+        ```
+    - 実行後にフォルダ"merged_<datetime>"が出力され，そこで併合されたログを確認できます．
 
 ### <span id="graphs">Graph Examples</span>
 - All graphs were plotted **from same logs**.

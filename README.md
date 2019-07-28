@@ -18,6 +18,7 @@ CLI that Monitors active-tab, mouse-distance and keyboard-count, Logs and Plots 
     - [logger](#l)
     - [plotter](#p)
     - [displayer](#d)
+    - [merger](#m)
 - [Issues](#4)
 - [In the future...](#5)
 - [License](#6)
@@ -166,6 +167,12 @@ optional arguments:
         ```
         Input file name of '.pkl':
         ```
+- <span id="m"></span>Add an option `--merger` if you want to merge all logs in folders(these names is ID) in "ganttlogger_logs".
+    - Then, you'll be required a setting.
+        ```
+        Select 'all' or names separated by ',' from ('active_tab'|'mouse'|'keyboard').:
+        ```
+    - After running, you'll get an outputted folder "merged_<datetime>".
 
 ### <span id="graphs">Graph Examples</span>
 - All graphs were plotted **from same logs**.
