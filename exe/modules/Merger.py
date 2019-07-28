@@ -14,6 +14,9 @@ class Merger:
     }
     strfmr = None
     def __init__(self):
+        '''
+        Merge logs in folders in "ganttlogger_logs".
+        '''
         self.strfmr = StrFormatter()
         # Check whether current folder name is "ganttlogger_logs"
         self.currdir = os.getcwd()
@@ -27,7 +30,7 @@ class Merger:
             print(self.strfmr.get_colored_console_log("red",
                 "Error: You must move to a folder 'ganttlogger_logs'."))
             sys.exit()
-        self.mergedir = "{currdir}/merged_{datetime}/".format(currdir=self.currdir, datetime=datetime.datetime.now().strftime("%Y%m%d_%H%M%S"))
+        self.mergedir = "{currdir}/merged_{datetime}".format(currdir=self.currdir, datetime=datetime.datetime.now().strftime("%Y%m%d_%H%M%S"))
     
     def start(self):
         try:
@@ -67,7 +70,7 @@ class Merger:
                         continue
 
             # Create new folder where is outputted merged logs
-            os.makedirs(os.path.dirname(self.mergedir), exist_ok=True)
+            os.makedirs(os.path.dirname("{}/".format(self.mergedir)), exist_ok=True)
             print("Created an output folder '{}'.".format(self.mergedir))
             self.run()
         except KeyboardInterrupt:
@@ -109,7 +112,7 @@ class Merger:
         for k in remove_keys_list:
             log_folders.pop(k)
         # Sort "log_folders" by datetime of values in ASC
-        log_folders = sorted(log_folders.items(), key=lambda x:x[1])
+        log_folders = dict(sorted(log_folders.items(), key=lambda x:x[1]))
 #         print("""
 # log_folders: {log_folders}
 # """.format(log_folders=log_folders))
@@ -122,8 +125,58 @@ class Merger:
             self.merge_keyboard_logs(log_folders)
 
     def merge_active_tab_logs(self, sorted_folders_dict):
+        with open("{mergedir}/active_tab.log".format(mergedir=self.mergedir), "a", encoding="utf-8") as af:
+            af.write("StartTime]:+:[ApplicationName]:+:[TabText\n")
+            for folder in sorted_folders_dict:
+                try:
+                    filedir = "{currdir}/{folder}/active_tab.log".format(currdir=self.currdir, folder=folder)
+                    with open(filedir, "r", encoding="utf-8") as rf:
+                        log = rf.read().strip() # Remove the last "\n"
+                        splitted_log = log.split("\n", 1)
+                        if "StartTime]:+:[" in splitted_log[0]:
+                            log = splitted_log[1]
+                    log += "\n"
+                    af.write(log)
+                except FileNotFoundError:
+                    print(self.strfmr.get_colored_console_log("red",
+                        "Error: File '{filedir}' not found.".format(filedir=filedir)))
+                    sys.exit()
         print("ActiveTab merged!")
+
     def merge_mouse_logs(self, sorted_folders_dict):
+        with open("{mergedir}/mouse.log".format(mergedir=self.mergedir), "a", encoding="utf-8") as af:
+            af.write("Time]:+:[MoveDistance\n")
+            for folder in sorted_folders_dict:
+                try:
+                    filedir = "{currdir}/{folder}/mouse.log".format(currdir=self.currdir, folder=folder)
+                    with open(filedir, "r", encoding="utf-8") as rf:
+                        log = rf.read().strip() # Remove the last "\n"
+                        splitted_log = log.split("\n", 1)
+                        if "Time]:+:[" in splitted_log[0]:
+                            log = splitted_log[1]
+                    log += "\n"
+                    af.write(log)
+                except FileNotFoundError:
+                    print(self.strfmr.get_colored_console_log("red",
+                        "Error: File '{filedir}' not found.".format(filedir=filedir)))
+                    sys.exit()
         print("Mouse merged!")
+
     def merge_keyboard_logs(self, sorted_folders_dict):
+        with open("{mergedir}/keyboard.log".format(mergedir=self.mergedir), "a", encoding="utf-8") as af:
+            af.write("Time]:+:[PressCount\n")
+            for folder in sorted_folders_dict:
+                try:
+                    filedir = "{currdir}/{folder}/keyboard.log".format(currdir=self.currdir, folder=folder)
+                    with open(filedir, "r", encoding="utf-8") as rf:
+                        log = rf.read().strip() # Remove the last "\n"
+                        splitted_log = log.split("\n", 1)
+                        if "Time]:+:[" in splitted_log[0]:
+                            log = splitted_log[1]
+                    log += "\n"
+                    af.write(log)
+                except FileNotFoundError:
+                    print(self.strfmr.get_colored_console_log("red",
+                        "Error: File '{filedir}' not found.".format(filedir=filedir)))
+                    sys.exit()
         print("Keyboard merged!")
