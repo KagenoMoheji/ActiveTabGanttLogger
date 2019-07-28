@@ -111,7 +111,7 @@ ganttlogger_logs
 
 ## <span id="3">コマンドオプション</span> [▲](#0)
 ```
-usage: ganttlogger [--observer] [--logger] [--uuid <UUID>] [--help] [--plotter] [--withplot] [--displayer]
+usage: ganttlogger [--observer] [--logger] [--uuid <UUID>] [--help] [--plotter] [--withplot] [--displayer] [--merger]
 
 This CLI will do Observing active-tab, mouse, keyboard,
 and Logging them,
@@ -126,6 +126,7 @@ optional arguments:
   -p, --plotter         Use this option if you want other outputs by a log in the current directory after getting one and a graph.
   --withplot            Use this option when you want to get a graph after running 'Alone'.
   -d, --displayer       Use this option when you want to look a graph from a '.pkl' file.
+  -m, --merger          Use this option when you want to merge all logs in folders in 'ganttlogger_logs'.
 ```
 - <span id="o"></span><span id="l"></span>**`--observer`と`--logger`は実装していないのでまだ機能しません．**
 - <span id="a"></span>`observer`と`logger`をPC単体で行う`alone`を実行したい場合は，オプション無しの`ganttlogger`のみを実行してください．
@@ -151,7 +152,7 @@ optional arguments:
         ```
     - `select_data`を選択した場合は，1点の設定をします．
         ```
-        Select 'all' or list separated by ',' from ('active_tab'|'mouse'|'keyboard'|'mouse-keyboard').:
+        Select 'all' or names separated by ',' from ('active_tab'|'mouse'|'keyboard'|'mouse-keyboard').:
         ```
         "active_tab" と "keyboard"とそれぞれ入力した場合のグラフの例が[Graph Examples](#graphs)の5番と6番です．
     - `xaxis_type`を選択した場合は，2点の設定をします．

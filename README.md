@@ -112,7 +112,7 @@ ganttlogger_logs
 
 ## <span id="3">Command Options</span> [▲](#0)
 ```
-usage: ganttlogger [--observer] [--logger] [--uuid <UUID>] [--help] [--plotter] [--withplot] [--displayer]
+usage: ganttlogger [--observer] [--logger] [--uuid <UUID>] [--help] [--plotter] [--withplot] [--displayer] [--merger]
 
 This CLI will do Observing active-tab, mouse, keyboard,
 and Logging them,
@@ -127,6 +127,7 @@ optional arguments:
   -p, --plotter         Use this option if you want other outputs by a log in the current directory after getting one and a graph.
   --withplot            Use this option when you want to get a graph after running 'Alone'.
   -d, --displayer       Use this option when you want to look a graph from a '.pkl' file.
+  -m, --merger          Use this option when you want to merge all logs in folders in 'ganttlogger_logs'.
 ```
 - <span id="o"></span><span id="l"></span>**`--observer` and `--logger` don't work because they're not implemented yet.**
 - <span id="a"></span>Run `ganttlogger` without any options if you run CLI as `alone` - both of `observer` and `logger/plotter` -.
@@ -152,7 +153,7 @@ optional arguments:
         ```
     - When select `select_data`, you'll be required a setting.
         ```
-        Select 'all' or list separated by ',' from ('active_tab'|'mouse'|'keyboard'|'mouse-keyboard').:
+        Select 'all' or names separated by ',' from ('active_tab'|'mouse'|'keyboard'|'mouse-keyboard').:
         ```
         Example graphs when set "active_tab" and "keyboard" are No.5 and No.6 of [Graph Examples](#graphs).
     - When select `xaxis_type`, you'll be required two settings.
