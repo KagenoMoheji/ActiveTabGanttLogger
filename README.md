@@ -166,6 +166,7 @@ optional arguments:
     - When select `xlim_range`, you'll be required two settings.
         ```
         (1)Input start time of graph xlim in the format 'YYYY/mm/dd HH:MM:SS'.:
+        
         (2)Input end time of graph xlim in the format 'YYYY/mm/dd HH:MM:SS'.:
         ```
         Then, you can get a graph during the specified time zone.

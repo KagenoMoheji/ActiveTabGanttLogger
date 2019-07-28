@@ -165,6 +165,7 @@ optional arguments:
     - `xlim_range`を選択した場合は，2点の設定をします．
         ```
         (1)Input start time of graph xlim in the format 'YYYY/mm/dd HH:MM:SS'.:
+        
         (2)Input end time of graph xlim in the format 'YYYY/mm/dd HH:MM:SS'.:
         ```
         これにより，指定した時間帯のグラフを得られます．
