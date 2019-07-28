@@ -162,6 +162,12 @@ optional arguments:
         (2)Select x-axis type for Mouse or Keyboard from whether 'active-start' or number of the interval by seconds:
         ```
         "(1)active-start(2)active-start" と "(1)15(2)15"とそれぞれ入力した場合のグラフの例が[Graph Examples](#graphs)の3番と4番です．
+    - `xlim_range`を選択した場合は，2点の設定をします．
+        ```
+        (1)Input start time of graph xlim in the format 'YYYY/mm/dd HH:MM:SS'.:
+        (2)Input end time of graph xlim in the format 'YYYY/mm/dd HH:MM:SS'.:
+        ```
+        これにより，指定した時間帯のグラフを得られます．
 - <span id="d"></span>`~.pkl`ファイルを用いて動的グラフを見たい場合は，オプション`--displayer`を追加して実行してください．
     - 1点の設定入力を行う必要があります．
         ```
@@ -207,7 +213,6 @@ optional arguments:
 - 標準入力のバッファクリアの実装を試みるが，難題です．助言やプルリクを求めます．
 
 ## <span id="5">これから</span> [▲](#0)
-- 関数への共通化による`Plotter.py`のコード最適化
 - 2台以上運用・リモート形式の`--observer`と`--logger`の実装．
 
 ## <span id="6">LICENSE</span> [▲](#0)

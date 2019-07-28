@@ -139,7 +139,7 @@ optional arguments:
         ```
         Select plot types separated by ',',  or enter without input.:
         ```
-        Select keywords(you can combine) from (set_interval | filter_tab | select_data | xaxis_type).
+        Select keywords(you can combine) from (set_interval | filter_tab | select_data | xaxis_type | xlim_range).
     - When select `set_interval`, you'll be required a setting.
         ```
         Set the number of interval by seconds:
@@ -163,6 +163,12 @@ optional arguments:
         (2)Select x-axis type for Mouse or Keyboard from whether 'active-start' or number of the interval by seconds:
         ```
         Example graphs when set "(1)active-start(2)active-start" and "(1)15(2)15" are No.3 and No.4 of [Graph Examples](#graphs).
+    - When select `xlim_range`, you'll be required two settings.
+        ```
+        (1)Input start time of graph xlim in the format 'YYYY/mm/dd HH:MM:SS'.:
+        (2)Input end time of graph xlim in the format 'YYYY/mm/dd HH:MM:SS'.:
+        ```
+        Then, you can get a graph during the specified time zone.
 - <span id="d"></span>Add an option `--displayer` if you want watch dynamic graph with generated `~.pkl`.
     - Then, you'll be required a setting.
         ```
@@ -209,7 +215,6 @@ I'm investigating the causes...
 - Try implementing flushing stdin buffering. But it's difficury, so I want advices or pull-requests.
 
 ## <span id="5">In the future...</span> [▲](#0)
-- Optimize code like `Plotter.py` by commonizing to functions.
 - Implement mode remote '--observer' and '--logger'.
 
 ## <span id="6">License</span> [▲](#0)
