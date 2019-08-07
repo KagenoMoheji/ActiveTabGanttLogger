@@ -28,7 +28,7 @@
 ## <span id="1">使用環境(テスト済み)</span> [▲](#0)
 - OS
     - Windows10(64bit)
-    - MacOS Sierra ~
+    - MacOS High Sierra ~
 - Python
     - 3.6.x
     - 3.7.x
@@ -169,6 +169,11 @@ optional arguments:
         (2)Input end time of graph xlim in the format 'YYYY/mm/dd HH:MM:SS'.:
         ```
         これにより，指定した時間帯のグラフを得られます．
+    - `set_ylabel`を選択した場合は，1点の設定をします．
+        ```
+        Do you want to remove from active-tab-names(y-labels)? (Y/n):
+        ```
+        'Y'を入力した場合，Y軸のラベルのアクティブタブ名からタブ名を除いた(つまりアプリケーション名のみの)ラベルを持つグラフを得られます．
 - <span id="d"></span>`~.pkl`ファイルを用いて動的グラフを見たい場合は，オプション`--displayer`を追加して実行してください．
     - 1点の設定入力を行う必要があります．
         ```

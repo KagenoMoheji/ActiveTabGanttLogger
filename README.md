@@ -29,7 +29,7 @@ CLI that Monitors active-tab, mouse-distance and keyboard-count, Logs and Plots 
 ## <span id="1">Requirements(Test Completing)</span> [▲](#0)
 - OS
     - Windows10(64bit)
-    - MacOS Sierra ~
+    - MacOS High Sierra ~
 - Python
     - 3.6.x
     - 3.7.x
@@ -170,6 +170,11 @@ optional arguments:
         (2)Input end time of graph xlim in the format 'YYYY/mm/dd HH:MM:SS'.:
         ```
         Then, you can get a graph during the specified time zone.
+    - When select `set_ylabel`, you'll be required a setting.
+        ```
+        Do you want to remove from active-tab-names(y-labels)? (Y/n):
+        ```
+        If you input 'Y', you can get graphs having y-labels composed of the only application names (excluding tab names).
 - <span id="d"></span>Add an option `--displayer` if you want watch dynamic graph with generated `~.pkl`.
     - Then, you'll be required a setting.
         ```
