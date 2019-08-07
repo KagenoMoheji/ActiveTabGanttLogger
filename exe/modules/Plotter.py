@@ -58,6 +58,7 @@ class Plotter:
     plot_mouse = np.array([["", None]])
     plot_keyboard = np.array([["", None]])
     df_active_tab = {}
+    add_tabname = True
     def __init__(self, uuid=""):
         '''
         When arg "uuid" is empty, the mode is "plotter".
@@ -89,6 +90,7 @@ class Plotter:
         self.plot_keyboard = np.array([[None, None]])
         self.df_active_tab = {}
         self.xlim_range = {"start": None, "end": None}
+        self.add_tabname = True
         # Create an output folder
         os.makedirs(os.path.dirname("{dirname}/graphs/".format(dirname=self.dirname)), exist_ok=True)
 
@@ -102,15 +104,17 @@ class Plotter:
         ・select_data -> Set "all" to plot a compiled graph, or select from ('active_tab'|'mouse'|'keyboard'|'mouse-keyboard') to plot each graphs.
         ・xaxis_type -> For x-axis, select "active-start" to set start times of active-tabs, or set a number of seconds to set times of the interval.
         ・xlim_range -> Set start time or end time in the format "%Y/%m/%d %H:%M:%S", or "None"/no input when use from raw data.
+        ・set_ylabel -> Select whether remove tab names to active-tab-name and show only application name as y-labels.
         '''
         try:
-            plot_types_labels = set(["set_interval", "filter_tab", "select_data", "xaxis_type", "xlim_range"])
+            plot_types_labels = set(["set_interval", "filter_tab", "select_data", "xaxis_type", "xlim_range", "set_ylabel"])
             plot_types_flags = {
                 "set_interval": False,
                 "filter_tab": False,
                 "select_data": False,
                 "xaxis_type": False,
-                "xlim_range": False
+                "xlim_range": False,
+                "set_ylabel": False
             }
 
             print(self.strfmr.get_colored_console_log("yellow",
@@ -123,7 +127,8 @@ class Plotter:
 'xaxis_type'  : Select x-axis scale from whether 'active-start'(the start times of active tabs) or number
                 of seconds interval.
 'xlim_range'  : Set start time or end time. Defaults of both of them are using from raw-data(= inputing 'None'
-                or not input).""")
+                or not input).
+'set_ylabel'  : Select whether removing tab-names from active-tab-name(y-labels) and showing only application names.""")
             while True:
                 print(self.strfmr.get_colored_console_log("yellow",
                     "Select plot types separated by ',',  or enter without input.: "), end="")
@@ -295,6 +300,22 @@ class Plotter:
                         continue
                     print(self.strfmr.get_colored_console_log("red",
                             "Error: Invalid input."))
+            if plot_types_flags["set_ylabel"]:
+                print(self.strfmr.get_colored_console_log("yellow",
+                    "-----------------[set_ylabel]-----------------"))
+                print("There are a required setting.")
+                while True:
+                    print(self.strfmr.get_colored_console_log("yellow",
+                        "Do you want to remove from active-tab-names(y-labels)? (Y/n): "), end="")
+                    st_input = input().strip()
+                    if st_input == "Y":
+                        self.add_tabname = False
+                        break
+                    elif st_input == "n":
+                        # self.add_tabname = True
+                        break
+                    print(self.strfmr.get_colored_console_log("red",
+                            "Error: Invalid input."))
 
             if self.select_data[0] == "all":
                 self.run()
@@ -345,6 +366,7 @@ class Plotter:
 
         fig = plt.figure(figsize=(15, 9))
         # Get range(limit) of x axis
+        # The related code of "xlim-range" is implemented in only setting xlim and getting the labels of x-axis
         if self.xlim_range["start"] is None:
             init = self.plot_active_tab[0][0]
         else:
@@ -423,6 +445,7 @@ class Plotter:
 
         filetime = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         # Get range(limit) of x axis
+        # The related code of "xlim-range" is implemented in only setting xlim and getting the labels of x-axis
         if self.xlim_range["start"] is None:
             init = self.plot_active_tab[0][0]
         else:
@@ -545,7 +568,8 @@ class Plotter:
                         print(self.strfmr.get_colored_console_log("red",
                             "Error: End-time exceeds the last time in 'active_tab.log'."))
                         sys.exit()
-                end_index -= 1
+                if end_index > 1: # If the last value of labels of x-axis is no the only one
+                    end_index -= 1
             dates += [t for t in self.plot_active_tab[start_index:end_index, 0]]
         else:
             t = init
@@ -581,7 +605,8 @@ class Plotter:
                         print(self.strfmr.get_colored_console_log("red",
                             "Error: End-time exceeds the last time in 'active_tab.log'."))
                         sys.exit()
-                end_index -= 1
+                if end_index > 1: # If the last value of labels of x-axis is no the only one
+                    end_index -= 1
             dates += [t for t in self.plot_active_tab[start_index:end_index, 0]]
         else:
             t = init
@@ -709,7 +734,7 @@ class Plotter:
         # Create dataframe 'self.df_active_tab' groupby 'ActiveName(TabText)'
         for i in range(len(self.plot_active_tab) - 1):
             name = self.plot_active_tab[i][1]
-            if self.plot_active_tab[i][2]:
+            if self.add_tabname and self.plot_active_tab[i][2]:
                 name += "({})".format(self.plot_active_tab[i][2])
             start = self.plot_active_tab[i][0]
             finish = self.plot_active_tab[i][3] # self.plot_active_tab[i+1][0]
